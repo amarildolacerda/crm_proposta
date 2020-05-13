@@ -23,27 +23,28 @@
 
 <!-- Main content -->
 <section class="content">
-    <figure>
-        <?php if ($dadoslogin['filial'] == "SP") { ?>
-            <img src="<?php echo base_url() ?>assets/imagens/topo-sp.jpg" title="Logo" width="100%" height="100%" />
-        <?php } ?>
-        <?php if ($dadoslogin['filial'] == "SAN") { ?>
-            <img src="<?php echo base_url() ?>assets/imagens/topo-san.jpg" title="Logo" width="100%" height="100%" />
-        <?php } ?>
-        <?php if ($dadoslogin['filial'] == "BP") { ?>
-            <img src="<?php echo base_url() ?>assets/imagens/topo-bp.jpg" title="Logo" width="100%" height="100%" />
-        <?php } ?> 
 
-    </figure>
+    <table class="table table-borderless">
+        <tbody >
+            <tr>
+                <td>
+                    <figure class="figure">
+                        <img src="<?php echo base_url() ?>assets/imagens/logo.png" title="Logo" width="30%" height="30%" />
+                    </figure>
+                </td>
+                <td class="text-left"> 
+                    <div class="text-center">
+                        <h2>Proposta</h2>
+                        <h1><strong><?php echo $result->numpropostas; ?></strong></h1>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
+    <br><br><br><br><br>
     <div class="row">
         <div class="col-xs-12">
-            <div class="header ">
-                <h3 class="text-center"><strong>Proposta comercial N° <?php echo $result->numpropostas; ?> </strong> <?php
-                    echo " - ";
-                    echo "Data: " . strtoupper($result->data);
-                    ?> </h3>
-            </div>
             <div>
                 <div class="col-xs-6">
                     <label>Nome Fantasia: <strong> <?php echo strtoupper($result->fantasia); ?></strong></label>
@@ -310,7 +311,7 @@
                 <div class="box box-success">
                     <div class="box-header with-border text-center">
                         <?php if ($result->totalmensalidade > 0) { ?>
-                            
+
                             <font size="4"> Mensalidade:
                             <strong>R$<?php echo number_format($result->totalmensalidade, 2, ',', '.'); ?></strong></font>
                         <?php } ?>

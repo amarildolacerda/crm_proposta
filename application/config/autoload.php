@@ -58,7 +58,7 @@ $autoload['packages'] = array();
 |
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
-$autoload['libraries'] = array('table','database','session','form_validation','permission');
+$autoload['libraries'] = array('table','database','session','form_validation','permission','telegram/telegram_lib');
 
 /*
 | -------------------------------------------------------------------
@@ -89,7 +89,7 @@ $autoload['drivers'] = array();
 |
 |	$autoload['helper'] = array('url', 'file');
 */
-$autoload['helper'] = array('security','url','form'); 
+$autoload['helper'] = array('security','url','form','file'); 
 
 
 

@@ -40,19 +40,9 @@
                     <div class="box-body">
                         <div class="col-md-6">
                             <label>Nome da Permissão</label>
-                            <input name="nome" type="text" id="nome" class="span12" />
-
+                            <input name="nome" type="text" id="nome" class="form-control" />
                         </div>
-                        <div class="col-md-6">
-                            <br/>
-                            <label>
-                                <input name="marcarTodos" type="checkbox" value="1" id="marcarTodos" />
-                                <span class="lbl"> Marcar Todos</span>
-
-                            </label>
-                            <br/>
-                        </div>
-
+                        <br><br><br>
                         <div class="control-group">
                             <label for="documento" class="control-label"></label>
                             <div class="controls">
@@ -158,6 +148,13 @@
                                                     <span class="lbl"> Excluir Lead</span>
                                                 </label>
                                             </td>
+                                            
+                                            <td>
+                                                <label>
+                                                    <input name="oLead" class="marcar" type="checkbox" value="1" />
+                                                    <span class="lbl"> Ocultar Lead</span>
+                                                </label>
+                                            </td>
 
                                         </tr>
 
@@ -194,7 +191,7 @@
 
                                         </tr>
                                         <tr><td colspan="4"></td></tr>
-                                        
+
                                         <tr>
 
                                             <td>
@@ -227,7 +224,7 @@
 
                                         </tr>
                                         <tr><td colspan="4"></td></tr>
-                                        
+
                                         <tr>
 
                                             <td>
@@ -260,7 +257,78 @@
 
                                         </tr>
                                         <tr><td colspan="4"></td></tr>
-                                        
+
+                                        <tr>
+
+                                            <td>
+                                                <label>
+                                                    <input name="vAgenda" class="marcar" type="checkbox" checked="checked" value="1" />
+                                                    <span class="lbl"> Visualizar Agenda</span>
+                                                </label>
+                                            </td>
+
+                                            <td>
+                                                <label>
+                                                    <input name="aAgenda" class="marcar" type="checkbox" value="1" />
+                                                    <span class="lbl"> Adicionar Agenda</span>
+                                                </label>
+                                            </td>
+
+                                            <td>
+                                                <label>
+                                                    <input name="eAgenda" class="marcar" type="checkbox" value="1" />
+                                                    <span class="lbl"> Editar Agenda</span>
+                                                </label>
+                                            </td>
+
+                                            <td>
+                                                <label>
+                                                    <input name="dAgenda" class="marcar" type="checkbox" value="1" />
+                                                    <span class="lbl"> Excluir Agenda</span>
+                                                </label>
+                                            </td>
+
+                                            <td>
+                                                <label>
+                                                    <input name="tAgenda" class="marcar" type="checkbox" value="1" />
+                                                    <span class="lbl"> Todas Agendas</span>
+                                                </label>
+                                            </td>
+
+                                        </tr>
+                                        <tr><td colspan="4"></td></tr>
+
+                                        <tr>
+                                            <td>
+                                                <label>
+                                                    <input name="vBiblioteca" class="marcar" type="checkbox" checked="checked" value="1" />
+                                                    <span class="lbl"> Visualizar Biblioteca</span>
+                                                </label>
+                                            </td>
+
+                                            <td>
+                                                <label>
+                                                    <input name="aBiblioteca" class="marcar" type="checkbox" value="1" />
+                                                    <span class="lbl"> Adicionar Biblioteca</span>
+                                                </label>
+                                            </td>
+
+                                            <td>
+                                                <label>
+                                                    <input name="eBiblioteca" class="marcar" type="checkbox" value="1" />
+                                                    <span class="lbl"> Editar Biblioteca</span>
+                                                </label>
+                                            </td>
+
+                                            <td>
+                                                <label>
+                                                    <input name="dBiblioteca" class="marcar" type="checkbox" value="1" />
+                                                    <span class="lbl"> Excluir Biblioteca</span>
+                                                </label>
+                                            </td>
+                                        </tr>
+                                        <tr><td colspan="4"></td></tr>
+
                                         <tr>
 
                                             <td>
@@ -290,14 +358,22 @@
                                                     <span class="lbl"> Menu CRM</span>
                                                 </label>
                                             </td>
-                                            
+                                            <td>
+                                                <label>
+                                                    <input name="mIndicacaolead" class="marcar" type="checkbox" value="1" />
+                                                    <span class="lbl"> Menu Indicação Lead</span>
+                                                </label>
+                                            </td>
+
+                                        </tr>
+                                        <tr><td colspan="5"></td></tr>
+                                        <tr>
                                             <td>
                                                 <label>
                                                     <input name="mStatuslead" class="marcar" type="checkbox" value="1" />
                                                     <span class="lbl"> Menu Status Lead</span>
                                                 </label>
                                             </td>
-                                            
                                             <td>
                                                 <label>
                                                     <input name="mSeguimentolead" class="marcar" type="checkbox" value="1" />
@@ -305,261 +381,268 @@
                                                 </label>
                                             </td>
 
-                                        </tr>
-
-                                             <!-- <?php/*
-                                        <tr>
-
                                             <td>
                                                 <label>
-                                                    <input name="vServico" class="marcar" type="checkbox" checked="checked" value="1" />
-                                                    <span class="lbl"> Visualizar Serviço</span>
-                                                </label>
-                                            </td>
-
-                                            <td>
-                                                <label>
-                                                    <input name="aServico" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Adicionar Serviço</span>
-                                                </label>
-                                            </td>
-
-                                            <td>
-                                                <label>
-                                                    <input name="eServico" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Editar Serviço</span>
-                                                </label>
-                                            </td>
-
-                                            <td>
-                                                <label>
-                                                    <input name="dServico" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Excluir Serviço</span>
+                                                    <input name="mBiblioteca" class="marcar" type="checkbox" value="1" />
+                                                    <span class="lbl"> Menu Biblioteca</span>
                                                 </label>
                                             </td>
 
                                         </tr>
 
-                                        <tr><td colspan="4"></td></tr>
-                                        <tr>
+                                        <!-- <?php /*
+          <tr>
 
-                                            <td>
-                                                <label>
-                                                    <input name="vOs" class="marcar" type="checkbox" checked="checked" value="1" />
-                                                    <span class="lbl"> Visualizar OS</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="vServico" class="marcar" type="checkbox" checked="checked" value="1" />
+          <span class="lbl"> Visualizar Serviço</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="aOs" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Adicionar OS</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="aServico" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Adicionar Serviço</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="eOs" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Editar OS</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="eServico" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Editar Serviço</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="dOs" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Excluir OS</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="dServico" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Excluir Serviço</span>
+          </label>
+          </td>
 
-                                        </tr>
-                                        <tr><td colspan="4"></td></tr>
+          </tr>
 
-                                        <tr>
+          <tr><td colspan="4"></td></tr>
+          <tr>
 
-                                            <td>
-                                                <label>
-                                                    <input name="vVenda" class="marcar" type="checkbox" checked="checked" value="1" />
-                                                    <span class="lbl"> Visualizar Venda</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="vOs" class="marcar" type="checkbox" checked="checked" value="1" />
+          <span class="lbl"> Visualizar OS</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="aVenda" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Adicionar Venda</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="aOs" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Adicionar OS</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="eVenda" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Editar Venda</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="eOs" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Editar OS</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="dVenda" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Excluir Venda</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="dOs" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Excluir OS</span>
+          </label>
+          </td>
 
-                                        </tr>
+          </tr>
+          <tr><td colspan="4"></td></tr>
 
-                                        <tr><td colspan="4"></td></tr>
+          <tr>
 
-                                        <tr>
+          <td>
+          <label>
+          <input name="vVenda" class="marcar" type="checkbox" checked="checked" value="1" />
+          <span class="lbl"> Visualizar Venda</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="vArquivo" class="marcar" type="checkbox" checked="checked" value="1" />
-                                                    <span class="lbl"> Visualizar Arquivo</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="aVenda" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Adicionar Venda</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="aArquivo" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Adicionar Arquivo</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="eVenda" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Editar Venda</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="eArquivo" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Editar Arquivo</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="dVenda" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Excluir Venda</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="dArquivo" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Excluir Arquivo</span>
-                                                </label>
-                                            </td>
+          </tr>
 
-                                        </tr>
+          <tr><td colspan="4"></td></tr>
 
-                                        <tr><td colspan="4"></td></tr>
+          <tr>
 
-                                        <tr>
+          <td>
+          <label>
+          <input name="vArquivo" class="marcar" type="checkbox" checked="checked" value="1" />
+          <span class="lbl"> Visualizar Arquivo</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="vLancamento" class="marcar" type="checkbox" checked="checked" value="1" />
-                                                    <span class="lbl"> Visualizar Lançamento</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="aArquivo" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Adicionar Arquivo</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="aLancamento" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Adicionar Lançamento</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="eArquivo" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Editar Arquivo</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="eLancamento" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Editar Lançamento</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="dArquivo" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Excluir Arquivo</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="dLancamento" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Excluir Lançamento</span>
-                                                </label>
-                                            </td>
+          </tr>
 
-                                        </tr>
+          <tr><td colspan="4"></td></tr>
 
-                                        <tr><td colspan="4"></td></tr>
+          <tr>
 
-                                        <tr>
+          <td>
+          <label>
+          <input name="vLancamento" class="marcar" type="checkbox" checked="checked" value="1" />
+          <span class="lbl"> Visualizar Lançamento</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="rCliente" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Relatório Cliente</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="aLancamento" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Adicionar Lançamento</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="rServico" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Relatório Serviço</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="eLancamento" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Editar Lançamento</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="rOs" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Relatório OS</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="dLancamento" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Excluir Lançamento</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="rProduto" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Relatório Produto</span>
-                                                </label>
-                                            </td>
+          </tr>
 
-                                        </tr>
+          <tr><td colspan="4"></td></tr>
 
-                                        <tr>
+          <tr>
 
-                                            <td>
-                                                <label>
-                                                    <input name="rVenda" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Relatório Venda</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="rCliente" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Relatório Cliente</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="rFinanceiro" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Relatório Financeiro</span>
-                                                </label>
-                                            </td>
-                                            <td colspan="2"></td>
+          <td>
+          <label>
+          <input name="rServico" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Relatório Serviço</span>
+          </label>
+          </td>
 
-                                        </tr>
-                                        <tr><td colspan="4"></td></tr>
+          <td>
+          <label>
+          <input name="rOs" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Relatório OS</span>
+          </label>
+          </td>
 
-                                        <tr>
+          <td>
+          <label>
+          <input name="rProduto" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Relatório Produto</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="cUsuario" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Configurar Usuário</span>
-                                                </label>
-                                            </td>
+          </tr>
 
-                                            <td>
-                                                <label>
-                                                    <input name="cEmitente" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Configurar Emitente</span>
-                                                </label>
-                                            </td>
+          <tr>
 
-                                            <td>
-                                                <label>
-                                                    <input name="cPermissao" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Configurar Permissão</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="rVenda" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Relatório Venda</span>
+          </label>
+          </td>
 
-                                            <td>
-                                                <label>
-                                                    <input name="cBackup" class="marcar" type="checkbox" value="1" />
-                                                    <span class="lbl"> Backup</span>
-                                                </label>
-                                            </td>
+          <td>
+          <label>
+          <input name="rFinanceiro" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Relatório Financeiro</span>
+          </label>
+          </td>
+          <td colspan="2"></td>
 
-                                        </tr>
-*/?>-->
+          </tr>
+          <tr><td colspan="4"></td></tr>
+
+          <tr>
+
+          <td>
+          <label>
+          <input name="cUsuario" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Configurar Usuário</span>
+          </label>
+          </td>
+
+          <td>
+          <label>
+          <input name="cEmitente" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Configurar Emitente</span>
+          </label>
+          </td>
+
+          <td>
+          <label>
+          <input name="cPermissao" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Configurar Permissão</span>
+          </label>
+          </td>
+
+          <td>
+          <label>
+          <input name="cBackup" class="marcar" type="checkbox" value="1" />
+          <span class="lbl"> Backup</span>
+          </label>
+          </td>
+
+          </tr>
+         */ ?>-->
                                     </tbody>
                                 </table>
                             </div>
@@ -571,7 +654,7 @@
                             <div class="span12">
                                 <div class="span6 offset3">
                                     <button type="submit" class="btn btn-success"><i class="icon-plus icon-white"></i> Adicionar</button>
-                                    <a href="<?php echo base_url() ?>index.php/permissoes" id="" class="btn"><i class="icon-arrow-left"></i> Voltar</a>
+                                    <a href="<?php echo base_url() ?>index.php/permissoes" id="" class="btn btn-danger"><i class="icon-arrow-left"></i> Voltar</a>
                                 </div>
                             </div>
                         </div>

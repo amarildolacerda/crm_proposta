@@ -50,7 +50,21 @@
                                 <div class="box box-success" >
                                     <div class="box-header with-border">
                                         <div class="col-md-6">
-                                            <h3 class="box-title">Informações do cliente</h3>
+                                            <div class="info-box-text bg-green">
+                                                <h3 class="box-title">Faturamento direto?&nbsp;&nbsp;&nbsp;</h3>
+                                                <label class="radio-inline"><input type="radio" name="fatdireto" id="fatdireto" value="1" <?php
+                                                    if ($result->fatdireto == 1) {
+                                                        echo "checked";
+                                                    }
+                                                    ?>>SIM
+                                                </label>
+                                                <label class="radio-inline"><input type="radio" name="fatdireto" id="fatdireto" value="0" <?php
+                                                    if ($result->fatdireto == 0) {
+                                                        echo "checked";
+                                                    }
+                                                    ?>>NÃO
+                                                </label>
+                                            </div>
                                         </div>
                                         <div class="col-md-6">
                                             <select name="status" class="form-control">
@@ -58,17 +72,20 @@
                                                 if ($result->status == 1) {
                                                     echo "selected";
                                                 }
-                                                ?>>Aguardando Aprovação</option>
+                                                ?>>Aguardando Aprovação
+                                                </option>
                                                 <option value="2" <?php
                                                 if ($result->status == 2) {
                                                     echo "selected";
                                                 }
-                                                ?>>Fechado Ganho</option>
+                                                ?>>Fechado Ganho
+                                                </option>
                                                 <option value="3" <?php
                                                 if ($result->status == 3) {
                                                     echo "selected";
                                                 }
-                                                ?>>Fechado Perdido</option>
+                                                ?>>Fechado Perdido
+                                                </option>
                                             </select>
                                         </div>
                                     </div>
@@ -280,7 +297,7 @@
                                                 <button class="btn btn-block btn-success">Alterar proposta<i class="fa-fw glyphicon glyphicon-ok"></i></button>
                                             </div>
                                             <div  class="col-md-3">
-                                                <a href="<?php echo base_url() ?>proposta/gerenciar" class="btn btn-block btn-danger"> Voltar<i class="fa-fw glyphicon glyphicon-remove"></i></a>
+                                                <a href="<?php echo base_url() ?>index.php/proposta/gerenciar" class="btn btn-block btn-danger"> Voltar<i class="fa-fw glyphicon glyphicon-remove"></i></a>
                                             </div>
                                         </div> <!-- /.box-body -->
                                     </div> <!-- /.box box-info-->
@@ -297,12 +314,12 @@
                                 </div>
                                 <div class="box-body">
 
-                                    <form id="formProdutos" action="<?php echo base_url() ?>proposta/adicionarProduto" method="post">
+                                   <form id="formProdutos" action="<?php echo base_url() ?>proposta/adicionarProduto" method="post">
                                         <div class="col-md-2">
                                             <label for="">Codigo</label>
                                             <input type="text" class="form-control" maxlength="48" name="codigo" id="codigo"  onblur="loginPesquisaProduto()" placeholder="Ex.: 125">
                                         </div>
-                                        <div class="col-md-5">
+                                        <div class="col-md-6">
                                             <input type="hidden" name="numpropostas" id="idOsProduto" value="<?php echo $result->numpropostas ?>" />
                                             <label for="">Produto</label>
                                             <input type="text" name="produto" id="produto" class="form-control" placeholder="Digite o produto">
@@ -315,9 +332,9 @@
                                             <label>Unitario</label>
                                             <input type="number" min="0" step=0.01 class="form-control" name="vlunitario" id="vlunitario" placeholder="Ex.: 1300,00">
                                         </div>
-                                        <div class="col-md-1">
-                                            <label for="">.</label>
-                                            <button class="btn btn-success span12" id="btnAdicionarProduto"><i class="icon-white icon-plus"></i> Adicionar</button>
+                                        <div class="col-md-2">
+                                            <br>
+                                            <button class="btn btn-success span6" id="btnAdicionarProduto"><i class="fa fa-plus"></i></button>
                                         </div>
                                     </form>
                                 </div>
@@ -370,6 +387,10 @@
                             <!-- /.box -->
                         </div>
                         <!-- /.tab-pane -->
+
+                        
+                        <!-- ABA DE SERVIÇOS -->
+
                         <div class="tab-pane" id="tab_3-2">
                             <div class="box box-success">
                                 <div class="box-header with-border">
@@ -488,12 +509,19 @@
                                                 <select name="modulo" id="modulo" class="form-control">
                                                     <option></option>
                                                     <option>Supervisor</option>
+                                                    <option>Pedido</option>
                                                     <option>PDV</option>
                                                     <option>Estoque</option>
                                                     <option>Financeiro</option>
                                                     <option>NF-e</option>
                                                     <option>Vendas</option>
+                                                    <option>PDVSync</option>
+                                                    <option>Comanda Cel/tablet</option>
+                                                    <option>Comanda</option>
                                                     <option>Store Pet</option>
+                                                    <option>Cobrebem</option>
+                                                    <option>Estação Storeware</option>
+                                                    <option>Busca preço</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -562,9 +590,18 @@
 <?php $this->load->view('template/footer'); ?>
 <script type="text/javascript">
     $(document).ready(function () {
+        $(function () {
+            $("#btAtualizarValor").click(function () {
+                $("#codigo").val($("#codprod").val());
+                $("#produto").val($("#nomeprod").val());
+                $("#quantidade").val('1');
+                $("#vlunitario").val($("#vlunitariomodal").val());
+
+
+            });
+        });
 
         $("#formProdutos").validate({
-
             rules: {
                 codigo: {required: true},
                 vlunitario: {required: true},
@@ -633,7 +670,6 @@
         });
 
         $("#formServicos").validate({
-
             rules: {
                 servico: {required: true},
                 quantidadeserv: {required: true},
@@ -696,7 +732,6 @@
         });
 
         $("#formModulos").validate({
-
             rules: {
                 modulo: {required: true},
                 quantidademod: {required: true}
@@ -757,7 +792,6 @@
 
 
         $("#formMensalidade").validate({
-
             rules: {
                 totalmensalidade: {required: true},
             },
@@ -797,3 +831,36 @@
     });
 
 </script>
+<script>
+  var BASE_URL = "<?php echo base_url(); ?>";
+ 
+ $(document).ready(function() {
+      
+    $( "#produto" ).autocomplete({
+
+        source: function(request, response) {
+            $.ajax({
+            url: BASE_URL + "index.php/teste/search",
+            data: {
+                    term : request.term
+                    
+             },
+            dataType: "json",
+            success: function(data){
+               var resp = $.map(data.value,function(obj){
+                    return obj.nome + " - " + "R$" +obj.precovenda;
+                    
+               }); 
+               
+               response(resp);
+               
+            }
+        });
+    },
+    minLength: 3,
+    delay: 1000
+ 
+ });
+});
+ 
+</script> 

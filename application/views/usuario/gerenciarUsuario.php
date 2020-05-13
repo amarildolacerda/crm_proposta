@@ -19,7 +19,7 @@
                     <h3 class="box-title">GERENCIAR USUÁRIOS CADASTRADOS NO SISTEMA</h3>
                 </div>
                 <div class="box-body">
-                    <a href="<?php echo base_url(); ?>index.php/usuario/add" class="btn btn-success"><i class="icon-plus icon-white"></i> Adicionar Usuário</a>
+                    <a href="<?php echo base_url(); ?>index.php/usuario/add" class="btn btn-success btn-sm"><i class="glyphicon glyphicon-plus-sign"></i> Adicionar usuário</a>
                     <br>
                     <br>
                     <?php if (!$results) { ?>
@@ -35,7 +35,7 @@
                             <div class="widget-content nopadding table-responsive">
 
 
-                                <table class="table table-bordered ">
+                                <table class="table table-bordered table-hover table-striped table-condense">
                                     <thead>
                                         <tr>
                                             <th>#</th>
@@ -57,16 +57,8 @@
                     <?php } else { ?>
 
                         <div class="widget-box">
-                            <div class="widget-title">
-                                <span class="icon">
-                                    <i class="icon-barcode"></i>
-                                </span>
-                            </div>
-
                             <div class="widget-content nopadding table-responsive">
-
-
-                                <table class="table table-bordered ">
+                                <table class="table table-bordered table-hover table-striped table-condense">
                                     <thead>
                                         <tr style="backgroud-color: #2D335B">
                                             <th>#</th>
@@ -80,11 +72,11 @@
                                     <tbody>
                                         <?php foreach ($results as $r) { ?>
                                             <tr> 
-                                                <td><?php echo $r->idusuarios; ?></td>
-                                                <td><?php echo $r->nome; ?></td> 
-                                                <td><?php echo $r->permissao; ?></td> 
-                                                <td><?php echo $r->filial; ?></td> 
-                                                <td><?php
+                                                <td class="text-middle ng-binding"><?php echo $r->idusuarios; ?></td>
+                                                <td class="text-middle ng-binding"><?php echo $r->nome; ?></td> 
+                                                <td class="text-middle ng-binding"><?php echo $r->permissao; ?></td> 
+                                                <td class="text-middle ng-binding"><?php echo $r->filial; ?></td> 
+                                                <td class="text-middle ng-binding"><?php
                                                     if ($r->status == 1) {
                                                         echo "Ativo";
                                                     } else {
@@ -93,10 +85,9 @@
                                                     ?></td>
 
 
-                                                <td class="text-center">
-                                                    <a title="visualizar" href="<?php base_url().'index.php/usuario/view/' . $r->idusuarios ?>" class="btn btn-success btn-small">Visualizar <i class="fa-fw glyphicon glyphicon-eye-open"></i> </a>
-                                                    <a title="editar" href="<?php echo base_url() ?>index.php/usuario/edit/<?php echo $r->idusuarios; ?>" class="btn btn-primary btn-small">Editar <i class="fa-fw glyphicon glyphicon-edit"></i> </a>
-
+                                                <td class="text-middle ng-binding text-center">
+                                                    <a href="<?php echo base_url(); ?>index.php/usuario/alterarsenha/<?php echo $dadoslogin['idusuarios']; ?>" class="btn btn-success btn-xs">Alterar senha<i class="fa-fw glyphicon glyphicon-user"></i></a>
+                                                    <a title="editar" href="<?php echo base_url() ?>index.php/usuario/edit/<?php echo $r->idusuarios; ?>" class="btn btn-primary btn-xs"><i class="fa-fw glyphicon glyphicon-edit"></i> </a>
                                                 </td>
                                             </tr>
                                             <?php

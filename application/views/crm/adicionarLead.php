@@ -51,19 +51,31 @@
                                 <input type="text" class="form-control" name="nome" placeholder="Ex.: João da Silva" value="<?= set_value('nome') ?>">
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>CNPJ</label>
+                                <input type="text" class="form-control" maxlength="18" name="cnpj" value="<?= set_value('cnpj') ?>">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Whatsapp</label>
+                                <input type="text" class="form-control" maxlength="15" name="whatsapp" value="<?= set_value('whatsapp') ?>">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label>Telefone</label>
                                 <input type="text" class="form-control" maxlength="15" name="telefone" value="<?= set_value('telefone') ?>">
                             </div>
                         </div>
-                        <div class="col-md-5">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label>E-mail</label>
                                 <input type="email" class="form-control" name="email" placeholder="Ex.: xxxxxxx@storeware.com.br" value="<?= set_value('email') ?>">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label>Cargo </label>
                                 <input type="text" class="form-control" name="cargo"  value="<?= set_value('cargo') ?>">
@@ -91,32 +103,77 @@
                         <div class=" col-md-3">
                             <div class="form-group">
                                 <label>Status</label>
-                                <select class="form-control" name="status">
+                                <select class="form-control" name="status" >
                                     <?php
                                     foreach ($status as $value) {
                                         ?>
-                                        <option value = <?php echo $value->idstatus; ?> ><?php echo $value->descricao; ?></option>
-                                        <?php
-                                    }
-                                    ?>
+                                        <option value = <?php echo $value->idstatus; ?> <?php
+                                        if ($value->idstatus == $statuspost) {
+                                            echo "selected";
+                                        }
+                                        ?> ><?php echo $value->descricao; ?></option>
+                                                <?php
+                                            }
+                                            ?>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Probabilidade venda (%)</label>
+                                <select class="form-control" name="probabilidade">
+                                    <option value="10"<?php
+                                    if (10 == $probabilidadepost) {
+                                        echo "selected";
+                                    }
+                                    ?> >0%</option>
+                                    <option value="20" <?php
+                                    if (20 == $probabilidadepost) {
+                                        echo "selected";
+                                    }
+                                    ?>>20%</option>
+                                    <option value="40" <?php
+                                    if (40 == $probabilidadepost) {
+                                        echo "selected";
+                                    }
+                                    ?>>40%</option>
+                                    <option value="60" <?php
+                                    if (60 == $probabilidadepost) {
+                                        echo "selected";
+                                    }
+                                    ?>>60%</option>
+                                    <option value="80" <?php
+                                    if (80 == $probabilidadepost) {
+                                        echo "selected";
+                                    }
+                                    ?>>80%</option>
+                                    <option value="100" <?php
+                                    if (100 == $probabilidadepost) {
+                                        echo "selected";
+                                    }
+                                    ?>>100%</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label>Fonte da indicação</label>
                                 <select class="form-control" name="fonte">
                                     <?php
                                     foreach ($indicacao as $value2) {
                                         ?>
-                                        <option value = <?php echo $value2->idindicacao; ?> ><?php echo $value2->descricao; ?></option>
-                                        <?php
-                                    }
-                                    ?>
+                                        <option value = <?php echo $value2->idindicacao; ?> <?php
+                                        if ($value2->idindicacao == $fontepost) {
+                                            echo "selected";
+                                        }
+                                        ?> ><?php echo $value2->descricao; ?></option>
+                                                <?php
+                                            }
+                                            ?>
                                 </select>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Seguimento</label>
@@ -124,20 +181,37 @@
                                     <?php
                                     foreach ($seguimento as $value2) {
                                         ?>
-                                        <option value = <?php echo $value2->idseguimento; ?> ><?php echo $value2->descricao; ?></option>
-                                        <?php
-                                    }
-                                    ?>
+                                        <option value = <?php echo $value2->idseguimento; ?> <?php
+                                        if ($value2->idseguimento == $seguimentopost) {
+                                            echo "selected";
+                                        }
+                                        ?> ><?php echo $value2->descricao; ?></option>
+                                                <?php
+                                            }
+                                            ?>
                                 </select>
                             </div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label>Possui sistema?</label>
                                 <select class="form-control" name="possuisistema">
-                                    <option value="0">Não</option>
-                                    <option value="1">Sim</option>
+                                    <option value="0"<?php
+                                    if (0 == $possuisistemapost) {
+                                        echo "selected";
+                                    }
+                                    ?> >Não</option>
+                                    <option value="1" <?php
+                                    if (1 == $possuisistemapost) {
+                                        echo "selected";
+                                    }
+                                    ?>>Sim</option>
+                                    <option value="2" <?php
+                                    if (2 == $possuisistemapost) {
+                                        echo "selected";
+                                    }
+                                    ?>>Não informado</option>
                                 </select>
                             </div>
                         </div>
@@ -155,4 +229,10 @@
     </form>
 
 </section>
+<script type="text/javascript">
+    $(document).ready(function () {
+        
+        alert("status");
+    });
+</script>
 <?php $this->load->view('template/footer'); ?>

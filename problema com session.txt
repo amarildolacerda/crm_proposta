@@ -1,0 +1,3 @@
+alterar na config na linha 383 e colocar o path da session 
+
+$config['sess_save_path'] = 'C:\inetpub\wwwroot2\proposta\session';

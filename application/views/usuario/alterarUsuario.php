@@ -51,10 +51,6 @@
                             </div>
                         </div>
                         <div class="form-group col-md-3">
-                            <label>Senha</label>
-                            <input type="password" class="form-control" name="senha" value="<?php echo $result->senha; ?>">
-                        </div>
-                        <div class="form-group col-md-3">
                             <div class="form-group">
                                 <label>Status</label>
                                 <select class="form-control" name="status">
@@ -63,13 +59,13 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-3">
                             <div class="form-group">
                                 <label>Telefone</label>
                                 <input type="text" class="form-control" maxlength="15" name="telefone" value="<?php echo $result->telefone; ?>">
                             </div>
                         </div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-3">
                             <div class="form-group">
                                 <label>Filial</label>
                                 <select class="form-control" name="filial">
@@ -79,7 +75,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-3">
                             <div class="form-group">
                                 <label>Permissão</label>
                                 <select class="form-control" name="permissao">

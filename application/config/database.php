@@ -102,7 +102,7 @@ $db['wba_db'] = array(
     'username' => 'wba',
     'password' => '2017@gestao',
     'database' => 'wbainterno',
-    'dbdriver' => 'odbc',
+    'dbdriver' => 'mssql',
     'dbprefix' => '',
     'pconnect' => FALSE,
     'db_debug' => (ENVIRONMENT !== 'production'),

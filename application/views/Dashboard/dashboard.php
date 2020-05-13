@@ -1,12 +1,19 @@
 <?php $this->load->view('template/menu'); ?>
 <section class="content-header">
-    <h1>
-        Funil de vendas CRM
-
-    </h1>
-    <ol class="breadcrumb">
-        <li><i class="active fa fa-dashboard"></i> Dashboard</a></li>
-    </ol>
+    <h1>Estatística mensal</h1>
+</section>
+<!-- Main content -->
+<section class="content">
+    <!-- Small boxes (Stat box) -->
+    <div class="row">
+        <div class="col-md-12">
+            <!-- gráfico de coluna -->
+            <div id="barrasnovomensal" style="height: 300px; width: 100%;"></div>
+        </div>
+    </div>
+</section>
+<section class="content-header">
+    <h1>Funil de vendas CRM</h1>
 </section>
 <!-- Main content -->
 <section class="content">
@@ -16,7 +23,6 @@
             <!-- gráfico de coluna -->
             <div id="barrasgeral" style="height: 300px; width: 100%;"></div>
         </div>
-
         <div class="col-md-6">
             <!-- funil de vendas -->
             <div id="funilgeral" style="height: 300px; width: 100%;"></div>
@@ -31,197 +37,53 @@
         <div class="col-md-6">
             <div id="funilindividual" style="height: 300px; width: 100%;"></div>
         </div>
-
-<!-- planoB caso o outro pare <div id="chartContainer" style="width:100%; height:280px"></div>  -->
-
-    </div>
+</div>
 </section>
 
+<!-- DASH META DE VENDAS  ------------------------ 
+<input type="hidden" name="meta_vendas" id="meta_vendas" value="<?php echo $meta_vendas ?>" />
+<input type="hidden" name="meta_atingida" id="meta_atingida" value="<?php echo $meta_atingida ?>" />
+<input type="hidden" name="mes_atual" id="mes_atual" value="<?php echo $mes_atual ?>" />-->
+
+<!-- ESTATÍSTICA MENSAL  ----------------FAZER UM FOREACH PEGANDO MES E TOTAL-------- -->
+<?php
+$contador = 1;
+foreach ($stat_mensal_convertido as $value) {
+    ?>
+    <input type="hidden" name="stat_mensal_convertido_<?php echo $contador ?>" id="stat_mensal_convertido_<?php echo $contador ?>" value="<?php echo $value->convertidos; ?>" />
+    <input type="hidden" name="mes_convertido_<?php echo $contador ?>" id="mes_convertido_<?php echo $contador ?>" value="<?php echo date('m/Y', strtotime($value->data)); ?>" />
+    <?php
+    $contador ++;
+    // echo $teste = date('m/Y', strtotime($value->data));
+    // echo $teste->format("m");
+    //  echo '<br>';
+}
+
+//var_dump($stat_mensal_convertido);
+//$teste = date("m/Y", strtotime("-11 month"));
+
+?>
+
+<?php
+$contador2 = 1;
+foreach ($stat_mensal_novo as $value) {
+    ?>
+    <input type="hidden" name="stat_mensal_novo_<?php echo $contador2 ?>" id="stat_mensal_novo_<?php echo $contador2 ?>" value="<?php echo $value->novos; ?>" />
+    <input type="hidden" name="mes_novo_<?php echo $contador2 ?>" id="mes_novo_<?php echo $contador2 ?>" value="<?php echo date('m/Y', strtotime($value->data)); ?>" />
+
+    <?php
+    $contador2 ++;
+    // echo $teste = date('m/Y', strtotime($value->data));
+    // echo $teste->format("m");
+    //  echo '<br>';
+}
+
+//var_dump($stat_mensal_convertido);
+//$teste = date("m/Y", strtotime("-11 month"));
+
+?>
 
 
-<section class="content-header">
-    <h1>
-        ESTATÍSTICAS INDIVIDUAIS DE PROPOSTAS
-
-    </h1>
-    <ol class="breadcrumb">
-        <li><i class="active fa fa-dashboard"></i> Dashboard</a></li>
-    </ol>
-</section>
-<!-- Main content -->
-<section class="content">
-    <!-- Small boxes (Stat box) -->
-    <div class="row">
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-yellow">
-                <div class="inner">
-                    <h3><?php echo $count_proposta ?></h3>
-
-                    <p>Total de propostas</p>
-                </div>
-                <div class="icon">
-                    <i class="ion ion-bag"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-aqua">
-                <div class="inner">
-                    <h3>
-                        <?php
-                        echo $count_proposta_aguardando;
-
-                        if ($count_proposta_aguardando > 0) {
-                            echo " / " . number_format((($count_proposta_aguardando / $count_proposta) * 100), 2, ",", ".");
-                            ?><sup style="font-size: 20px">%</sup>
-                        <?php } ?>
-                    </h3>
-
-
-                    <p>Aguardando aprovação</p>
-                </div>
-                <div class="icon">
-                    <i class="ion ion-stats-bars"></i>
-                </div>
-                <a href="<?php echo base_url(); ?>index.php/proposta/gerenciar?pesquisa=&pesquisa2=&status=1" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-green">
-                <div class="inner">
-                    <h3><?php
-                        echo $count_proposta_ganho;
-                        if ($count_proposta_ganho > 0) {
-                            echo " / " . number_format((($count_proposta_ganho / $count_proposta) * 100), 2, ",", ".")
-                            ?><sup style="font-size: 20px">%</sup>
-                        <?php } ?>
-                    </h3>
-
-                    <p>Fechado ganho</p>
-                </div>
-                <div class="icon">
-                    <i class="ion ion-person-add"></i>
-                </div>
-                <a href="<?php echo base_url(); ?>index.php/proposta/gerenciar?pesquisa=&pesquisa2=&status=2" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-red">
-                <div class="inner">
-                    <h3><?php
-                        echo $count_proposta_perdido;
-                        if ($count_proposta_perdido > 0) {
-                            echo " / " . number_format((($count_proposta_perdido / $count_proposta) * 100), 2, ",", ".")
-                            ?><sup style="font-size: 20px">%</sup>
-                        <?php } ?>
-                    </h3>
-
-                    <p>Fechado perdido</p>
-                </div>
-                <div class="icon">
-                    <i class="ion ion-pie-graph"></i>
-                </div>
-                <a href="<?php echo base_url(); ?>index.php/proposta/gerenciar?pesquisa=&pesquisa2=&status=3" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <div class="col-lg-12">
-            <h3>ESTATÍSTICAS GERAIS DE PROPOSTAS</h3>
-        </div>
-
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-yellow">
-                <div class="inner">
-                    <h3><?php echo $count_proposta_geral ?></h3>
-
-                    <p>Total de propostas</p>
-                </div>
-                <div class="icon">
-                    <i class="ion ion-bag"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col -->
-
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-aqua">
-                <div class="inner">
-                    <h3>
-                        <?php
-                        echo $count_proposta_aguardando_geral;
-
-                        if ($count_proposta_aguardando_geral > 0) {
-                            echo " / " . number_format((($count_proposta_aguardando_geral / $count_proposta_geral) * 100), 2, ",", ".");
-                            ?><sup style="font-size: 20px">%</sup>
-                        <?php } ?>
-                    </h3>
-
-
-                    <p>Aguardando aprovação</p>
-                </div>
-                <div class="icon">
-                    <i class="ion ion-stats-bars"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-green">
-                <div class="inner">
-                    <h3><?php
-                        echo $count_proposta_ganho_geral;
-                        if ($count_proposta_ganho_geral > 0) {
-                            echo " / " . number_format((($count_proposta_ganho_geral / $count_proposta_geral) * 100), 2, ",", ".")
-                            ?><sup style="font-size: 20px">%</sup>
-                        <?php } ?>
-                    </h3>
-
-                    <p>Fechado ganho</p>
-                </div>
-                <div class="icon">
-                    <i class="ion ion-person-add"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-red">
-                <div class="inner">
-                    <h3><?php
-                        echo $count_proposta_perdido_geral;
-                        if ($count_proposta_perdido_geral > 0) {
-                            echo " / " . number_format((($count_proposta_perdido_geral / $count_proposta_geral) * 100), 2, ",", ".")
-                            ?><sup style="font-size: 20px">%</sup>
-                        <?php } ?>
-                    </h3>
-
-                    <p>Fechado perdido</p>
-                </div>
-                <div class="icon">
-                    <i class="ion ion-pie-graph"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-        <!-- ./col -->
-
-    </div>
-
-</section>
 <!-- DASH GERAL ------------------------ -->
 <input type="hidden" name="crm_total" id="crm_total" value="<?php echo $count_crm_total ?>" />
 <input type="hidden" name="crm_prospect" id="crm_prospect" value="<?php echo $count_crm_prospect ?>" />
@@ -246,6 +108,8 @@ $this->load->view('template/footer');
 
 <script>
     window.onload = function () {
+
+        // recebe dados do input hidden para montar o funil de vendas
         var crm_total = document.getElementById("crm_total");
         var crm_prospect = document.getElementById("crm_prospect");
         var crm_oportunidade = document.getElementById("crm_oportunidade");
@@ -254,7 +118,7 @@ $this->load->view('template/footer');
         var crm_ganho = document.getElementById("crm_ganho");
         var crm_perdido = document.getElementById("crm_perdido");
 
-
+        // converte o objeto recebido anteriormente para um numero
         var crm_totaln = Number(crm_total.value);
         var crm_prospectn = Number(crm_prospect.value);
         var crm_oportunidaden = Number(crm_oportunidade.value);
@@ -263,16 +127,105 @@ $this->load->view('template/footer');
         var crm_ganhon = Number(crm_ganho.value);
         var crm_perdidon = Number(crm_perdido.value);
 
-        // update chart every second
 
-//Better to construct options first and then pass it as a parameter
+        //RECEBE INFORMAÇÕES PARA MONTAR GRÁFICO DE OPORTUNIDADES CONVERTIDAS NOS ÚLTIMOS 6 MESES
+        var meses = 1;
+        var stat_mensal_convertido = [];
+        var stat_mensal_convertido_n = [];
+        var mes_convertido = [];
+        var mes_convertido_n = [];
+
+        var stat_mensal_novo = [];
+        var stat_mensal_novo_n = [];
+        var mes_novo = [];
+        var mes_novo_n = [];
+        while (meses < 7) { // se alterar este valor para 13 e mudar no cotroller para pegar 12 meses, pga o ano todo.
+            stat_mensal_convertido[meses] = document.getElementById("stat_mensal_convertido_" + meses);
+            stat_mensal_convertido_n[meses] = Number(stat_mensal_convertido[meses].value);
+            stat_mensal_novo[meses] = document.getElementById("stat_mensal_novo_" + meses);
+            stat_mensal_novo_n[meses] = Number(stat_mensal_novo[meses].value);
+
+            mes_convertido[meses] = document.getElementById("mes_convertido_" + meses);
+            mes_convertido_n[meses] = mes_convertido[meses].value;
+            mes_novo[meses] = document.getElementById("mes_novo_" + meses);
+            mes_novo_n[meses] = mes_novo[meses].value;
+            //alert(stat_mensal_novo_n[meses]);
+            meses++;
+        }
+
+
+
+        var options = {
+            title: {
+                text: "NOVOS CADASTROS E CONVERTIDOS ÚLTIMOS 6 MESES"
+            },
+            legend: {
+                verticalAlign: "top",
+                horizontalAlign: "right",
+                dockInsidePlotArea: true
+            },
+            toolTip: {
+                shared: true
+            },
+            data: [
+                {
+                    name: "Novos cadastros",
+                    showInLegend: true,
+                    legendMarkerType: "square",
+                    type: "splineArea",
+                    color: "green",
+                    dataPoints: [
+                        {label: mes_novo_n[1], y: stat_mensal_novo_n[1]},
+                        {label: mes_novo_n[2], y: stat_mensal_novo_n[2]},
+                        {label: mes_novo_n[3], y: stat_mensal_novo_n[3]},
+                        {label: mes_novo_n[4], y: stat_mensal_novo_n[4]},
+                        {label: mes_novo_n[5], y: stat_mensal_novo_n[5]},
+                        {label: mes_novo_n[6], y: stat_mensal_novo_n[6]}
+//                        {label: mes_convertido_n[7], y: stat_mensal_convertido_n[7]}, // se tirar comentario destas linhas pega 12 meses
+//                        {label: mes_convertido_n[8], y: stat_mensal_convertido_n[8]},
+//                        {label: mes_convertido_n[9], y: stat_mensal_convertido_n[9]},
+//                        {label: mes_convertido_n[10], y: stat_mensal_convertido_n[10]},
+//                        {label: mes_convertido_n[11], y: stat_mensal_convertido_n[11]},
+//                        {label: mes_convertido_n[12], y: stat_mensal_convertido_n[12]}
+                    ]
+
+
+                },
+                {
+                    name: "Convertidos",
+                    showInLegend: true,
+                    legendMarkerType: "square",
+                    type: "splineArea",
+                    color: "blue",
+                    dataPoints: [
+                        {label: mes_convertido_n[1], y: stat_mensal_convertido_n[1]},
+                        {label: mes_convertido_n[2], y: stat_mensal_convertido_n[2]},
+                        {label: mes_convertido_n[3], y: stat_mensal_convertido_n[3]},
+                        {label: mes_convertido_n[4], y: stat_mensal_convertido_n[4]},
+                        {label: mes_convertido_n[5], y: stat_mensal_convertido_n[5]},
+                        {label: mes_convertido_n[6], y: stat_mensal_convertido_n[6]}
+//                        {label: mes_convertido_n[7], y: stat_mensal_convertido_n[7]}, // se tirar comentario destas linhas pega 12 meses
+//                        {label: mes_convertido_n[8], y: stat_mensal_convertido_n[8]},
+//                        {label: mes_convertido_n[9], y: stat_mensal_convertido_n[9]},
+//                        {label: mes_convertido_n[10], y: stat_mensal_convertido_n[10]},
+//                        {label: mes_convertido_n[11], y: stat_mensal_convertido_n[11]},
+//                        {label: mes_convertido_n[12], y: stat_mensal_convertido_n[12]}
+                    ]
+
+                }
+            ]
+        };
+
+        $("#barrasnovomensal").CanvasJSChart(options);
+
+
+        // grafico colunas fúnil geral
         var options = {
             title: {
                 text: "COLUNAS FÚNIL GERAL"
             },
             data: [
                 {
-
                     // Change type to "doughnut", "line", "splineArea", etc.
                     type: "column",
                     dataPoints: [
@@ -330,9 +283,9 @@ $this->load->view('template/footer');
 
 
 
-//PARTE DE GERAÇÃO DOS GRÁFICOS INDIVIDUAIS
+        //PARTE DE GERAÇÃO DOS GRÁFICOS INDIVIDUAIS
 
-    var crm_total = document.getElementById("crm_total_individual");
+        var crm_total = document.getElementById("crm_total_individual");
         var crm_prospect = document.getElementById("crm_prospect_individual");
         var crm_oportunidade = document.getElementById("crm_oportunidade_individual");
         var crm_entregue = document.getElementById("crm_entregue_individual");
@@ -351,14 +304,13 @@ $this->load->view('template/footer');
 
         // update chart every second
 
-//Better to construct options first and then pass it as a parameter
+        //Better to construct options first and then pass it as a parameter
         var options = {
             title: {
                 text: "COLUNAS FÚNIL INDIVIDUAL"
             },
             data: [
                 {
-
                     // Change type to "doughnut", "line", "splineArea", etc.
                     type: "column",
                     dataPoints: [
@@ -415,6 +367,34 @@ $this->load->view('template/footer');
         }
 
     }
+
+
+    //BAR CHART
+    var meta_vendas = document.getElementById("meta_vendas");
+    var meta_atingida = document.getElementById("meta_atingida");
+    var mes_atual = document.getElementById("mes_atual");
+
+    var vendas = Number(meta_vendas.value);
+    var atingida = Number(meta_atingida.value);
+    var atual = Number(mes_atual.value);
+
+
+
+    var bar = new Morris.Bar({
+        element: 'bar-chart',
+        resize: true,
+        data: [
+            {y: "Mês: " + atual, a: atingida, b: vendas}
+
+        ],
+        barColors: ['#00a65a', '#f56954'],
+        xkey: 'y',
+        ykeys: ['a', 'b'],
+        labels: ['ATINGIDO', 'META'],
+        hideHover: 'auto'
+    });
+
+
 </script>
 <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/bower_components/jquery.canvasjs.min.js') ?>"></script>

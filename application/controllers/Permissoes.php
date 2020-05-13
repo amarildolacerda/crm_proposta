@@ -28,8 +28,8 @@ class Permissoes extends CI_Controller {
     }
 
     function gerenciar() {
-        
-        
+
+
         $this->load->library('pagination');
 
 
@@ -92,6 +92,7 @@ class Permissoes extends CI_Controller {
                 'eLead' => $this->input->post('eLead'),
                 'dLead' => $this->input->post('dLead'),
                 'vLead' => $this->input->post('vLead'),
+                'oLead' => $this->input->post('oLead'),
                 'aStatuslead' => $this->input->post('aStatuslead'),
                 'eStatuslead' => $this->input->post('eStatuslead'),
                 'dStatuslead' => $this->input->post('dStatuslead'),
@@ -100,6 +101,15 @@ class Permissoes extends CI_Controller {
                 'eSeguimentolead' => $this->input->post('eSeguimentolead'),
                 'dSeguimentolead' => $this->input->post('dSeguimentolead'),
                 'vSeguimentolead' => $this->input->post('vSeguimentolead'),
+                'aAgenda' => $this->input->post('aAgenda'),
+                'eAgenda' => $this->input->post('eAgenda'),
+                'dAgenda' => $this->input->post('dAgenda'),
+                'vAgenda' => $this->input->post('vAgenda'),
+                'tAgenda' => $this->input->post('tAgenda'),
+                'aBiblioteca' => $this->input->post('aBiblioteca'),
+                'eBiblioteca' => $this->input->post('eBiblioteca'),
+                'dBiblioteca' => $this->input->post('dBiblioteca'),
+                'vBiblioteca' => $this->input->post('vBiblioteca'),
                 'mProposta' => $this->input->post('mProposta'),
                 'mUsuario' => $this->input->post('mUsuario'),
                 'mPermissao' => $this->input->post('mPermissao'),
@@ -107,6 +117,7 @@ class Permissoes extends CI_Controller {
                 'mCrm' => $this->input->post('mCrm'),
                 'mStatuslead' => $this->input->post('mStatuslead'),
                 'mSeguimentolead' => $this->input->post('mSeguimentolead'),
+                'mBiblioteca' => $this->input->post('mBiblioteca'),
             );
             $permissoes = serialize($permissoes);
 
@@ -159,6 +170,7 @@ class Permissoes extends CI_Controller {
                 'eLead' => $this->input->post('eLead'),
                 'dLead' => $this->input->post('dLead'),
                 'vLead' => $this->input->post('vLead'),
+                'oLead' => $this->input->post('oLead'),
                 'aStatuslead' => $this->input->post('aStatuslead'),
                 'eStatuslead' => $this->input->post('eStatuslead'),
                 'dStatuslead' => $this->input->post('dStatuslead'),
@@ -167,6 +179,15 @@ class Permissoes extends CI_Controller {
                 'eSeguimentolead' => $this->input->post('eSeguimentolead'),
                 'dSeguimentolead' => $this->input->post('dSeguimentolead'),
                 'vSeguimentolead' => $this->input->post('vSeguimentolead'),
+                'aAgenda' => $this->input->post('aAgenda'),
+                'eAgenda' => $this->input->post('eAgenda'),
+                'dAgenda' => $this->input->post('dAgenda'),
+                'vAgenda' => $this->input->post('vAgenda'),
+                'tAgenda' => $this->input->post('tAgenda'),
+                'aBiblioteca' => $this->input->post('aBiblioteca'),
+                'eBiblioteca' => $this->input->post('eBiblioteca'),
+                'dBiblioteca' => $this->input->post('dBiblioteca'),
+                'vBiblioteca' => $this->input->post('vBiblioteca'),
                 'mProposta' => $this->input->post('mProposta'),
                 'mUsuario' => $this->input->post('mUsuario'),
                 'mPermissao' => $this->input->post('mPermissao'),
@@ -174,6 +195,7 @@ class Permissoes extends CI_Controller {
                 'mIndicacaolead' => $this->input->post('mIndicacaolead'),
                 'mStatuslead' => $this->input->post('mStatuslead'),
                 'mSeguimentolead' => $this->input->post('mSeguimentolead'),
+                'mBiblioteca' => $this->input->post('mBiblioteca'),
             );
             $permissoes = serialize($permissoes);
 

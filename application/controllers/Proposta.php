@@ -25,22 +25,22 @@ class Proposta extends CI_Controller {
     }
 
     public function gerenciar() {
-        if(!$this->permission->checkPermission($this->session->userdata('permissao'),'vProposta')){
-           $this->session->set_flashdata('error','Você não tem permissão para visualizar propostas.');
-           redirect(base_url().'index.php/dashboard');
+        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'vProposta')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
+            redirect(base_url() . 'index.php/dashboard');
         }
-        
+
         $this->load->library('table');
         $this->load->library('pagination');
         $dadoslogin = $this->session->all_userdata();
 
-        
+
         $where_array = array();
 
         $fantasia = $this->input->get('pesquisa');
         $numpropostas = $this->input->get('pesquisa2');
         $status = $this->input->get('status');
-        
+
         if ($fantasia) {
             $where_array['fantasia'] = $fantasia;
         }
@@ -50,12 +50,12 @@ class Proposta extends CI_Controller {
         if ($status) {
             $where_array['status'] = $status;
         }
-        
-        
-        
+
+
+
 
         $config['base_url'] = base_url() . 'index.php/proposta/gerenciar';
-        $config['total_rows'] = $this->proposta_model->count('propostas',$dadoslogin['idusuarios']);
+        $config['total_rows'] = $this->proposta_model->count('propostas', $dadoslogin['idusuarios']);
         $config['per_page'] = 10;
         $config['next_link'] = 'Próxima';
         $config['prev_link'] = 'Anterior';
@@ -77,19 +77,19 @@ class Proposta extends CI_Controller {
         $config['last_tag_close'] = '</li>';
 
         $this->pagination->initialize($config);
-        
-        $this->data['results'] = $this->proposta_model->get('propostas', 'numpropostas,fantasia,contato,data,status', $dadoslogin['idusuarios'],$where_array , $config['per_page'], $this->uri->segment(3));
+
+        $this->data['results'] = $this->proposta_model->get('propostas', 'numpropostas,fantasia,contato,data,status', $dadoslogin['idusuarios'], $where_array, $config['per_page'], $this->uri->segment(3));
 
         $this->load->view('proposta/gerenciarProposta', $this->data);
     }
 
     public function add() {
-        
-        if(!$this->permission->checkPermission($this->session->userdata('permissao'),'aProposta')){
-           $this->session->set_flashdata('error','Você não tem permissão para visualizar propostas.');
-           redirect(base_url().'index.php/proposta/gerenciar' );
+
+        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'aProposta')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
+            redirect(base_url() . 'index.php/proposta/gerenciar');
         }
-        
+
         //$this->form_validation->set_rules('cnpj', 'Cnpj', 'trim|required');
         $this->form_validation->set_rules('fantasia', 'Fantasia', 'trim|required');
         //$this->form_validation->set_rules('email', 'E-mail', 'trim|valid_email');
@@ -108,9 +108,10 @@ class Proposta extends CI_Controller {
             $dados['telefone'] = $this->input->post('telefone');
             $dados['data'] = date('d/m/Y');
             $dados['status'] = 1;
+            $dados['fatdireto'] = 0;
             $dados['idLead_proposta'] = $this->input->post('idLead_proposta');
             $dados['usuario'] = $this->input->post('usuario');
-            
+
             $numproposta = $this->proposta_model->adicionar($dados);
             if ($numproposta != 0) {
                 redirect(base_url() . 'index.php/proposta/edit/' . $numproposta);
@@ -123,20 +124,20 @@ class Proposta extends CI_Controller {
     }
 
     public function edit() {
-        
-        if(!$this->permission->checkPermission($this->session->userdata('permissao'),'eProposta')){
-           $this->session->set_flashdata('error','Você não tem permissão para visualizar propostas.');
-           redirect(base_url().'index.php/dashboard');
+
+        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'eProposta')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
+            redirect(base_url() . 'index.php/dashboard');
         }
-        
+
         if (!$this->uri->segment(3) || !is_numeric($this->uri->segment(3))) {
             $this->session->set_flashdata('error', 'Item não pode ser encontrado, parâmetro não foi passado corretamente.');
-            redirect(base_url().'index.php/proposta/gerenciar' );
+            redirect(base_url() . 'index.php/proposta/gerenciar');
         }
- 
-       // $this->form_validation->set_rules('cnpj', 'Cnpj', 'trim|required');
+
+        // $this->form_validation->set_rules('cnpj', 'Cnpj', 'trim|required');
         $this->form_validation->set_rules('fantasia', 'Fantasia', 'trim|required');
- 
+
         if ($this->form_validation->run() == FALSE) {
             $data['formErrors'] = validation_errors();
         } else {
@@ -152,8 +153,9 @@ class Proposta extends CI_Controller {
             $dados['validade'] = $this->input->post('validade');
             $dados['previsaoinst'] = $this->input->post('previsao');
             $dados['observacao'] = $this->input->post('observacao');
+            $dados['fatdireto'] = $this->input->post('fatdireto');
             $dados['status'] = $this->input->post('status');
-            
+
             if ($this->proposta_model->edit('propostas', $dados, 'numpropostas', $this->input->post('numpropostas')) == TRUE) {
                 $this->session->set_flashdata('success_msg', 'Cadastro atualizado com sucesso!');
                 $data['formErrors'] = null;
@@ -162,19 +164,31 @@ class Proposta extends CI_Controller {
                 $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
             }
         }
-         
+
         $data['produtos'] = $this->proposta_model->getProdutos($this->uri->segment(3));
         $data['servicos'] = $this->proposta_model->getServicos($this->uri->segment(3));
         $data['modulos'] = $this->proposta_model->getModulos($this->uri->segment(3));
         $data['result'] = $this->proposta_model->getById($this->uri->segment(3));
         $this->load->view('proposta/alterarProposta', $data);
     }
+    
+    public function pesquisaProduto() {
+        $produtopesq = $this->input->post('produtopesq');
+
+            $response = file_get_contents('http://intranet1.wbagestao.com.br:7070/OData/OData.svc/produtos?select=nome&$filter=nome%20like%20(%27%%25' . $produtopesq . '%%25%27)');
+//            $response = json_decode($response);
+
+            $this->data['totalresultados'] = count($response->value);
+            $this->data['produtopesq'] = $response;
+     
+            echo $this->data;
+    }
 
     public function imprimir() {
-        
-        if(!$this->permission->checkPermission($this->session->userdata('permissao'),'iProposta')){
-           $this->session->set_flashdata('error','Você não tem permissão para visualizar propostas.');
-           redirect(base_url().'index.php/proposta/gerenciar' );
+
+        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'iProposta')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
+            redirect(base_url() . 'index.php/proposta/gerenciar');
         }
 
         if (!$this->uri->segment(3) || !is_numeric($this->uri->segment(3))) {
@@ -184,139 +198,146 @@ class Proposta extends CI_Controller {
 
 
         $this->data['result'] = $this->proposta_model->getById($this->uri->segment(3));
-        $this->data['count_prod'] = $this->proposta_model->count_impressao('produtos_proposta',$this->uri->segment(3));
-        $this->data['count_serv'] = $this->proposta_model->count_impressao('servicos_proposta',$this->uri->segment(3));
-        $this->data['count_mod'] = $this->proposta_model->count_impressao('modulos_proposta',$this->uri->segment(3));
+        $this->data['count_prod'] = $this->proposta_model->count_impressao('produtos_proposta', $this->uri->segment(3));
+        $this->data['count_serv'] = $this->proposta_model->count_impressao('servicos_proposta', $this->uri->segment(3));
+        $this->data['count_mod'] = $this->proposta_model->count_impressao('modulos_proposta', $this->uri->segment(3));
         $this->data['produtos'] = $this->proposta_model->getProdutos($this->uri->segment(3));
         $this->data['servicos'] = $this->proposta_model->getServicos($this->uri->segment(3));
         $this->data['modulos'] = $this->proposta_model->getModulos($this->uri->segment(3));
         $this->data['dadoslogin'] = $this->session->all_userdata();
-        
+
 
         $this->load->view('proposta/imprimirProposta', $this->data);
     }
 
-    
-    public function adicionarProduto(){
-        $numpropostas =$this->input->post('numpropostas');
+    public function adicionarProduto() {
+        $numpropostas = $this->input->post('numpropostas');
         $codigo = $this->input->post('codigo');
         $produto = $this->input->post('produto');
         $quantidade = $this->input->post('quantidade');
         $vlunitario = $this->input->post('vlunitario');
         $vltotal = $vlunitario * $quantidade;
-        
+
         $data = array(
-            'numpropostas'=> $numpropostas,
-            'codigo'=> $codigo,
-            'produto'=> $produto,
-            'quantidade'=> $quantidade,
-            'vlunitario'=> $vlunitario,
-            'vltotal'=> $vltotal,
+            'numpropostas' => $numpropostas,
+            'codigo' => $codigo,
+            'produto' => $produto,
+            'quantidade' => $quantidade,
+            'vlunitario' => $vlunitario,
+            'vltotal' => $vltotal,
         );
 
-        if($this->proposta_model->add('produtos_proposta', $data) == true){
-            echo json_encode(array('result'=> true));
-        }else{
-            echo json_encode(array('result'=> false));
+        if ($this->proposta_model->add('produtos_proposta', $data) == true) {
+            echo json_encode(array('result' => true));
+        } else {
+            echo json_encode(array('result' => false));
         }
-      
     }
-    
-    public function adicionarServico(){
-        $numpropostas =$this->input->post('numpropostas');
+
+    public function adicionarServico() {
+        $numpropostas = $this->input->post('numpropostas');
         $servico = $this->input->post('servico');
         $quantidade = $this->input->post('quantidadeserv');
         $vlunitario = $this->input->post('vlunitarioserv');
         $vltotal = $vlunitario * $quantidade;
-        
+
         $data = array(
-            'numpropostas'=> $numpropostas,
-            'servico'=> $servico,
-            'quantidade'=> $quantidade,
-            'vlunitario'=> $vlunitario,
-            'vltotal'=> $vltotal,
+            'numpropostas' => $numpropostas,
+            'servico' => $servico,
+            'quantidade' => $quantidade,
+            'vlunitario' => $vlunitario,
+            'vltotal' => $vltotal,
         );
 
-        if($this->proposta_model->add('servicos_proposta', $data) == true){
-            echo json_encode(array('result'=> true));
-        }else{
-            echo json_encode(array('result'=> false));
+        if ($this->proposta_model->add('servicos_proposta', $data) == true) {
+            echo json_encode(array('result' => true));
+        } else {
+            echo json_encode(array('result' => false));
         }
-      
     }
-    
-    public function adicionarModulo(){
-        $numpropostas =$this->input->post('numpropostas');
+
+    public function adicionarModulo() {
+        $numpropostas = $this->input->post('numpropostas');
         $modulo = $this->input->post('modulo');
         $quantidade = $this->input->post('quantidademod');
-        
-        
+
+
         $data = array(
-            'numpropostas'=> $numpropostas,
-            'modulo'=> $modulo,
-            'quantidade'=> $quantidade,
-            
+            'numpropostas' => $numpropostas,
+            'modulo' => $modulo,
+            'quantidade' => $quantidade,
         );
 
-        if($this->proposta_model->add('modulos_proposta', $data) == true){
-            echo json_encode(array('result'=> true));
-        }else{
-            echo json_encode(array('result'=> false));
+        if ($this->proposta_model->add('modulos_proposta', $data) == true) {
+            echo json_encode(array('result' => true));
+        } else {
+            echo json_encode(array('result' => false));
         }
-      
     }
-    
-    public function adicionarMensalidade(){
-        $numpropostas =$this->input->post('numpropostas');
+
+    public function adicionarMensalidade() {
+        $numpropostas = $this->input->post('numpropostas');
         $totalmensalidade = $this->input->post('totalmensalidade');
-        
+
         $data = array(
-            'numpropostas'=> $numpropostas,
-            'totalmensalidade'=> $totalmensalidade,
+            'numpropostas' => $numpropostas,
+            'totalmensalidade' => $totalmensalidade,
         );
 
-        if($this->proposta_model->edit('propostas', $data, 'numpropostas', $this->input->post('numpropostas')) == TRUE){
-            echo json_encode(array('result'=> true));
-        }else{
-            echo json_encode(array('result'=> false));
+        if ($this->proposta_model->edit('propostas', $data, 'numpropostas', $this->input->post('numpropostas')) == TRUE) {
+            echo json_encode(array('result' => true));
+        } else {
+            echo json_encode(array('result' => false));
         }
-      
     }
     
-    function excluirProduto(){
+    function excluirProposta() {
+
+        $numpropostas = $this->input->post('numPropostasExcluir');
         
-            $ID = $this->input->post('idProduto_proposta');
-            if($this->proposta_model->delete('produtos_proposta','idProduto_proposta',$ID) == true){
-                
-                echo json_encode(array('result'=> true));
-            }
-            else{
-                echo json_encode(array('result'=> false));
-            }           
-    }
-    
-      function excluirServico(){
-        
-            $ID = $this->input->post('idServico_proposta');
-            if($this->proposta_model->delete('servicos_proposta','idServico_proposta',$ID) == true){
-                
-                echo json_encode(array('result'=> true));
-            }
-            else{
-                echo json_encode(array('result'=> false));
-            }           
-    }
-    
-    function excluirModulo(){
-        
-            $ID = $this->input->post('idModulo_proposta');
-            if($this->proposta_model->delete('modulos_proposta','idModulo_proposta',$ID) == true){
-                
-                echo json_encode(array('result'=> true));
-            }
-            else{
-                echo json_encode(array('result'=> false));
-            }           
+        if ($this->proposta_model->delete('propostas', 'numpropostas', $numpropostas) == true) {
+            $this->proposta_model->delete('produtos_proposta', 'numpropostas', $numpropostas);
+            $this->proposta_model->delete('modulos_proposta', 'numpropostas', $numpropostas);
+            $this->proposta_model->delete('servicos_proposta', 'numpropostas', $numpropostas);
+            
+            redirect(base_url() . 'index.php/proposta/gerenciar');
+        } else {
+            echo json_encode(array('result' => false));
+        }
     }
 
+    function excluirProduto() {
+
+        $ID = $this->input->post('idProduto_proposta');
+        if ($this->proposta_model->delete('produtos_proposta', 'idProduto_proposta', $ID) == true) {
+
+            echo json_encode(array('result' => true));
+        } else {
+            echo json_encode(array('result' => false));
+        }
+    }
+
+    function excluirServico() {
+
+        $ID = $this->input->post('idServico_proposta');
+        if ($this->proposta_model->delete('servicos_proposta', 'idServico_proposta', $ID) == true) {
+
+            echo json_encode(array('result' => true));
+        } else {
+            echo json_encode(array('result' => false));
+        }
+    }
+
+    function excluirModulo() {
+
+        $ID = $this->input->post('idModulo_proposta');
+        if ($this->proposta_model->delete('modulos_proposta', 'idModulo_proposta', $ID) == true) {
+
+            echo json_encode(array('result' => true));
+        } else {
+            echo json_encode(array('result' => false));
+        }
+    }
+
+    
 }

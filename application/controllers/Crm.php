@@ -2,6 +2,9 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class Crm extends CI_Controller {
 
     function __construct() {
@@ -25,6 +28,46 @@ class Crm extends CI_Controller {
         $this->load->view('crm/crm', $this->data);
     }
 
+    public function sendgrid() {
+
+       // require 'vendor/autoload.php'; // If you're using Composer (recommended)
+// Comment out the above line if not using Composer
+ require("localhost/proposta_ci/index.php/third_party/sendgrid/sendgrid-php.php");
+// If not using Composer, uncomment the above line and
+// download sendgrid-php.zip from the latest release here,
+// replacing <PATH TO> with the path to the sendgrid-php.php file,
+// which is included in the download:
+// https://github.com/sendgrid/sendgrid-php/releases
+
+        $email = new \SendGrid\Mail\Mail();
+        $email->setFrom("test@example.com", "Example User");
+        $email->setSubject("Sending with SendGrid is Fun");
+        $email->addTo("test@example.com", "Example User");
+        $email->addContent("text/plain", "and easy to do anywhere, even with PHP");
+        $email->addContent(
+                "text/html", "<strong>and easy to do anywhere, even with PHP</strong>"
+        );
+        $sendgrid = new \SendGrid(getenv('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'));
+        try {
+            $response = $sendgrid->send($email);
+            print $response->statusCode() . "\n";
+            print_r($response->headers());
+            print $response->body() . "\n";
+        } catch (Exception $e) {
+            echo 'Caught exception: ' . $e->getMessage() . "\n";
+        }
+    }
+
+    public function atualizaClienteContrato() {
+        $data = file_get_contents('http://localhost:8886/OData/OData.svc/contrato?$filter=inativo%20eq%20%22N%22');
+        $data2 = json_decode($data);
+        foreach ($data2->value as $r) {
+            //echo "Codigo: ". $r->codigo. " - Nome: ".$r->nome . "<br>";
+        }
+
+        var_dump($data2->value);
+    }
+
     public function gerenciar() {
         if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'mCrm')) {
             $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
@@ -34,29 +77,14 @@ class Crm extends CI_Controller {
         $this->load->library('table');
         $this->load->library('pagination');
 
-
+        $dadoslogin = $this->session->all_userdata();
         $where_array = array();
-/*
-        $empresa = $this->input->get('empresa');
-        $idcrm = $this->input->get('idcrm');
-        $status = $this->input->get('status');
-        $usuario = $this->input->get('vendedor');
-
-        if ($empresa) {
-            $where_array['empresa'] = $empresa;
+        $where_array['atribuido'] = 1;
+        if ($this->permission->checkPermission($this->session->userdata('permissao'), 'oLead')) {
+            $where_array['usuario'] = $dadoslogin['idusuarios'];
         }
-        if ($idcrm) {
-            $where_array['idcrm'] = $idcrm;
-        }
-        if ($status) {
-            $where_array['status'] = $status;
-        }
-        if ($usuario) {
-            $where_array['usuario'] = $usuario;
-        }
-*/
         $config['base_url'] = base_url() . 'index.php/crm/gerenciar';
-        $config['total_rows'] = $this->crm_model->count('crm', '');
+        $config['total_rows'] = $this->crm_model->countatribuido($where_array);
         $config['per_page'] = 10;
         $config['next_link'] = 'Próxima';
         $config['prev_link'] = 'Anterior';
@@ -78,10 +106,23 @@ class Crm extends CI_Controller {
         $config['last_tag_close'] = '</li>';
 
         $this->pagination->initialize($config);
+
+
+
+//       ESTAS VARIAVEIS SERVEM PARA MANTER O CAMPO SELECIONADO DEPOIS DA PESQUISA 
+        $this->data['statuspost'] = 0;
+        $this->data['vendedorpost'] = 0;
+        $this->data['seguimentopost'] = 0;
+        $this->data['indicacaopost'] = 0;
+        $this->data['probabilidadepost'] = 0;
+
+
+
         $this->data['seguimento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', '');
         $this->data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', '');
         $this->data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao,encerra', '');
         $this->data['usuarios'] = $this->crm_model->getConfig('usuarios', 'idusuarios,nome', '');
+        $this->data['count'] = $this->crm_model->countatribuido($where_array);
         $this->data['results'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,telefone,status,seguimento,data,usuario', $where_array, $config['per_page'], $this->uri->segment(3), '', 'idcrm', 'desc');
         $this->load->view('crm/gerenciarLead', $this->data);
     }
@@ -91,28 +132,222 @@ class Crm extends CI_Controller {
             $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
             redirect(base_url() . 'index.php/dashboard');
         }
-         $this->load->library('table');
+        $this->load->library('table');
         $this->load->library('pagination');
-        
-               
+
+
         $empresa = $this->input->post('empresa');
         $numero = $this->input->post('idcrm');
         $status = $this->input->post('status');
         $vendedor = $this->input->post('vendedor');
-        
-       
-        if (isset($vendedor)and !empty($vendedor) or isset($numero)and !empty($numero) or isset($status)and !empty($status) or isset($empresa)and !empty($empresa)) {
+        $fonte = $this->input->post('indicacao');
+        $seguimento = $this->input->post('seguimento');
+        $datainicial = $this->input->post('datainicial');
+        $datafinal = $this->input->post('datafinal');
+        $probabilidade = $this->input->post('probabilidade');
+        $atribuido = 1;
+        if ($this->permission->checkPermission($this->session->userdata('permissao'), 'oLead')) {
+            $dadoslogin = $this->session->all_userdata();
+            $vendedor = $dadoslogin['idusuarios'];
+        }
+
+
+//       ESTAS VARIAVEIS SERVEM PARA MANTER O CAMPO SELECIONADO DEPOIS DA PESQUISA 
+        $this->data['statuspost'] = $this->input->post('status');
+        $this->data['vendedorpost'] = $this->input->post('vendedor');
+        $this->data['seguimentopost'] = $this->input->post('seguimento');
+        $this->data['indicacaopost'] = $this->input->post('indicacao');
+        $this->data['probabilidadepost'] = $this->input->post('probabilidade');
+
+
+        if (isset($vendedor)and ! empty($vendedor) or isset($numero)and ! empty($numero) or isset($status)and ! empty($status) or isset($empresa)and ! empty($empresa) or isset($seguimento)and ! empty($seguimento) or isset($dataincial)and ! empty($datainicial) or isset($datafinal)and ! empty($datafinal) or isset($atribuido)and ! empty($atribuido) or isset($fonte)and ! empty($fonte) or isset($probabilidade)and ! empty($probabilidade)) {
             //$this->pagination->initialize($config);
-            $this->data['results'] = $this->crm_model->filtro($vendedor,$status,$numero,$empresa);
+            $this->data['results'] = $this->crm_model->filtro($vendedor, $status, $numero, $empresa, $seguimento, $datainicial, $datafinal, $atribuido, $fonte, $probabilidade);
             $this->data['seguimento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', '');
             $this->data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', '');
             $this->data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao,encerra', '');
             $this->data['usuarios'] = $this->crm_model->getConfig('usuarios', 'idusuarios,nome', '');
+            $this->data['count'] = $this->crm_model->countfiltro($vendedor, $status, $numero, $empresa, $seguimento, $datainicial, $datafinal, $atribuido, $fonte, $probabilidade);
             $this->load->view('crm/gerenciarLead', $this->data);
-        }
-        else{
+        } else {
             redirect(base_url() . 'index.php/crm/gerenciar');
         }
+    }
+
+    public function negocios() {
+
+        $dadoslogin = $this->session->all_userdata();
+        $this->load->view('crm/negocios');
+    }
+
+    public function gerenciarnaoatribuido() {
+        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'mCrm')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
+            redirect(base_url() . 'index.php/dashboard');
+        }
+
+        $this->load->library('table');
+        $this->load->library('pagination');
+
+
+        $where_array = array();
+        $where_array['atribuido'] = 0;
+
+
+        $config['base_url'] = base_url() . 'index.php/crm/gerenciarnaoatribuido';
+        $config['total_rows'] = $this->crm_model->countatribuido($where_array);
+        $config['per_page'] = 10;
+        $config['next_link'] = 'Próxima';
+        $config['prev_link'] = 'Anterior';
+        $config['full_tag_open'] = '<div class="pagination"><ul class="pagination">';
+        $config['full_tag_close'] = '</ul></div>';
+        $config['num_tag_open'] = '<li>';
+        $config['num_tag_close'] = '</li>';
+        $config['cur_tag_open'] = '<li><a style="color: #2D335B"><b>';
+        $config['cur_tag_close'] = '</b></a></li>';
+        $config['prev_tag_open'] = '<li>';
+        $config['prev_tag_close'] = '</li>';
+        $config['next_tag_open'] = '<li>';
+        $config['next_tag_close'] = '</li>';
+        $config['first_link'] = 'Primeira';
+        $config['last_link'] = 'Última';
+        $config['first_tag_open'] = '<li>';
+        $config['first_tag_close'] = '</li>';
+        $config['last_tag_open'] = '<li>';
+        $config['last_tag_close'] = '</li>';
+
+        $this->pagination->initialize($config);
+
+
+//       ESTAS VARIAVEIS SERVEM PARA MANTER O CAMPO SELECIONADO DEPOIS DA PESQUISA 
+        $this->data['statuspost'] = 0;
+        $this->data['vendedorpost'] = 0;
+        $this->data['seguimentopost'] = 0;
+        $this->data['indicacaopost'] = 0;
+        $this->data['probabilidadepost'] = 0;
+
+
+        $this->data['seguimento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', '');
+        $this->data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', '');
+        $this->data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao,encerra', '');
+        $this->data['usuarios'] = $this->crm_model->getConfig('usuarios', 'idusuarios,nome', '');
+        $this->data['count'] = $this->crm_model->countatribuido($where_array);
+        $this->data['results'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,telefone,status,seguimento,data,usuario', $where_array, $config['per_page'], $this->uri->segment(3), '', 'idcrm', 'desc');
+        $this->load->view('crm/gerenciarLeadNaoAtribuido', $this->data);
+    }
+
+    public function filtronaoatribuido() {
+        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'mCrm')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
+            redirect(base_url() . 'index.php/dashboard');
+        }
+        $this->load->library('table');
+        $this->load->library('pagination');
+
+
+        $empresa = $this->input->post('empresa');
+        $numero = $this->input->post('idcrm');
+        $status = $this->input->post('status');
+        $vendedor = $this->input->post('vendedor');
+        $fonte = $this->input->post('indicacao');
+        $seguimento = $this->input->post('seguimento');
+        $datainicial = $this->input->post('datainicial');
+        $datafinal = $this->input->post('datafinal');
+        $probabilidade = $this->input->post('probabilidade');
+        $atribuido = 0;
+
+//       ESTAS VARIAVEIS SERVEM PARA MANTER O CAMPO SELECIONADO DEPOIS DA PESQUISA 
+        $this->data['statuspost'] = $this->input->post('status');
+        $this->data['vendedorpost'] = $this->input->post('vendedor');
+        $this->data['seguimentopost'] = $this->input->post('seguimento');
+        $this->data['indicacaopost'] = $this->input->post('indicacao');
+        $this->data['probabilidadepost'] = $this->input->post('probabilidade');
+
+
+        if (isset($vendedor)and ! empty($vendedor) or isset($numero)and ! empty($numero) or isset($status)and ! empty($status) or isset($empresa)and ! empty($empresa) or isset($seguimento)and ! empty($seguimento) or isset($dataincial)and ! empty($datainicial) or isset($datafinal)and ! empty($datafinal) or isset($atribuido)and ! empty($atribuido) or isset($fonte)and ! empty($fonte) or isset($probabilidade)and ! empty($probabilidade)) {
+            //$this->pagination->initialize($config);
+            $this->data['results'] = $this->crm_model->filtro($vendedor, $status, $numero, $empresa, $seguimento, $datainicial, $datafinal, $atribuido, $fonte, $probabilidade);
+            $this->data['seguimento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', '');
+            $this->data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', '');
+            $this->data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao,encerra', '');
+            $this->data['count'] = $this->crm_model->countfiltro($vendedor, $status, $numero, $empresa, $seguimento, $datainicial, $datafinal, $atribuido, $fonte, $probabilidade);
+            $this->data['usuarios'] = $this->crm_model->getConfig('usuarios', 'idusuarios,nome', '');
+            $this->load->view('crm/gerenciarLeadNaoAtribuido', $this->data);
+        } else {
+            redirect(base_url() . 'index.php/crm/gerenciarnaoatribuido');
+        }
+    }
+
+    public function csv() {
+        $fileName = 'crm-wba.xlsx';
+        $where_array = array();
+        $where_array['atribuido'] = 1;
+        $employeeData = $this->crm_model->get('crm', 'empresa,nome,telefone,email,cnpj,whatsapp,endereco,bairro,cidade', $where_array, '', $this->uri->segment(3), '', 'idcrm', 'desc');
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Nome');
+        $sheet->setCellValue('B1', 'Empresa');
+        $sheet->setCellValue('C1', 'CNPJ');
+        $sheet->setCellValue('D1', 'E-mail');
+        $sheet->setCellValue('E1', 'Telefone');
+        $sheet->setCellValue('F1', 'Whatsapp');
+        $sheet->setCellValue('G1', 'Endereço');
+        $sheet->setCellValue('H1', 'Bairro');
+        $sheet->setCellValue('I1', 'Cidade');
+        $rows = 2;
+        foreach ($employeeData as $val) {
+            $sheet->setCellValue('A' . $rows, $val->nome);
+            $sheet->setCellValue('B' . $rows, $val->empresa);
+            $sheet->setCellValue('C' . $rows, $val->cnpj);
+            $sheet->setCellValue('D' . $rows, $val->email);
+            $sheet->setCellValue('E' . $rows, $val->telefone);
+            $sheet->setCellValue('F' . $rows, $val->whatsapp);
+            $sheet->setCellValue('G' . $rows, $val->endereco);
+            $sheet->setCellValue('H' . $rows, $val->bairro);
+            $sheet->setCellValue('I' . $rows, $val->cidade);
+            $rows++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $writer->save("upload/" . $fileName);
+        header("Content-Type: application/vnd.ms-excel");
+        redirect(base_url() . "/upload/" . $fileName);
+    }
+
+    public function csvnaoatribuido() {
+        $fileName = 'crm-wba.xlsx';
+        $where_array = array();
+        $where_array['atribuido'] = 0;
+        $employeeData = $this->crm_model->get('crm', 'empresa,nome,telefone,email,cnpj,whatsapp,endereco,bairro,cidade', $where_array, '', $this->uri->segment(3), '', 'idcrm', 'desc');
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Nome');
+        $sheet->setCellValue('B1', 'Empresa');
+        $sheet->setCellValue('C1', 'CNPJ');
+        $sheet->setCellValue('D1', 'E-mail');
+        $sheet->setCellValue('E1', 'Telefone');
+        $sheet->setCellValue('F1', 'Whatsapp');
+        $sheet->setCellValue('G1', 'Endereço');
+        $sheet->setCellValue('H1', 'Bairro');
+        $sheet->setCellValue('I1', 'Cidade');
+        $rows = 2;
+        foreach ($employeeData as $val) {
+            $sheet->setCellValue('A' . $rows, $val->nome);
+            $sheet->setCellValue('B' . $rows, $val->empresa);
+            $sheet->setCellValue('C' . $rows, $val->cnpj);
+            $sheet->setCellValue('D' . $rows, $val->email);
+            $sheet->setCellValue('E' . $rows, $val->telefone);
+            $sheet->setCellValue('F' . $rows, $val->whatsapp);
+            $sheet->setCellValue('G' . $rows, $val->endereco);
+            $sheet->setCellValue('H' . $rows, $val->bairro);
+            $sheet->setCellValue('I' . $rows, $val->cidade);
+            $rows++;
+        }
+        $writer = new Xlsx($spreadsheet);
+        $writer->save("upload/" . $fileName);
+        header("Content-Type: application/vnd.ms-excel");
+        redirect(base_url() . "/upload/" . $fileName);
     }
 
     public function add() {
@@ -123,10 +358,79 @@ class Crm extends CI_Controller {
         }
         $data['dadoslogin'] = $this->session->all_userdata();
 
+        $this->form_validation->set_rules('nomeEmpresa', 'Empresa', 'trim|required|min_length[3]');
+        $this->form_validation->set_rules('nomeContato', 'Nome contato', 'trim|required|min_length[3]');
+        $this->form_validation->set_rules('telefone', 'Telefone', 'trim|required|min_length[3]');
+        $this->form_validation->set_rules('fonte', 'Fonte da indicação', 'trim|required|min_length[1]');
+        $this->form_validation->set_rules('segmento', 'Segmento', 'trim|required|min_length[1]');
 
+
+
+
+        if ($this->form_validation->run() == FALSE) {
+            $data['formErrors'] = validation_errors();
+        } else {
+            $dadosEmpresa['nomeEmpresa'] = $this->input->post('nomeEmpresa');
+            $dadosEmpresa['nomeCliente'] = $this->input->post('nomeContato');
+            $dadosEmpresa['contrato'] = 0;
+            $dadosEmpresa['cnpj'] = $this->input->post('cnpj');
+            $dadosEmpresa['whatsapp'] = $this->input->post('whatsapp');
+            $dadosEmpresa['telefone'] = $this->input->post('telefone');
+            $dadosEmpresa['email'] = $this->input->post('email');
+            $dadosEmpresa['segmento'] = $this->input->post('segmento');
+            $dadosEmpresa['numeroFuncionarios'] = $this->input->post('numeroFuncionarios');
+            $dadosEmpresa['marcador'] = $this->input->post('marcador');
+            $dadosEmpresa['enderecoEmpresa'] = $this->input->post('endereco');
+            $dadosEmpresa['bairroEmpresa'] = $this->input->post('bairro');
+            $dadosEmpresa['cidadeEmpresa'] = $this->input->post('cidade');
+            $dadosEmpresa['softwareAtual'] = $this->input->post('softwareAtual');
+            $dadosEmpresa['papelNaCompra'] = $this->input->post('papelNaCompra');
+
+            $dados['cargo'] = $this->input->post('cargo');
+            $dados['status'] = $this->input->post('status');
+            $dados['probabilidade'] = $this->input->post('probabilidade');
+            $dados['fonte'] = $this->input->post('fonte');
+            $dados['concorrente'] = $this->input->post('concorrente');
+            $dados['data_alteracao'] = date('Y/m/d');
+            $dados['usuario'] = $this->input->post('usuario');
+            $dados['atribuido'] = 1;
+            $dados['situacao'] = "novo";
+
+            $idLead = $this->crm_model->add('empresas', $dadosEmpresa);
+            if ($idLead != 0) {
+                redirect(base_url() . 'index.php/crm/edit/' . $idLead);
+            } else {
+                $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
+            }
+        }
+// ESTAS VARIAVEIS SERVEM PARA MANTER O CAMPO SELECIONADO DEPOIS DA PESQUISA 
+        $data['statuspost'] = $this->input->post('status');
+        $data['fontepost'] = $this->input->post('fonte');
+        $data['segmentopost'] = $this->input->post('segmento');
+        $data['possuisistemapost'] = $this->input->post('possuisistema');
+        $data['probabilidadepost'] = $this->input->post('probabilidade');
+        $data['papelNaCompraPost'] = $this->input->post('papelNaCompra');
+        $data['marcadorPost'] = $this->input->post('marcador');
+
+
+        $data['segmento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', 'status=1');
+        $data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', 'status=1');
+        $data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao', 'status=1');
+        $this->load->view('crm/adicionarNegocio', $data);
+        // $this->load->view('crm/adicionarLead', $data);
+    }
+
+    public function addnaoatribuido() {
+
+        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'aLead')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
+            redirect(base_url() . 'index.php/crm/gerenciar');
+        }
+        $data['dadoslogin'] = $this->session->all_userdata();
 
         $this->form_validation->set_rules('empresa', 'Empresa', 'trim|required|min_length[3]');
         $this->form_validation->set_rules('nome', 'Nome', 'trim|required|min_length[3]');
+//$this->form_validation->set_rules('whatsapp', 'whatsapp', 'trim|required|min_length[3]');
         $this->form_validation->set_rules('telefone', 'telefone', 'trim|required|min_length[3]');
         $this->form_validation->set_rules('email', 'E-mail', 'trim|valid_email');
         $this->form_validation->set_rules('cargo', 'Cargo', 'trim|required|min_length[3]');
@@ -141,6 +445,8 @@ class Crm extends CI_Controller {
         } else {
             $dados['empresa'] = $this->input->post('empresa');
             $dados['nome'] = $this->input->post('nome');
+            $dados['cnpj'] = $this->input->post('cnpj');
+            $dados['whatsapp'] = $this->input->post('whatsapp');
             $dados['telefone'] = $this->input->post('telefone');
             $dados['email'] = $this->input->post('email');
             $dados['cargo'] = $this->input->post('cargo');
@@ -148,13 +454,16 @@ class Crm extends CI_Controller {
             $dados['bairro'] = $this->input->post('bairro');
             $dados['cidade'] = $this->input->post('cidade');
             $dados['status'] = $this->input->post('status');
+            $dados['probabilidade'] = $this->input->post('probabilidade');
             $dados['fonte'] = $this->input->post('fonte');
             $dados['concorrente'] = $this->input->post('concorrente');
             $dados['seguimento'] = $this->input->post('seguimento');
             $dados['data'] = date('Y/m/d');
             $dados['data_alteracao'] = date('Y/m/d');
             $dados['possuisistema'] = $this->input->post('possuisistema');
-            $dados['usuario'] = $this->input->post('usuario');
+            $dados['usuario'] = 0;
+            $dados['atribuido'] = 0;
+            $dados['situacao'] = "novo";
 
             $idLead = $this->crm_model->add('crm', $dados);
             if ($idLead != 0) {
@@ -164,27 +473,39 @@ class Crm extends CI_Controller {
             }
         }
 
+// ESTAS VARIAVEIS SERVEM PARA MANTER O CAMPO SELECIONADO DEPOIS DA PESQUISA 
+        $data['statuspost'] = $this->input->post('status');
+        $data['fontepost'] = $this->input->post('fonte');
+        $data['seguimentopost'] = $this->input->post('seguimento');
+        $data['possuisistemapost'] = $this->input->post('possuisistema');
+        $data['probabilidadepost'] = $this->input->post('probabilidade');
+
 
         $data['seguimento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', 'status=1');
         $data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', 'status=1');
         $data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao', 'status=1');
-        $this->load->view('crm/adicionarLead', $data);
+        $this->load->view('crm/adicionarLeadNaoAtribuido', $data);
     }
 
     public function edit() {
-
+        //checa se o usuário tem permissão de acessso a esta função
         if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'eLead')) {
             $this->session->set_flashdata('error', 'Você não tem permissão para visualizar produtos.');
             redirect(base_url() . 'index.php/crm/gerenciar');
         }
 
+        //verifica se o codigo passado no endereço do navegador é de um lead existente
         if (!$this->uri->segment(3) || !is_numeric($this->uri->segment(3))) {
             $this->session->set_flashdata('error', 'Item não pode ser encontrado, parâmetro não foi passado corretamente.');
             redirect('crm/gerenciar');
         }
+        $this->session->set_userdata('last_url', current_url());
 
+
+        //faz a validação dos dados  que chegaram via post
         $this->form_validation->set_rules('empresa', 'Empresa', 'trim|required|min_length[3]');
         $this->form_validation->set_rules('nome', 'Nome', 'trim|required|min_length[3]');
+//$this->form_validation->set_rules('whatsapp', 'whatsapp', 'trim|required|min_length[3]');
         $this->form_validation->set_rules('telefone', 'telefone', 'trim|required|min_length[3]');
         $this->form_validation->set_rules('email', 'E-mail', 'trim|valid_email');
         $this->form_validation->set_rules('cargo', 'Cargo', 'trim|required|min_length[3]');
@@ -192,11 +513,17 @@ class Crm extends CI_Controller {
         $this->form_validation->set_rules('bairro', 'Bairro', 'trim|required|min_length[3]');
         $this->form_validation->set_rules('cidade', 'Cidade', 'trim|required|min_length[3]');
 
+
+        //se não passou na validação, devolve para a view os erros dos campos encontrados
         if ($this->form_validation->run() == FALSE) {
             $data['formErrors'] = validation_errors();
+
+            //se passou na validação, recebe os dados via post e atribui nas variáveis
         } else {
             $dados['empresa'] = $this->input->post('empresa');
             $dados['nome'] = $this->input->post('nome');
+            $dados['cnpj'] = $this->input->post('cnpj');
+            $dados['whatsapp'] = $this->input->post('whatsapp');
             $dados['telefone'] = $this->input->post('telefone');
             $dados['email'] = $this->input->post('email');
             $dados['cargo'] = $this->input->post('cargo');
@@ -204,25 +531,31 @@ class Crm extends CI_Controller {
             $dados['bairro'] = $this->input->post('bairro');
             $dados['cidade'] = $this->input->post('cidade');
             $dados['status'] = $this->input->post('status');
+            $dados['probabilidade'] = $this->input->post('probabilidade');
             $dados['fonte'] = $this->input->post('fonte');
             $dados['concorrente'] = $this->input->post('concorrente');
             $dados['seguimento'] = $this->input->post('seguimento');
             $dados['data_alteracao'] = date('Y/m/d');
             $dados['possuisistema'] = $this->input->post('possuisistema');
-            $dados['usuario'] = $this->input->post('usuario');
-
-
+            //$dados['usuario'] = $this->input->post('usuario'); comentado para nao substituir vendedor na edição
+            //pega todos os status que são considerados como encerrado
             $where_array3['encerra'] = 1;
             $estadoencerrado = $this->crm_model->getConfig('status_crm', 'idstatus,descricao', $where_array3);
+
+            //se o estado que recebeu via post estiver dentro dos estados considerados que encerram lead,
+            //adiciona a data atual como data de encerramento
             foreach ($estadoencerrado as $value2) {
                 if ($dados['status'] == $value2->idstatus) {
                     $dados['data_encerra'] = date('Y/m/d');
+                    if ($dados['status'] == 5) { //se o status é fechado ganho, escreve ganho na situação, caso contrário escreve perdido
+                        $dados['situacao'] = "ganho";
+                    } else {
+                        $dados['situacao'] = "perdido";
+                    }
                 }
             }
 
-
-
-
+            //depois de receber as variáveis no post e definir as outras variáveis nos testes anteriores, parte para o update na tabela
             if ($this->crm_model->edit('crm', $dados, 'idcrm', $this->input->post('idcrm')) == TRUE) {
                 $this->session->set_flashdata('success_msg', 'Cadastro realizado com sucesso!');
                 $data['formErrors'] = null;
@@ -256,10 +589,46 @@ class Crm extends CI_Controller {
         $data['timeline'] = $this->crm_model->getTimeline($this->uri->segment(3));
         $data['dadoslogin'] = $this->session->all_userdata();
         $data['permissao'] = $this->crm_model->getPermissao('permissoes', 'idPermissao,nome,data,situacao');
+        $data['usuarios'] = $this->crm_model->getConfig('usuarios', 'idusuarios,nome', '');
         $data['result'] = $this->crm_model->getById($this->uri->segment(3));
         $data['proposta'] = $this->crm_model->getPropostas('propostas', 'numpropostas,fantasia,contato,data,status', $where_array3, '');
+        $data['agenda'] = $this->crm_model->getConfig('calendario', 'id,title,color,start,end', $where_array3);
 
         $this->load->view('crm/alterarLead', $data);
+    }
+
+    public function excluirCRM() {
+
+        $idcrm = $this->input->post('idcrmExcluir');
+        $where_idcrm['idLead_proposta'] = $idcrm;
+
+        $where_proposta = $this->crm_model->getPropostas('propostas', 'numpropostas', $where_idcrm, '');
+//        var_dump($where_proposta);
+        if ($this->crm_model->delete('crm', 'idcrm', $idcrm) == true) {
+            $this->crm_model->delete('propostas', 'idLead_proposta', $idcrm);
+            foreach ($where_proposta as $r) {
+                $this->crm_model->deleteProposta('produtos_proposta', $r->numpropostas);
+                $this->crm_model->deleteProposta('modulos_proposta', $r->numpropostas);
+                $this->crm_model->deleteProposta('servicos_proposta', $r->numpropostas);
+            }
+            $this->crm_model->delete('calendario', 'idLead_Proposta', $idcrm);
+            $this->crm_model->delete('timeline_crm', 'idcrm', $idcrm);
+            redirect($_SERVER['HTTP_REFERER']);
+        } else {
+            echo json_encode(array('result' => false));
+        }
+    }
+
+    public function atribuir() {
+        $dados['atribuido'] = 1;
+        $dados['usuario'] = $this->input->post('vendedoratribuir');
+
+        if ($this->crm_model->edit('crm', $dados, 'idcrm', $this->input->post('idcrm')) == true) {
+
+            redirect(base_url() . 'index.php/crm/edit/' . $this->input->post('idcrm'));
+        } else {
+            echo json_encode(array('result' => false));
+        }
     }
 
     public function view() {

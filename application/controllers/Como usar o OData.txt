@@ -1,0 +1,19 @@
+usando o texto completo
+http://localhost:8886/OData/OData.svc/produtos?select=nome&$filter=codigo%20eq%20%278889%27
+
+saundo like para pegar qualquer parte do nome
+http://intranet1.wbagestao.com.br:7070/OData/OData.svc/produtos?select=nome&$filter=nome%20like%20(%27%%25ROTEADOR%%25%27)
+
+
+
+select com where
+http://localhost:8886/OData/OData.svc/pedidos?$filter=baixado eq 'N'
+http://localhost:8886/OData/OData.svc/clientes?$filter=cnpj eq '20254743000103'
+
+operadores
+[' eq ', ' lt ', ' le ', ' ne ', ' gt ', ' ge '];
+ [' = ', ' < ', ' <= ', ' <> ', ' > ', ' >= '];
+
+and / or
+
+http://localhost:8886/OData/OData.svc/vendas?select=nome&$filter=data="2020-01-28"

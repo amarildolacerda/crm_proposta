@@ -22,7 +22,7 @@
                     <form method="get" action="<?php echo base_url(); ?>index.php/proposta/gerenciar">
                         <div class="col-md-2">
                             <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'aProposta')) { ?>
-                                <a href="<?php echo base_url(); ?>index.php/proposta/add" class="btn btn-success"><i class="icon-plus icon-white"></i> Adicionar proposta</a>
+                                <a href="<?php echo base_url(); ?>index.php/proposta/add" class="btn btn-success btn-sm"><i class="glyphicon glyphicon-plus-sign"></i> Adicionar proposta</a>
                             <?php } ?>
                         </div>
                         <div class="col-md-3">
@@ -40,9 +40,9 @@
                             </select>
 
                         </div>
-                        
+
                         <div class="col-md-1">
-                            <button class="btn btn-danger"> <i class="icon-search"></i> Pesquisar</button>
+                            <button class="btn btn-danger btn-sm"><i class="glyphicon glyphicon-search"></i> Pesquisar</button>
                         </div>
                         <br><br>
                     </form>
@@ -59,7 +59,7 @@
                             <div class="widget-content nopadding table-responsive">
 
 
-                                <table class="table table-bordered ">
+                                <table class="table table-bordered table-hover table-striped table-condensed">
                                     <thead>
                                         <tr style="backgroud-color: #2D335B">
                                             <th>Nº Proposta</th>
@@ -92,7 +92,7 @@
                             <div class="widget-content nopadding table-responsive">
 
 
-                                <table class="table table-bordered ">
+                                <table class="table table-bordered table-hover table-striped table-condensed ">
                                     <thead>
                                         <tr style="backgroud-color: #2D335B">
                                             <th>Nº Proposta</th>
@@ -106,11 +106,11 @@
                                     <tbody>
                                         <?php foreach ($results as $r) { ?>
                                             <tr> 
-                                                <td><?php echo $r->numpropostas; ?></td>
-                                                <td><?php echo $r->fantasia; ?></td> 
-                                                <td><?php echo $r->contato; ?></td> 
-                                                <td><?php echo $r->data; ?></td> 
-                                                <td><?php
+                                                <td class="text-middle ng-binding"><?php echo $r->numpropostas; ?></td>
+                                                <td class="text-middle ng-binding"><?php echo $r->fantasia; ?></td> 
+                                                <td class="text-middle ng-binding"><?php echo $r->contato; ?></td> 
+                                                <td class="text-middle ng-binding"><?php echo $r->data; ?></td> 
+                                                <td class="text-middle ng-binding"><?php
                                                     if ($r->status == 1) {
                                                         echo "<span class='label label-primary'>Aguardando Aprovação</span>";
                                                     }
@@ -124,15 +124,39 @@
                                                 </td>
 
 
-                                                <td class="text-center">
-                                                    <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'iProposta')) { ?>
-                                                        <a title="imprimir" href="<?php echo base_url() . 'index.php/proposta/imprimir/' . $r->numpropostas ?>" class="btn btn-warning btn-small">Imprimir <i class="fa-fw glyphicon glyphicon-print"></i> </a>
+                                                <td class="text-center text-middle ng-binding">
+                                                <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'iProposta')) { ?>
+                                                        <a title="imprimir" href="<?php echo base_url() . 'index.php/proposta/imprimir/' . $r->numpropostas ?>" class="btn btn-warning btn-xs"><i class="fa-fw glyphicon glyphicon-print"></i> </a>
+                                                        <?php } ?>
+                                                        <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'eProposta')) { ?>
+                                                        <a title="editar" href="<?php echo base_url() ?>index.php/proposta/edit/<?php echo $r->numpropostas; ?>" class="btn btn-primary btn-xs"><i class="fa-fw glyphicon glyphicon-edit"></i> </a>
                                                     <?php } ?>
-                                                    <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'eProposta')) { ?>
-                                                        <a title="editar" href="<?php echo base_url() ?>index.php/proposta/edit/<?php echo $r->numpropostas; ?>" class="btn btn-primary btn-small">Editar <i class="fa-fw glyphicon glyphicon-edit"></i> </a>
+                                                    <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'dProposta')) { ?>
+                                                        <a title="excluir"  class="btn btn-danger btn-xs" data-toggle="modal" data-target="#modal-danger<?php echo $r->numpropostas; ?>"><i class="fa-fw glyphicon glyphicon-trash"></i> </a>
                                                     <?php } ?>
+                                                    <!--MODAL BOTÃO EXCLUIR-->
+                                                    <div class="modal modal-default fade" id="modal-danger<?php echo $r->numpropostas; ?>">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">×</span></button>
+                                                                    <h4 class="modal-title">Deseja excluir a proposta <?php echo $r->numpropostas; ?>?</h4>
+                                                                </div>
+                                                                <form action="<?php echo base_url() ?>index.php/proposta/excluirProposta" method="post">
+                                                                    <input type="hidden" id="numPropostasExcluir" name="numPropostasExcluir" value="<?php echo $r->numpropostas; ?>">
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-primary pull-left" data-dismiss="modal">Desistir</button>
+                                                                        <button type="submit" class="btn btn-danger ">Excluir<i class="icon-remove icon-white"></i></button>
+                                                                    </div>
+                                                                </form>
+                                                            </div><!-- /.modal-content -->
+                                                        </div><!-- /.modal-dialog -->
+                                                    </div>
+                                                    <!--MODAL BOTÃO EXCLUIR-->
                                                 </td>
                                             </tr>
+
                                             <?php
                                         }
                                         ?>
@@ -156,24 +180,4 @@
 
 
 </section>
-
-<!-- Modal -->
-<div id="modal-excluir" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <form action="<?php echo base_url() ?>index.php/produtos/excluir" method="post" >
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h5 id="myModalLabel">Excluir Produto</h5>
-        </div>
-        <div class="modal-body">
-            <input type="hidden" id="idProduto" name="id" value="" />
-            <h5 style="text-align: center">Deseja realmente excluir este produto?</h5>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
-            <button class="btn btn-danger">Excluir</button>
-        </div>
-    </form>
-</div>
-
-
 <?php $this->load->view('template/footer'); ?>

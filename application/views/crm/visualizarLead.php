@@ -37,19 +37,31 @@
                             <input type="text" class="form-control" disabled name="nome" placeholder="Ex.: João da Silva" value="<?php echo $result->nome; ?>">
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>CNPJ</label>
+                            <input type="text" class="form-control" disabled maxlength="18" name="cnpj" value="<?php echo $result->cnpj; ?>">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Whatsapp</label>
+                            <input type="text" class="form-control" disabled maxlength="15" name="whatsapp" value="<?php echo $result->whatsapp; ?>">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label>Telefone</label>
                             <input type="text" class="form-control" disabled maxlength="15" name="telefone" value="<?php echo $result->telefone; ?>">
                         </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label>E-mail</label>
                             <input type="email" class="form-control" disabled name="email"  value="<?php echo $result->email; ?>">
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label>Cargo </label>
                             <input type="text" class="form-control" disabled name="cargo"  value="<?php echo $result->cargo; ?>">
@@ -147,6 +159,11 @@
                                     echo "selected";
                                 }
                                 ?> >Sim</option>
+                                <option value="2" <?php
+                                if ($result->possuisistema == 2) {
+                                    echo "selected";
+                                }
+                                ?> >Não informado</option>
                             </select>
                         </div>
                     </div>

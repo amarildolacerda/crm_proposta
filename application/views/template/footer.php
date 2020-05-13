@@ -60,5 +60,21 @@
 <script src="<?php echo base_url('assets/dist/js/demo.js') ?>"></script>
 <script type="text/javascript" src="<?php echo base_url() ?>assets/js/jquery.validate.js"></script>
 
+
+<!-- Select2 -->
+<script src="<?php echo base_url('assets/bower_components/select2/dist/js/select2.full.min.js') ?>"></script>
+<!-- InputMask -->
+<script src="<?php echo base_url('assets/plugins/input-mask/jquery.inputmask.js') ?>../../plugins"></script>
+<script src="<?php echo base_url('assets/plugins/input-mask/jquery.inputmask.date.extensions.js') ?>"></script>
+<script src="<?php echo base_url('assets/plugins/input-mask/jquery.inputmask.extensions.js') ?>"></script>
+
+
+<!-- SlimScroll -->
+<script src="<?php echo base_url('assets/bower_components/jquery-slimscroll/jquery.slimscroll.min.js') ?>"></script>
+<!-- iCheck 1.0.1 -->
+<script src="<?php echo base_url('assets/plugins/iCheck/icheck.min.js') ?>"></script>
+<!-- FastClick -->
+<script src="<?php echo base_url('assets/bower_components/fastclick/lib/fastclick.js') ?>"></script>
+
 </body>
 </html>
