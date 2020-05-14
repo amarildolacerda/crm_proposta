@@ -119,7 +119,9 @@ class Proposta extends CI_Controller {
                 $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
             }
         }
+        $data['senhaIntranet'] = $this->proposta_model->getSenhasEstrutura('intranet');
         $data['dadoslogin'] = $this->session->all_userdata();
+        
         $this->load->view('proposta/adicionarProposta', $data);
     }
 

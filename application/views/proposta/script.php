@@ -5,7 +5,7 @@
 
         $(document).ready(function () {
             $.ajax({
-                url: "http://intranet1.wbagestao.com.br:7070/Login.Get?usuario=798&senha=wba123"
+                url: "http://intranet1.wbagestao.com.br:7070/Login.Get?usuario=<?php echo $senhaIntranet['usuario']; ?>&senha=<?php echo $senhaIntranet['senha']; ?>"
 
             }).then(function (data) {
                 login = data.idLogin;
@@ -18,7 +18,7 @@
     }
 </script>
 
-
+<?php echo $senhaIntranet['usuario']; ?>
 <script type="text/javascript">
     function pesquisaProduto(login) {
 
@@ -53,7 +53,7 @@
 
         $(document).ready(function () {
             $.ajax({
-                url: "http://intranet1.wbagestao.com.br:7070/Login.Get?usuario=798&senha=wba123"
+                url: "http://intranet1.wbagestao.com.br:7070/Login.Get?usuario=<?php echo $senhaIntranet['usuario']; ?>&senha=<?php echo $senhaIntranet['senha']; ?>"
 
             }).then(function (data) {
                 login = data.idLogin;

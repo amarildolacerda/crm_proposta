@@ -51,6 +51,12 @@ class Proposta_model extends CI_Model {
         $result = !$one ? $query->result() : $query->row();
         return $result;
     }
+    
+    function getSenhasEstrutura($servico) {
+        $this->db->from('senhas_estruturas');
+        $this->db->where('servico', $servico);
+        return $this->db->get()->row_array();
+    }
 
     function getById($id) {
         $this->db->where('numpropostas', $id);
