@@ -360,24 +360,24 @@
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $total = 0;
+                                            $totalProdutos = 0;
                                             foreach ($produtos as $p) {
 
-                                                $total = $total + $p->vltotal;
+                                                $totalProdutos = $totalProdutos + $p->vltotal;
                                                 echo '<tr>';
                                                 echo '<td>' . $p->codigo . '</td>';
                                                 echo '<td>' . $p->produto . '</td>';
                                                 echo '<td>' . $p->quantidade . '</td>';
                                                 echo '<td>R$ ' . number_format($p->vlunitario, 2, ',', '.') . '</td>';
                                                 echo '<td>R$ ' . number_format($p->vltotal, 2, ',', '.') . '</td>';
-                                                echo '<td><a href="" idAcao="' . $p->idProduto_proposta . '"  class="btn btn-danger">Excluir<i class="icon-remove icon-white"></i></a></td>';
+                                                echo '<td><a href="" vltotal="'.$p->vltotal.'" idCrm="' . $result->numpropostas . '" idAcao="' . $p->idProduto_proposta . '"  class="btn btn-danger">Excluir<i class="icon-remove icon-white"></i></a></td>';
                                                 echo '</tr>';
                                             }
                                             ?>
 
                                             <tr>
                                                 <td colspan="4" style="text-align: right"><strong>Total:</strong></td>
-                                                <td><strong>R$ <?php echo number_format($total, 2, ',', '.'); ?><input type="hidden" id="total-venda" value="<?php echo number_format($total, 2); ?>"></strong></td>
+                                                <td><strong>R$ <?php echo number_format($totalProdutos, 2, ',', '.'); ?><input type="hidden" id="total-venda" value="<?php echo number_format($totalProdutos, 2); ?>"></strong></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -446,7 +446,7 @@
                                                 echo '<td>' . $p->quantidade . '</td>';
                                                 echo '<td>R$ ' . number_format($p->vlunitario, 2, ',', '.') . '</td>';
                                                 echo '<td>R$ ' . number_format($p->vltotal, 2, ',', '.') . '</td>';
-                                                echo '<td><span href="" idAcao="' . $p->idServico_proposta . '"  class="btn btn-danger">Excluir<i class="icon-remove icon-white"></i></span></td>';
+                                                echo '<td><span href="" vltotal="'.$p->vltotal.'" idCrm="' . $result->numpropostas . '" idAcao="' . $p->idServico_proposta . '"  class="btn btn-danger">Excluir<i class="icon-remove icon-white"></i></span></td>';
                                                 echo '</tr>';
                                             }
                                             ?>
@@ -646,13 +646,15 @@
 
         $(document).on('click', 'a', function (event) {
             var idProduto_proposta = $(this).attr('idAcao');
-
+            var idCrm = $(this).attr('idCrm');
+            var vltotal = $(this).attr('vltotal');
+           
             if ((idProduto_proposta % 1) == 0) {
                 $("#divProdutos").html("<div class='progress'><div class='progress-bar progress-bar-primary progress-bar-striped' style='width: 100%'></div></div>");
                 $.ajax({
                     type: "POST",
                     url: "<?php echo base_url(); ?>index.php/proposta/excluirProduto",
-                    data: "idProduto_proposta=" + idProduto_proposta,
+                    data: {'idProduto_proposta':idProduto_proposta,'idCrm':idCrm,'vltotal':vltotal},
                     dataType: 'json',
                     success: function (data)
                     {
@@ -708,13 +710,15 @@
 
         $(document).on('click', 'span', function (event) {
             var idServico_proposta = $(this).attr('idAcao');
+            var idCrm = $(this).attr('idCrm');
+            var vltotal = $(this).attr('vltotal');
 
             if ((idServico_proposta % 1) == 0) {
                 $("#divServicos").html("<div class='progress'><div class='progress-bar progress-bar-primary progress-bar-striped' style='width: 100%'></div></div>");
                 $.ajax({
                     type: "POST",
                     url: "<?php echo base_url(); ?>index.php/proposta/excluirServico",
-                    data: "idServico_proposta=" + idServico_proposta,
+                    data: {'idServico_proposta':idServico_proposta,'idCrm':idCrm,'vltotal':vltotal},
                     dataType: 'json',
                     success: function (data)
                     {

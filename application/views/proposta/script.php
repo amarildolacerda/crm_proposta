@@ -18,7 +18,6 @@
     }
 </script>
 
-<?php echo $senhaIntranet['usuario']; ?>
 <script type="text/javascript">
     function pesquisaProduto(login) {
 

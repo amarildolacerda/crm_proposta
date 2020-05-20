@@ -121,7 +121,7 @@ class Proposta extends CI_Controller {
         }
         $data['senhaIntranet'] = $this->proposta_model->getSenhasEstrutura('intranet');
         $data['dadoslogin'] = $this->session->all_userdata();
-        
+
         $this->load->view('proposta/adicionarProposta', $data);
     }
 
@@ -173,17 +173,17 @@ class Proposta extends CI_Controller {
         $data['result'] = $this->proposta_model->getById($this->uri->segment(3));
         $this->load->view('proposta/alterarProposta', $data);
     }
-    
+
     public function pesquisaProduto() {
         $produtopesq = $this->input->post('produtopesq');
 
-            $response = file_get_contents('http://intranet1.wbagestao.com.br:7070/OData/OData.svc/produtos?select=nome&$filter=nome%20like%20(%27%%25' . $produtopesq . '%%25%27)');
+        $response = file_get_contents('http://intranet1.wbagestao.com.br:7070/OData/OData.svc/produtos?select=nome&$filter=nome%20like%20(%27%%25' . $produtopesq . '%%25%27)');
 //            $response = json_decode($response);
 
-            $this->data['totalresultados'] = count($response->value);
-            $this->data['produtopesq'] = $response;
-     
-            echo $this->data;
+        $this->data['totalresultados'] = count($response->value);
+        $this->data['produtopesq'] = $response;
+
+        echo $this->data;
     }
 
     public function imprimir() {
@@ -230,9 +230,13 @@ class Proposta extends CI_Controller {
         );
 
         if ($this->proposta_model->add('produtos_proposta', $data) == true) {
-            echo json_encode(array('result' => true));
-        } else {
-            echo json_encode(array('result' => false));
+            $data['result'] = $this->proposta_model->getById($numpropostas);
+            $dados['totalequip'] = $data['result']->totalequip + $vltotal;
+            if ($this->proposta_model->edit('propostas', $dados, 'numpropostas', $this->input->post('numpropostas')) == TRUE) {
+                echo json_encode(array('result' => true));
+            } else {
+                echo json_encode(array('result' => false));
+            }
         }
     }
 
@@ -252,9 +256,13 @@ class Proposta extends CI_Controller {
         );
 
         if ($this->proposta_model->add('servicos_proposta', $data) == true) {
-            echo json_encode(array('result' => true));
-        } else {
-            echo json_encode(array('result' => false));
+            $data['result'] = $this->proposta_model->getById($numpropostas);
+            $dados['totalservico'] = $data['result']->totalservico + $vltotal;
+            if ($this->proposta_model->edit('propostas', $dados, 'numpropostas', $this->input->post('numpropostas')) == TRUE) {
+                echo json_encode(array('result' => true));
+            } else {
+                echo json_encode(array('result' => false));
+            }
         }
     }
 
@@ -292,16 +300,16 @@ class Proposta extends CI_Controller {
             echo json_encode(array('result' => false));
         }
     }
-    
+
     function excluirProposta() {
 
         $numpropostas = $this->input->post('numPropostasExcluir');
-        
+
         if ($this->proposta_model->delete('propostas', 'numpropostas', $numpropostas) == true) {
             $this->proposta_model->delete('produtos_proposta', 'numpropostas', $numpropostas);
             $this->proposta_model->delete('modulos_proposta', 'numpropostas', $numpropostas);
             $this->proposta_model->delete('servicos_proposta', 'numpropostas', $numpropostas);
-            
+
             redirect(base_url() . 'index.php/proposta/gerenciar');
         } else {
             echo json_encode(array('result' => false));
@@ -309,24 +317,40 @@ class Proposta extends CI_Controller {
     }
 
     function excluirProduto() {
-
+//recebe o id do produto na tabela de produto proposta e o valor total desse produto
+        // recebe também a ID do crm 
         $ID = $this->input->post('idProduto_proposta');
-        if ($this->proposta_model->delete('produtos_proposta', 'idProduto_proposta', $ID) == true) {
+        $idCrm = $this->input->post('idCrm');
+        $vltotal = $this->input->post('vltotal');
 
-            echo json_encode(array('result' => true));
-        } else {
-            echo json_encode(array('result' => false));
+        //se retornar true para o delete desse produto, então ele pega os dados e subtrai o total no total da proposta
+        if ($this->proposta_model->delete('produtos_proposta', 'idProduto_proposta', $ID) == true) {
+            $data['result'] = $this->proposta_model->getById($idCrm);
+            $dados['totalequip'] = $data['result']->totalequip - $vltotal;
+            if ($this->proposta_model->edit('propostas', $dados, 'numpropostas', $idCrm) == TRUE) {
+                echo json_encode(array('result' => true));
+            } else {
+                echo json_encode(array('result' => false));
+            }
         }
     }
 
     function excluirServico() {
-
+//recebe o id do serviço na tabela de produto proposta e o valor total desse serviço
+        // recebe também a ID do crm 
         $ID = $this->input->post('idServico_proposta');
-        if ($this->proposta_model->delete('servicos_proposta', 'idServico_proposta', $ID) == true) {
+        $idCrm = $this->input->post('idCrm');
+        $vltotal = $this->input->post('vltotal');
 
-            echo json_encode(array('result' => true));
-        } else {
-            echo json_encode(array('result' => false));
+        //se retornar true para o delete desse serviço, então ele pega os dados e subtrai o total no total do serviço
+        if ($this->proposta_model->delete('servicos_proposta', 'idServico_proposta', $ID) == true) {
+            $data['result'] = $this->proposta_model->getById($idCrm);
+            $dados['totalservico'] = $data['result']->totalservico - $vltotal;
+            if ($this->proposta_model->edit('propostas', $dados, 'numpropostas', $idCrm) == TRUE) {
+                echo json_encode(array('result' => true));
+            } else {
+                echo json_encode(array('result' => false));
+            }
         }
     }
 
@@ -341,5 +365,4 @@ class Proposta extends CI_Controller {
         }
     }
 
-    
 }

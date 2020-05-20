@@ -27,6 +27,48 @@ class Crm_model extends CI_Model {
         $result = !$one ? $query->result() : $query->row();
         return $result;
     }
+    
+    function getNegocios($table, $fields, $where = '', $perpage = 0, $start = 0, $one = false, $a, $b) {
+
+        $this->db->select($fields);
+        $this->db->from($table);
+        $this->db->order_by($a, $b);
+        $this->db->limit($perpage, $start);
+        if ($where) {
+            $this->db->where($where);
+        }
+         $this->db->join('propostas','propostas.idLead_proposta = crm.idcrm');
+
+        $query = $this->db->get();
+
+        $result = !$one ? $query->result() : $query->row();
+        return $result;
+    }
+    
+    function getEncerrado($table, $fields, $where = '', $perpage = 0, $start = 0, $one = false, $a, $b) {
+
+        $this->db->select($fields);
+        $this->db->from($table);
+        $this->db->order_by($a, $b);
+        $this->db->limit($perpage, $start);
+        if ($where) {
+            $this->db->where($where);
+        }
+        $this->db->limit(7);
+
+        $query = $this->db->get();
+
+        $result = !$one ? $query->result() : $query->row();
+        return $result;
+    }
+    
+     function countNegocios($table,$where) {
+        $this->db->from($table);
+         if ($where) {
+            $this->db->where($where);
+        }
+        return $this->db->count_all_results();
+    }
 
     function existeContrato($idWBA) {
         $this->db->where('idwba', $idWBA);

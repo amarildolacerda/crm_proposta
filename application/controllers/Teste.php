@@ -14,9 +14,41 @@ class Teste extends CI_Controller {
         $this->load->library('javascript', 'jquery', 'ajax');
     }
 
-    public function index() {
-        $this->load->view('teste/teste');
+   public function index(){
+        $data = array();
+        
+        // Get posts data from the database
+        $conditions['order_by'] = "idcrm DESC";
+        $conditions['limit'] = 4;
+        $data['posts'] = $this->teste_model->getRows($conditions);
+        
+        // Pass the post data to view
+        $this->load->view('teste/teste', $data);
     }
+    
+    function loadMoreData(){
+        $conditions = array();
+        
+        // Get last post ID
+        $lastID = $this->input->post('idcrm');
+        
+        // Get post rows num
+        $conditions['where'] = array('idcrm <'=>$lastID);
+        $conditions['returnType'] = 'count';
+        $data['postNum'] = $this->teste_model->getRows($conditions);
+        
+        // Get posts data from the database
+        $conditions['returnType'] = '';
+        $conditions['order_by'] = "idcrm DESC";
+        $conditions['limit'] = 4;
+        $data['posts'] = $this->teste_model->getRows($conditions);
+        
+        $data['postLimit'] = 4;
+        
+        // Pass data to view
+        $this->load->view('teste/load-more-data', $data, false);
+    }
+
     public function estou() {
         $this->load->view('teste/teste_1');
     }
@@ -152,7 +184,7 @@ class Teste extends CI_Controller {
             array_push($arrayEmail, $dataCliente->value[0]->email); // insere os codigos de clientes no array
         }
 
-         var_dump($arrayEmail)."<br><br>";
+        var_dump($arrayEmail) . "<br><br>";
 
         $arrayEmail2 = array(); // novo array para colocar o json de consulta de dados do cliente
         for ($i = 0; $i < sizeof($clientesPosVendas); $i++) {
@@ -164,7 +196,7 @@ class Teste extends CI_Controller {
         if (sizeof($arrayEmail2) > 0) {
             for ($i = 0; $i < sizeof($arrayEmail2); $i++) {
                 $dataCliente3 = json_decode($arrayEmail2[$i]);
-                $this->emailPos($dataCliente3->value[0]->email,$dataCliente3->value[0]->nome); // chama a função de enviar email passando o cliente
+                $this->emailPos($dataCliente3->value[0]->email, $dataCliente3->value[0]->nome); // chama a função de enviar email passando o cliente
             }
         } else
             echo "Nada";
@@ -200,8 +232,8 @@ class Teste extends CI_Controller {
                 show_error($this->email->print_debugger());
         }
     }
-    
-    public function pesquisaodata(){
+
+    public function pesquisaodata() {
         $dados = $this->teste_model->contrato();
         var_dump($dados);
     }

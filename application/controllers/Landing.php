@@ -17,7 +17,7 @@ class Landing extends CI_Controller {
             $data['formErrors'] = validation_errors();
         } else {
            //your site secret key
-        $secret = '6Lfl9fUUAAAAAJXx8wjghR0QW8aPU9-92fLxno1D';
+        $secret = '6Lfl9fUUAAAAADy1fPUqBJC9AlpD7l2vfNA8QVaz';
         //get verify response data
         $verifyResponse = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$secret.'&response='.$this->input->post('g-recaptcha-response'));
         $responseData = json_decode($verifyResponse);

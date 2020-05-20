@@ -1,32 +1,67 @@
-<?php $this->load->view('template/menu'); ?>
-<div class="row">
-    <form action="<?php echo base_url() ?>index.php/Teste/pesquisaProduto" method="post">
-        <div class="col-md-12">
-            <div class="col-md-11">
-                <input type="text" name="produtopesq" id="produtopesq" class="form-control" placeholder="Digite o produto">
-            </div>
-            <div class="col-md-1">
-                <button type="submit" ><i class="fa fa-search"></i></button>
-            </div>
-        </div>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Document</title>
+</head>
+<body>
+    <p id="top">Projeto</p>
 
-    </form>
-    <div class="col-md-12">
-        <?php
-        for ($i = 0; $i < $totalresultados; $i++) {
-            echo $produtopesq->value[$i]->nome;
-            echo "<br>";
+<div class="post">1</div>
+<div class="post">2</div>
+<div class="post">3</div>
+<div class="post">4</div>
+<div class="post">5</div>
+<div class="post">6</div>
+<div class="post">7</div>
+<div class="post">8</div>
+<div class="post">9</div>
+<div class="post">7</div>
+<div class="post">8</div>
+<div class="post">9</div>
+<div class="post">10</div>
+<div class="post">11</div>
+<div class="post">12</div>
+<div class="post">13</div>
+<div class="post">14</div>
+<div class="post">15</div>
+
+<a href="#" id="loadmore">Mais</p>
+
+<a href="#" id="totop">Para o topo</a> 
+</body>
+</html>
+
+<script>
+$(function () {
+  num_posts_show = 3;
+  speed_to_top = 1000; // in ms
+  
+    $(".post").slice(0, num_posts_show).show();
+    $("#loadmore").on('click', function (e) {
+        e.preventDefault();
+        $("div:hidden").slice(0, num_posts_show).slideDown();
+        if ($("div:hidden").length == 0) {
+            $("#load").fadeOut('slow');
         }
-        ?>
-    </div>
-    <div class="col-md-12">
-        <div class="container" style="width:500px;">  
-            <h3 align="center">Autocomplete textbox using jQuery, PHP and MySQL</h3><br />  
-            <label>Enter Country Name</label>  
-            <input type="text" name="country" id="country" class="form-control" placeholder="Enter Country Name" />  
-            <div id="countryList"></div>  
-        </div>  
-    </div>
-</div>
+        $('html,body').animate({
+            scrollTop: $(this).offset().top
+        }, 1500);
+    });
+});
 
-<?php $this->load->view('template/footer'); ?>
+$('#totop').click(function () {
+    $('body,html').animate({
+        scrollTop: 0
+    }, speed_to_top);
+    return false;
+});
+
+$(window).scroll(function () {
+    if ($(this).scrollTop() > 50) {
+        $('#totop').fadeIn();
+    } else {
+        $('#totop').fadeOut();
+    }
+});
+</script>

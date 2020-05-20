@@ -98,6 +98,25 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <div class="collapse navbar-collapse pull-left" id="navbar-collapse">
                             <ul class="nav navbar-nav">
                                 <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'mCrm')) { ?>
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-dashboard"></i> Dash<span class="caret"></span></a>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li>
+                                                <a href="<?php echo base_url() ?>index.php/dashboard">
+                                                    <span>Dashboard 1</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="<?php echo base_url() ?>index.php/dashboard/dashboard2">
+                                                    <span>Dashboard 2</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+
+
+                                <?php } ?>
+                                <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'mCrm')) { ?>
                                     <li class="<?= ($this->router->fetch_class() == 'negocios') ? 'active' : null; ?>">
                                         <a href="<?php echo base_url() ?>index.php/crm/negocios">
                                             <i class="fa fa-dollar"></i> <span>Negocios</span>
@@ -186,42 +205,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <!-- Navbar Right Menu -->
                         <div class="navbar-custom-menu">
                             <ul class="nav navbar-nav">
-                                <!-- Messages: style can be found in dropdown.less-->
-                                <li class="dropdown messages-menu">
-                                    <!-- Menu toggle button -->
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                        <i class="fa fa-envelope-o"></i>
-                                        <span class="label label-success">4</span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li class="header">You have 4 messages</li>
-                                        <li>
-                                            <!-- inner menu: contains the messages -->
-                                            <ul class="menu">
-                                                <li><!-- start message -->
-                                                    <a href="#">
-                                                        <div class="pull-left">
-                                                            <!-- User Image -->
-                                                            <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                                                        </div>
-                                                        <!-- Message title and timestamp -->
-                                                        <h4>
-                                                            Support Team
-                                                            <small><i class="fa fa-clock-o"></i> 5 mins</small>
-                                                        </h4>
-                                                        <!-- The message -->
-                                                        <p>Why not buy a new awesome theme?</p>
-                                                    </a>
-                                                </li>
-                                                <!-- end message -->
-                                            </ul>
-                                            <!-- /.menu -->
-                                        </li>
-                                        <li class="footer"><a href="#">See All Messages</a></li>
-                                    </ul>
-                                </li>
-                                <!-- /.messages-menu -->
-
                                 <!-- Notifications Menu -->
                                 <li class="dropdown notifications-menu">
                                     <!-- Menu toggle button -->
@@ -385,50 +368,50 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                         </a>
                                                     </li>
                             <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'mOS')) { ?>
-                                                                                            <li class="<?= ($this->router->fetch_class() == 'calendario') ? 'active' : null; ?>">
-                                                                                                <a href="<?php echo base_url() ?>index.php/calendario">
-                                                                                                    <i class="fa fa-calendar"></i> <span>Calendario</span>
-                                                                                                </a>
-                                                                                            </li>
+                                                                                                <li class="<?= ($this->router->fetch_class() == 'calendario') ? 'active' : null; ?>">
+                                                                                                    <a href="<?php echo base_url() ?>index.php/calendario">
+                                                                                                        <i class="fa fa-calendar"></i> <span>Calendario</span>
+                                                                                                    </a>
+                                                                                                </li>
                             <?php } ?>
                             <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'mBiblioteca')) { ?>
-                                                                                            <li>
-                                                                                                <a href="<?php echo base_url() ?>index.php/biblioteca/gerenciar">
-                                                                                                    <i class="fa fa-book"></i> <span>Biblioteca</span>
-                                                                                                </a>
-                                                                                            </li>
+                                                                                                <li>
+                                                                                                    <a href="<?php echo base_url() ?>index.php/biblioteca/gerenciar">
+                                                                                                        <i class="fa fa-book"></i> <span>Biblioteca</span>
+                                                                                                    </a>
+                                                                                                </li>
                             <?php } ?>
                             <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'mOS')) { ?>
-                                                                                            <li class="active treeview menu-open">
-                                                                                                <a href="#">
-                                                                                                    <i class="glyphicon glyphicon-list-alt"></i>
-                                                                                                    <span>Ordem Serviço</span>
-                                                                                                    <span class="pull-right-container">
-                                                                                                        <i class="fa fa-angle-left pull-right"></i>
-                                                                                                    </span>
-                                                                                                </a>
-                                                                                                <ul class="treeview-menu">
-                                                                                                    <li class="<?= ($this->router->fetch_class() == 'os' && $this->router->fetch_method() == 'gerenciar') ? 'active' : null; ?>">
-                                                                                                        <a href="<?php echo base_url() ?>index.php/os/gerenciar">
-                                                                                                            <i class="fa fa-list-ol"></i> <span>Gerenciar OS</span>
-                                                                                                        </a>
-                                                                                                    </li>
-                                                                                                    <li>
-                                                                                                        <a data-toggle="modal" data-target="#modal-success" id="alterarOS">
-                                                                                                            <i class="fa fa-list-ol" ></i> <span>Alterar OS</span>
-                                                                                                        </a>
-                                                                                                    </li>
-                                                                                                </ul>
-                                                                                            </li>
-                                                                
-                                                                
+                                                                                                <li class="active treeview menu-open">
+                                                                                                    <a href="#">
+                                                                                                        <i class="glyphicon glyphicon-list-alt"></i>
+                                                                                                        <span>Ordem Serviço</span>
+                                                                                                        <span class="pull-right-container">
+                                                                                                            <i class="fa fa-angle-left pull-right"></i>
+                                                                                                        </span>
+                                                                                                    </a>
+                                                                                                    <ul class="treeview-menu">
+                                                                                                        <li class="<?= ($this->router->fetch_class() == 'os' && $this->router->fetch_method() == 'gerenciar') ? 'active' : null; ?>">
+                                                                                                            <a href="<?php echo base_url() ?>index.php/os/gerenciar">
+                                                                                                                <i class="fa fa-list-ol"></i> <span>Gerenciar OS</span>
+                                                                                                            </a>
+                                                                                                        </li>
+                                                                                                        <li>
+                                                                                                            <a data-toggle="modal" data-target="#modal-success" id="alterarOS">
+                                                                                                                <i class="fa fa-list-ol" ></i> <span>Alterar OS</span>
+                                                                                                            </a>
+                                                                                                        </li>
+                                                                                                    </ul>
+                                                                                                </li>
+                                                                    
+                                                                    
                             <?php } ?>
                             <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'mOS')) { ?>
-                                                                                                                        <li>
-                                                                                                                            <a href="<?php echo base_url() ?>index.php/relatorio">
-                                                                                                                                <i class="fa fa-list-ol"></i> <span>Relatórios</span>
-                                                                                                                            </a>
-                                                                                                                        </li>
+                                                                                                                            <li>
+                                                                                                                                <a href="<?php echo base_url() ?>index.php/relatorio">
+                                                                                                                                    <i class="fa fa-list-ol"></i> <span>Relatórios</span>
+                                                                                                                                </a>
+                                                                                                                            </li>
                             <?php } ?>
                             
                                                     <li class="treeview">
@@ -460,24 +443,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                         </a>
                                                         <ul class="treeview-menu">
                             <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'mUsuario')) { ?>
-                                                                                                    <li class="<?= ($this->router->fetch_class() == 'usuario' && $this->router->fetch_method() == 'gerenciar') ? 'active' : null; ?>">
-                                                                                                        <a href="<?php echo base_url() ?>index.php/usuario/gerenciar"><i class="fa fa-user-plus"></i> Gerenciar Usuários</a>
-                                                                                                    </li>
+                                                                                                        <li class="<?= ($this->router->fetch_class() == 'usuario' && $this->router->fetch_method() == 'gerenciar') ? 'active' : null; ?>">
+                                                                                                            <a href="<?php echo base_url() ?>index.php/usuario/gerenciar"><i class="fa fa-user-plus"></i> Gerenciar Usuários</a>
+                                                                                                        </li>
                             <?php } ?>
                             <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'mPermissao')) { ?>
-                                                                                                    <li class="<?= ($this->router->fetch_class() == 'permissoes' && $this->router->fetch_method() == 'gerenciar') ? 'active' : null; ?>">
-                                                                                                        <a href="<?php echo base_url() ?>index.php/permissoes/gerenciar"><i class="fa fa-tags"></i> Permissões</a>
-                                                                                                    </li>
+                                                                                                        <li class="<?= ($this->router->fetch_class() == 'permissoes' && $this->router->fetch_method() == 'gerenciar') ? 'active' : null; ?>">
+                                                                                                            <a href="<?php echo base_url() ?>index.php/permissoes/gerenciar"><i class="fa fa-tags"></i> Permissões</a>
+                                                                                                        </li>
                             <?php } ?>
                             <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'mStatusOS')) { ?>
-                                                                                                    <li class="<?= ($this->router->fetch_class() == 'os' && $this->router->fetch_method() == 'gerenciarstatus') ? 'active' : null; ?>">
-                                                                                                        <a href="<?php echo base_url() ?>index.php/os/gerenciarstatus"><i class="glyphicon glyphicon-stats"></i> Gerenciar Status OS</a>
-                                                                                                    </li>
+                                                                                                        <li class="<?= ($this->router->fetch_class() == 'os' && $this->router->fetch_method() == 'gerenciarstatus') ? 'active' : null; ?>">
+                                                                                                            <a href="<?php echo base_url() ?>index.php/os/gerenciarstatus"><i class="glyphicon glyphicon-stats"></i> Gerenciar Status OS</a>
+                                                                                                        </li>
                             <?php } ?>
                             <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'mTiposEquipamentos')) { ?>
-                                                                                                    <li class="<?= ($this->router->fetch_class() == 'os' && $this->router->fetch_method() == 'gerenciarTiposEquipamentos') ? 'active' : null; ?>">
-                                                                                                        <a href="<?php echo base_url() ?>index.php/os/gerenciarTiposEquipamentos"><i class="glyphicon glyphicon-hdd"></i> Gerenciar Tipos Equipamentos</a>
-                                                                                                    </li>
+                                                                                                        <li class="<?= ($this->router->fetch_class() == 'os' && $this->router->fetch_method() == 'gerenciarTiposEquipamentos') ? 'active' : null; ?>">
+                                                                                                            <a href="<?php echo base_url() ?>index.php/os/gerenciarTiposEquipamentos"><i class="glyphicon glyphicon-hdd"></i> Gerenciar Tipos Equipamentos</a>
+                                                                                                        </li>
                             <?php } ?>
                             
                             
