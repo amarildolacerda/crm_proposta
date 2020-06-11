@@ -36,29 +36,75 @@ class Dashboard_model extends CI_Model {
 
         return $this->db->get()->result();
     }
+
+    function getStatusAberto() {
+
+        $this->db->select('*');
+        $this->db->from('status_crm');
+        $this->db->order_by('posicaoMenu', 'ASC');
+        //$this->db->where('encerra',0); DESCOMENTAR PARA MOSTRAR APENAS STATUS ABERTOS
+        return $this->db->get()->result();
+    }
+
+    function getFonteIndicacao() {
+
+        $this->db->select('*');
+        $this->db->from('indicacao_crm');
+        $this->db->order_by('descricao', 'ASC');
+        $this->db->where('status', 1);
+        return $this->db->get()->result();
+    }
+
+    function countCrmTotalProdutos() {
+        $this->db->select('numpropostas,vltotal');
+        $this->db->select_sum('vltotal');
+        $this->db->from('produtos_proposta');
+        $this->db->group_by('numpropostas');
+        return $this->db->get()->result();
+    }
     
-    function count_ultimos_7dias($table,$data) {
+    function countCrmTotalServicos() {
+        $this->db->select('numpropostas,vltotal');
+        $this->db->select_sum('vltotal');
+        $this->db->from('servicos_proposta');
+        $this->db->group_by('numpropostas');
+        return $this->db->get()->result();
+    }
+
+    function countCrmStatus($idStatus) {
+        $this->db->from('crm');
+        $this->db->where('status', $idStatus);
+        return $this->db->count_all_results();
+    }
+
+    function countCrmFonteIndicacao($idIndicacao) {
+        $this->db->from('crm');
+        $this->db->where('fonte', $idIndicacao);
+        return $this->db->count_all_results();
+    }
+
+    function count_ultimos_7dias($table, $data) {
         $this->db->from($table);
         $this->db->where('data >=', $data);
         return $this->db->count_all_results();
     }
-    
-    function count_fechadas_ultimos_7dias($table,$data) {
+
+    function count_fechadas_ultimos_7dias($table, $data) {
         $this->db->from($table);
         $this->db->where('data_encerra >=', $data);
-         $this->db->where('data_encerra !=', NULL);
+        $this->db->where('data_encerra !=', NULL);
         return $this->db->count_all_results();
     }
-    
-     function count_garantia_prox_prazo($table,$data) {
+
+    function count_garantia_prox_prazo($table, $data) {
         $this->db->from($table);
         $this->db->where('encerrada', 'nao');
         $this->db->where('garantia', 1);
         $this->db->where('dataEntrada <=', $data);
         return $this->db->count_all_results();
     }
-    
-    function count_os_mais3dias_seminteracao($table,$data) {
+
+    function count_os_mais3dias_seminteracao($table, $data) {
         $this->db->from($table);
         $this->db->where('encerrada', 'nao');
         $this->db->where('dataAlteracao <', $data);
@@ -101,7 +147,7 @@ class Dashboard_model extends CI_Model {
         $this->db->from('crm');
         $this->db->where('MONTH(data)', $mes);
         $this->db->where('YEAR(data)', $ano);
-       // $this->db->where('data_encerra', NULL);
+        // $this->db->where('data_encerra', NULL);
 
         $total = $this->db->count_all_results();
         return $total;
@@ -118,8 +164,8 @@ class Dashboard_model extends CI_Model {
         $total = $this->db->count_all_results();
         return $total;
     }
-    
-     function coutFonteIndicacaoNovo($mes, $ano, $fonte) {
+
+    function coutFonteIndicacaoNovo($mes, $ano, $fonte) {
         $this->db->select('*');
         $this->db->from('crm');
         $this->db->where('fonte', $fonte);
@@ -127,7 +173,7 @@ class Dashboard_model extends CI_Model {
         $total = $this->db->count_all_results();
         return $total;
     }
-    
+
     function coutFonteIndicacaoGanho($mes, $ano, $fonte) {
         $this->db->select('*');
         $this->db->from('crm');
@@ -161,8 +207,8 @@ class Dashboard_model extends CI_Model {
 
         return FALSE;
     }
-    
-    function edit($mes,$ano,$dados) {
+
+    function edit($mes, $ano, $dados) {
         $this->db->where('MONTH(data)', $mes);
         $this->db->where('YEAR(data)', $ano);
         $this->db->update('estatisticas', $dados);

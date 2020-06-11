@@ -44,12 +44,27 @@
                                 <input type="text" class="form-control" name="descricao" value="<?= set_value('descricao') ?>">
                             </div>
                         </div>
-                        <div class=" col-md-3">
+                        <div class=" col-md-2">
                             <div class="form-group">
                                 <label>Status</label>
                                 <select class="form-control" name="status">
                                     <option value="0">Inativo</option>
                                     <option selected="" value="1">Ativo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Posição menu </label>
+                                <input type="text" class="form-control" name="posicaoMenu" data-toggle="tooltip" data-placement="bottom" title="Ordem que vai aparecer na tela da OS" value="<?= set_value('posicaoMenu') ?>">
+                            </div>
+                        </div>
+                        <div class=" col-md-2">
+                            <div class="form-group">
+                                <label>Encerra?</label>
+                                <select class="form-control" name="encerra">
+                                    <option selected="" value="0">Não</option>
+                                    <option value="1">Sim</option>
                                 </select>
                             </div>
                         </div>

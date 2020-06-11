@@ -237,5 +237,29 @@ class Teste extends CI_Controller {
         $dados = $this->teste_model->contrato();
         var_dump($dados);
     }
+    
+    public function atualizaDB(){
+        
+         $dados['totalequip'] = $this->teste_model->countCrmTotalProdutos();
+        //var_dump($dados['totalProdutos']);
+        echo $dados['totalequip'][0]->numpropostas;
+        
+        
+        $dados['totalservico'] = $this->teste_model->countCrmTotalServicos();
+        //var_dump($dados['totalServicos']) ;
+        
+        $this->load->model('proposta_model');
+         foreach ($dados['totalequip'] as $f) {
+             //echo $f->numpropostas."-".$f->vltotal."<br>";
+             $dataequip['totalequip'] = $f->vltotal;
+            $this->proposta_model->edit('propostas', $dataequip, 'numpropostas', $f->numpropostas);
+        }
+        foreach ($dados['totalservico'] as $f) {
+             //echo $f->numpropostas."-".$f->vltotal."<br>";
+             $dataservico['totalservico'] = $f->vltotal;
+            $this->proposta_model->edit('propostas', $dataservico, 'numpropostas', $f->numpropostas);
+        }
+        
+    }
 
 }

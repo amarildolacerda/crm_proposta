@@ -11,6 +11,25 @@ class Crm_model extends CI_Model {
     function __construct() {
         parent::__construct();
     }
+    
+    function getGerenciar($table, $fields, $where = '', $perpage = 0, $start = 0, $one = false, $a, $b,$whereRazaoOuFantasia) {
+
+        $this->db->select($fields);
+        $this->db->from($table);
+        $this->db->order_by($a, $b);
+        $this->db->limit($perpage, $start);
+        if ($where) {
+            $this->db->where($where);
+        }
+        if ($whereRazaoOuFantasia) {
+            $this->db->like($whereRazaoOuFantasia);
+        }
+
+        $query = $this->db->get();
+
+        $result = !$one ? $query->result() : $query->row();
+        return $result;
+    }
 
     function get($table, $fields, $where = '', $perpage = 0, $start = 0, $one = false, $a, $b) {
 
@@ -21,7 +40,7 @@ class Crm_model extends CI_Model {
         if ($where) {
             $this->db->where($where);
         }
-
+        
         $query = $this->db->get();
 
         $result = !$one ? $query->result() : $query->row();
@@ -78,6 +97,18 @@ class Crm_model extends CI_Model {
         } else {
             return FALSE;
         }
+    }
+    
+     function countGerenciar($table, $where, $whereRazaoOuFantasia) {
+        $this->db->select('*');
+        $this->db->from($table);
+        if ($where) {
+            $this->db->where($where);
+        }
+        if ($whereRazaoOuFantasia) {
+            $this->db->like($whereRazaoOuFantasia);
+        }
+        return $this->db->count_all_results();
     }
 
     public function filtro($vendedor, $status, $numero, $empresa, $seguimento, $datainicial, $datafinal, $atribuido, $fonte, $probabilidade) {

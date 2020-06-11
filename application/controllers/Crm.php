@@ -73,19 +73,102 @@ class Crm extends CI_Controller {
             $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
             redirect(base_url() . 'index.php/dashboard');
         }
-
         $this->load->library('table');
         $this->load->library('pagination');
 
         $dadoslogin = $this->session->all_userdata();
+
         $where_array = array();
+        $whereRazaoOuFantasia = array();
+        $whereDataEntrada = array();
+        $idcrm = $this->input->get('idcrm');
+        $empresa = $this->input->get('empresa');
+        $status = $this->input->get('status');
+        $vendedor = $this->input->get('vendedor');
+        $fantasiaCliente = $this->input->get('fantasiaCliente');
+        $indicacao = $this->input->get('indicacao');
+        $seguimento = $this->input->get('seguimento');
+
+        $garantia = $this->input->get('garantia');
+        $encerrada = $this->input->get('encerrada');
+        $dataEntrada = $this->input->get('dataEntrada');
+        $dataEntradaMenor = $this->input->get('dataEntradaMenor');
+        $dataEntradaMaior = $this->input->get('dataEntradaMaior');
+        $dataEncerraMaior = $this->input->get('dataEncerraMaior');
+        $dataAlteracaoMenor = $this->input->get('dataAlteracaoMenor');
+
+        if ($idcrm) {
+            $where_array['idcrm'] = $idcrm;
+            $this->data['idcrmget'] = $idcrm;
+        } else {
+            $this->data['idcrmget'] = "";
+        }
+
+        if ($empresa) {
+            $whereRazaoOuFantasia['empresa'] = $empresa;
+            $this->data['empresaget'] = $empresa;
+        } else {
+            $this->data['empresaget'] = '';
+        }
+
+        if ($status) {
+            $where_array['status'] = $status;
+            $this->data['statusget'] = $status;
+        } else {
+            $this->data['statusget'] = '';
+        }
+
+        if ($vendedor) {
+            $where_array['usuario'] = $vendedor;
+            $this->data['vendedorget'] = $vendedor;
+        } else {
+            $this->data['vendedorget'] = '';
+        }
+
+        if ($indicacao) {
+            $where_array['fonte'] = $indicacao;
+            $this->data['indicacaoget'] = $indicacao;
+        } else {
+            $this->data['indicacaoget'] = '';
+        }
+
+        if ($seguimento) {
+            $where_array['seguimento'] = $seguimento;
+            $this->data['seguimentoget'] = $seguimento;
+        } else {
+            $this->data['seguimentoget'] = '';
+        }
+
+        if ($dataEntrada) {
+            $where_array['dataEntrada'] = $dataEntrada;
+        }
+
+        if ($dataEntradaMenor) {
+            $where_array['dataEntrada <'] = $dataEntradaMenor;
+        }
+
+        if ($dataEntradaMaior) {
+            $where_array['dataEntrada >'] = $dataEntradaMaior;
+        }
+
+        if ($dataEncerraMaior) {
+            $where_array['dataEncerra >='] = $dataEncerraMaior;
+        }
+
+        if ($dataAlteracaoMenor) {
+            $where_array['dataAlteracao <'] = $dataAlteracaoMenor;
+        }
+
+
+
         $where_array['atribuido'] = 1;
         if ($this->permission->checkPermission($this->session->userdata('permissao'), 'oLead')) {
             $where_array['usuario'] = $dadoslogin['idusuarios'];
         }
         $config['base_url'] = base_url() . 'index.php/crm/gerenciar';
-        $config['total_rows'] = $this->crm_model->countatribuido($where_array);
-        $config['per_page'] = 10;
+        $config['total_rows'] = $this->crm_model->countGerenciar('crm', $where_array, $whereRazaoOuFantasia);
+        $config['per_page'] = 15;
+        $config['reuse_query_string'] = TRUE;
         $config['next_link'] = 'Próxima';
         $config['prev_link'] = 'Anterior';
         $config['full_tag_open'] = '<div class="pagination"><ul class="pagination">';
@@ -107,23 +190,12 @@ class Crm extends CI_Controller {
 
         $this->pagination->initialize($config);
 
-
-
-//       ESTAS VARIAVEIS SERVEM PARA MANTER O CAMPO SELECIONADO DEPOIS DA PESQUISA 
-        $this->data['statuspost'] = 0;
-        $this->data['vendedorpost'] = 0;
-        $this->data['seguimentopost'] = 0;
-        $this->data['indicacaopost'] = 0;
-        $this->data['probabilidadepost'] = 0;
-
-
-
         $this->data['seguimento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', '');
         $this->data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', '');
         $this->data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao,encerra', '');
         $this->data['usuarios'] = $this->crm_model->getConfig('usuarios', 'idusuarios,nome', '');
-        $this->data['count'] = $this->crm_model->countatribuido($where_array);
-        $this->data['results'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,telefone,status,seguimento,data,usuario', $where_array, $config['per_page'], $this->uri->segment(3), '', 'idcrm', 'desc');
+        $this->data['count'] = $this->crm_model->countGerenciar('crm', $where_array, $whereRazaoOuFantasia);
+        $this->data['results'] = $this->crm_model->getGerenciar('crm', 'idcrm,empresa,nome,telefone,status,seguimento,data,usuario', $where_array, $config['per_page'], $this->uri->segment(3), '', 'idcrm', 'desc', $whereRazaoOuFantasia);
         $this->load->view('crm/gerenciarLead', $this->data);
     }
 
@@ -186,7 +258,7 @@ class Crm extends CI_Controller {
         $whereNegocios_array = array();
         $whereNegocios_array['crm.atribuido'] = 1;
         $whereNegocios_array['crm.usuario'] = $dadoslogin['idusuarios'];
-        
+
 //        $whereNegocios_array['crm.atribuido'] = 1;
 //        $whereNegocios_array['crm.usuario'] = $dadoslogin['idusuarios'];
 //        
@@ -201,44 +273,44 @@ class Crm extends CI_Controller {
         $whereNegocios_array['crm.situacao'] = "novo";
         $this->data['oportunidade'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
         $this->data['oportunidadeNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['countOportunidade'] = $this->crm_model->countNegocios('crm',$whereNegocios_array);
-        
+        $this->data['countOportunidade'] = $this->crm_model->countNegocios('crm', $whereNegocios_array);
+
         $whereNegocios_array['crm.status'] = 2;
         $whereNegocios_array['crm.situacao'] = "novo";
         $this->data['demoagendada'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
         $this->data['demoagendadaNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['countDemoagendada'] = $this->crm_model->countNegocios('crm',$whereNegocios_array);
-        
+        $this->data['countDemoagendada'] = $this->crm_model->countNegocios('crm', $whereNegocios_array);
+
         $whereNegocios_array['crm.status'] = 3;
         $whereNegocios_array['crm.situacao'] = "novo";
         $this->data['propostaentregue'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
         $this->data['propostaentregueNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['countPropostaentregue'] = $this->crm_model->countNegocios('crm',$whereNegocios_array);
-        
+        $this->data['countPropostaentregue'] = $this->crm_model->countNegocios('crm', $whereNegocios_array);
+
         $whereNegocios_array['crm.status'] = 4;
         $whereNegocios_array['crm.situacao'] = "novo";
         $this->data['emnegociacao'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
         $this->data['emnegociacaoNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['countEmnegociacao'] = $this->crm_model->countNegocios('crm',$whereNegocios_array);
-        
+        $this->data['countEmnegociacao'] = $this->crm_model->countNegocios('crm', $whereNegocios_array);
+
         $whereGanho_array['situacao'] = "ganho";
         $this->data['ganho'] = $this->crm_model->getEncerrado('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereGanho_array, 0, 0, '', 'data_encerra', 'desc');
         $this->data['ganhoNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereGanho_array, 0, 0, '', 'data_encerra', 'desc');
-        $this->data['countGanho'] = $this->crm_model->countNegocios('crm',$whereGanho_array);
-        
+        $this->data['countGanho'] = $this->crm_model->countNegocios('crm', $whereGanho_array);
+
         $wherePerdido_array['situacao'] = "perdido";
         $this->data['perdido'] = $this->crm_model->getEncerrado('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $wherePerdido_array, 0, 0, '', 'data_encerra', 'desc');
         $this->data['perdidoNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $wherePerdido_array, 0, 0, '', 'data_encerra', 'desc');
-        $this->data['countPerdido'] = $this->crm_model->countNegocios('crm',$wherePerdido_array);
-        
-        
+        $this->data['countPerdido'] = $this->crm_model->countNegocios('crm', $wherePerdido_array);
+
+
         $this->data['seguimento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', '');
         $this->data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', '');
         $this->data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao,encerra', '');
         $this->data['usuarios'] = $this->crm_model->getConfig('usuarios', 'idusuarios,nome', '');
         $this->data['count'] = $this->crm_model->countatribuido($whereNegocios_array);
         $this->data['results'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, $this->uri->segment(3), '', 'idcrm', 'desc');
-        
+
         $this->load->view('crm/negocios', $this->data);
     }
 
@@ -421,13 +493,6 @@ class Crm extends CI_Controller {
         $data['dadoslogin'] = $this->session->all_userdata();
 
         $this->form_validation->set_rules('nomeEmpresa', 'Empresa', 'trim|required|min_length[3]');
-        $this->form_validation->set_rules('nomeContato', 'Nome contato', 'trim|required|min_length[3]');
-        $this->form_validation->set_rules('telefone', 'Telefone', 'trim|required|min_length[3]');
-        $this->form_validation->set_rules('fonte', 'Fonte da indicação', 'trim|required|min_length[1]');
-        $this->form_validation->set_rules('segmento', 'Segmento', 'trim|required|min_length[1]');
-
-
-
 
         if ($this->form_validation->run() == FALSE) {
             $data['formErrors'] = validation_errors();
@@ -447,22 +512,39 @@ class Crm extends CI_Controller {
             $dadosEmpresa['cidadeEmpresa'] = $this->input->post('cidade');
             $dadosEmpresa['softwareAtual'] = $this->input->post('softwareAtual');
             $dadosEmpresa['papelNaCompra'] = $this->input->post('papelNaCompra');
+            $dadosEmpresa['dataCadastro'] = date('Y/m/d');
 
+
+            $dados['empresa'] = $this->input->post('nomeEmpresa');
+            $dados['nome'] = $this->input->post('nomeContato');
+            $dados['cnpj'] = $this->input->post('cnpj');
+            $dados['whatsapp'] = $this->input->post('whatsapp');
+            $dados['telefone'] = $this->input->post('telefone');
+            $dados['email'] = $this->input->post('email');
+            $dados['seguimento'] = $this->input->post('segmento');
+            $dados['endereco'] = $this->input->post('endereco');
+            $dados['bairro'] = $this->input->post('bairro');
+            $dados['cidade'] = $this->input->post('cidade');
+            $dados['possuisistema'] = $this->input->post('softwareAtual');
             $dados['cargo'] = $this->input->post('cargo');
             $dados['status'] = $this->input->post('status');
             $dados['probabilidade'] = $this->input->post('probabilidade');
             $dados['fonte'] = $this->input->post('fonte');
             $dados['concorrente'] = $this->input->post('concorrente');
+            $dados['data'] = date('Y/m/d');
             $dados['data_alteracao'] = date('Y/m/d');
             $dados['usuario'] = $this->input->post('usuario');
             $dados['atribuido'] = 1;
             $dados['situacao'] = "novo";
-
-            $idLead = $this->crm_model->add('empresas', $dadosEmpresa);
-            if ($idLead != 0) {
-                redirect(base_url() . 'index.php/crm/edit/' . $idLead);
-            } else {
-                $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
+            
+            
+            if ($this->crm_model->add('empresas', $dadosEmpresa)) {
+                $idLead = $this->crm_model->add('crm', $dados);
+                if ($idLead != 0) {
+                    redirect(base_url() . 'index.php/crm/edit/' . $idLead);
+                } else {
+                    $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
+                }
             }
         }
 // ESTAS VARIAVEIS SERVEM PARA MANTER O CAMPO SELECIONADO DEPOIS DA PESQUISA 
@@ -780,7 +862,9 @@ class Crm extends CI_Controller {
             $data['formErrors'] = validation_errors();
         } else {
             $dados['descricao'] = $this->input->post('descricao');
+            $dados['posicaoMenu'] = $this->input->post('posicaoMenu');
             $dados['status'] = $this->input->post('status');
+            $dados['encerra'] = $this->input->post('encerra');
 
             $idLead = $this->crm_model->add('status_crm', $dados);
             if ($idLead != 0) {
@@ -811,7 +895,9 @@ class Crm extends CI_Controller {
             $data['formErrors'] = validation_errors();
         } else {
             $dados['descricao'] = $this->input->post('descricao');
+            $dados['posicaoMenu'] = $this->input->post('posicaoMenu');
             $dados['status'] = $this->input->post('status');
+            $dados['encerra'] = $this->input->post('encerra');
 
 
             if ($this->crm_model->edit('status_crm', $dados, 'idstatus', $this->input->post('idstatus')) == TRUE) {

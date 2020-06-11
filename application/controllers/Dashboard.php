@@ -38,7 +38,7 @@ class Dashboard extends CI_Controller {
             $dados['novos'] = $this->dashboard_model->coutestatisticanovo($mes, $ano);
             $dados['convertidos'] = $this->dashboard_model->coutestatisticaganho($mes, $ano);
             $dados['data'] = date('Y-m-01', strtotime("-1 month"));
-            
+
 
             $existe = $this->dashboard_model->exist($mes, $ano); // VERIFICA SE JÁ EXISTE UMA ESTATISTICA GRAVADA NO BANCO COM O MES E ANO VERIFICADO
 
@@ -130,8 +130,8 @@ class Dashboard extends CI_Controller {
 
         $this->load->view('dashboard/dashboard', $this->data);
     }
-    
-     public function dashboard2() {
+
+    public function dashboard2() {
 //          //OS EM GARANTIA
 //        $whereGarantia = array();
 //        $whereGarantia['garantia'] = 1;
@@ -145,10 +145,10 @@ class Dashboard extends CI_Controller {
 //        
         //OS ABERTAS ÚLTIMOS 7 DIAS
         $this->data['totalOportunidadesAbertas7dias'] = $this->dashboard_model->count_ultimos_7dias('crm', date("Y-m-d", strtotime("-7 days")));
-        
+
         //OS FECHADAS ÚLTIMOS 7 DIAS
         $this->data['totalOportunidadesFechadas7dias'] = $this->dashboard_model->count_fechadas_ultimos_7dias('crm', date("Y-m-d", strtotime("-7 days")));
-               
+
 //        //OS GARANTIA PRÓXIMA DO VENCIMENTO 25 DIAS+
 //        $this->data['totalAbertasGarantiaProxPrazo'] = $this->dashboard_model->count_garantia_prox_prazo('ordem_servico', date("Y-m-d", strtotime("-25 days")));
 //        
@@ -158,8 +158,22 @@ class Dashboard extends CI_Controller {
 //        //OS Á 3 DIAS SEM INTERAÇÃO
 //        $this->data['totalAbertasMais3diasSemInteracao'] = $this->dashboard_model->count_os_mais3dias_seminteracao('ordem_servico', date("Y-m-d", strtotime("-3 days")));
 //                
-//        //TOTAL DE OSs POR STATUS
-//        $this->data['status'] = $this->dashboard_model->getStatusAberto();
+        //TOTAL DE OPORTUNIDADES POR FASES DE FÚNIL
+        $this->data['status'] = $this->dashboard_model->getStatusAberto();
+
+        //TOTAL DE OPORTUNIDADES POR INDICAÇÃO
+        $this->data['fonte'] = $this->dashboard_model->getFonteIndicacao();
+
+        foreach ($this->data['fonte'] as $f) {
+            $f->quantidade = $this->dashboard_model->countCrmFonteIndicacao($f->idindicacao);
+        }
+        usort(
+                $this->data['fonte'], function( $a, $b ) {
+            if ($a->quantidade == $b->quantidade)
+                return 0;
+            return ( ( $a->quantidade > $b->quantidade ) ? -1 : 1 );
+        }
+        );
 
         $this->load->view('dashboard/dashboard2', $this->data);
     }
@@ -168,15 +182,14 @@ class Dashboard extends CI_Controller {
 
         $this->load->view('teste');
     }
-    
-    public function dashboardDiretoria(){
+
+    public function dashboardDiretoria() {
         $mes_atual = date('Y-m', strtotime("+1 month"));
         $ultimos_6_meses = date("Y-m", strtotime("-5 month")); //se alterar para 11 pega mes atual e ultimos 11 meses
 
         $this->data['stat_mensal_convertido'] = $this->dashboard_model->get($mes_atual, $ultimos_6_meses, '');
-        $this->data['stat_mensal_novo'] = $this->dashboard_model->coutFonteIndicacaoNovo($mes_atual, $ultimos_6_meses,21);
+        $this->data['stat_mensal_novo'] = $this->dashboard_model->coutFonteIndicacaoNovo($mes_atual, $ultimos_6_meses, 21);
         $this->load->view('dashboard/dashboardDiretoria', $this->data);
     }
-            
 
 }

@@ -6,7 +6,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>StoreOS</title>
+        <title>StoreCRM</title>
         <link rel="shortcut icon" href="<?php echo base_url('assets/favicon.png') ?>" type="image/x-png"
               <!-- Tell the browser to be responsive to screen width -->
               <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -195,11 +195,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </li>
 
                             </ul>
-                            <form class="navbar-form navbar-left" role="search">
+<!--                            <form class="navbar-form navbar-left" role="search">
                                 <div class="form-group">
                                     <input type="text" class="form-control" id="navbar-search-input" placeholder="Search">
                                 </div>
-                            </form>
+                            </form>-->
                         </div>
                         <!-- /.navbar-collapse -->
                         <!-- Navbar Right Menu -->

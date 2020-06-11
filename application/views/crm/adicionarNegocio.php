@@ -27,16 +27,16 @@
                     <div class="col-md-4">
                         <h3 class="box-title">Adicione um negócio</h3>
                     </div>
-                    <div class="col-md-2">
+<!--                    <div class="col-md-2">
                         <span class="label label-success">Cliente de carteira</span>
-                    </div>
+                    </div>-->
                 </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Empresa </label>
-                                <input type="text" class="form-control" name="nomeEmpresa" value="<?= set_value('nomeEmpresa') ?>">
+                                <input type="text" class="form-control" name="nomeEmpresa" required="" value="<?= set_value('nomeEmpresa') ?>">
                                 <input type="hidden" class="form-control" name="usuario" value="<?php echo $dadoslogin['idusuarios'] ?>">
                             </div>
                         </div>
@@ -141,7 +141,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label>Fonte da indicação</label>
-                                <select class="form-control" name="fonte" data-toggle="tooltip" data-placement="left" title="Quem indicou?">
+                                <select required="" class="form-control" name="fonte" data-toggle="tooltip" data-placement="left" title="Quem indicou?">
                                     <option value = "" ></option>
                                     <?php
                                     foreach ($indicacao as $value2) {
@@ -160,7 +160,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label>Segmento</label>
-                                <select class="form-control" name="segmento">
+                                <select required="" class="form-control" name="segmento">
                                     <option value = "" ></option>
                                     <?php
                                     foreach ($segmento as $value2) {
@@ -216,7 +216,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label>Qual software usa?</label>
-                                <input type="text" class="form-control" maxlength="15" name="softwareAtual" data-toggle="tooltip" data-placement="bottom" title="Colocar o nome do sistema" value="<?= set_value('softwareAtual') ?>">
+                                <input required="" type="text" class="form-control" maxlength="15" name="softwareAtual" data-toggle="tooltip" data-placement="bottom" title="Colocar o nome do sistema" value="<?= set_value('softwareAtual') ?>">
                             </div>
                         </div>
                     </div>

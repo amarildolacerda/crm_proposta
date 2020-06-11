@@ -38,25 +38,48 @@
                     </div>
                     <div class="box-body">
                         <div class="col-md-6">
-                            <?php echo form_hidden('idstatus',$result->idstatus) ?>
+                            <?php echo form_hidden('idstatus', $result->idstatus) ?>
                             <div class="form-group">
                                 <label>Descricao </label>
                                 <input type="text" class="form-control" name="descricao" value="<?php echo $result->descricao; ?>">
                             </div>
                         </div>
-                        <div class=" col-md-3">
+                        <div class=" col-md-2">
                             <div class="form-group">
                                 <label>Status</label>
                                 <select class="form-control" name="status">
-                                    <option value="0" <?php if($result->status == 0){echo "selected";} ?>>Inativo</option>
-                                    <option value="1" <?php if($result->status == 1){echo "selected";} ?>>Ativo</option>
+                                    <option value="0" <?php if ($result->status == 0) {
+                                echo "selected";
+                            } ?>>Inativo</option>
+                                    <option value="1" <?php if ($result->status == 1) {
+                                echo "selected";
+                            } ?>>Ativo</option>
                                 </select>
                             </div>
                         </div>
-                        
-                        
-                       
-                     
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Posição no menu </label>
+                                <input type="text" class="form-control" name="posicaoMenu" value="<?php echo $result->posicaoMenu; ?>">
+                            </div>
+                        </div>
+                        <div class=" col-md-2">
+                            <label>Encerra?</label>
+                            <select class="form-control" name="encerra">
+                                <option value="0" <?php
+                                        if ($result->encerra == 0) {
+                                            echo "selected";
+                                        }
+                                        ?>>Não</option>
+                                <option value="1" <?php
+                                        if ($result->encerra == 1) {
+                                            echo "selected";
+                                        }
+                                        ?>>Sim</option>
+                            </select>
+                        </div>
+
+
                         <div class="col-md-12">
                             <div class="form-group text-left">
                                 <button type="submit" class="btn btn-success"> SALVAR </button>
@@ -72,6 +95,5 @@
 </section>
 <?php $this->load->view('template/footer'); ?>
 
-    
-    
-    
+
+

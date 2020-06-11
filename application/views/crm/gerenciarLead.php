@@ -22,12 +22,12 @@
                     </div><!-- /.box-tools -->
                 </div> <!-- /.box-header -->
                 <div class="box-body">
-                    <form method="post" action="<?php echo base_url(); ?>index.php/crm/filtro"> <!-- INICIO DE FORM DE FILTRO DE BUSCA -->
+                    <form method="get" action="<?php echo base_url(); ?>index.php/crm/gerenciar"> <!-- INICIO DE FORM DE FILTRO DE BUSCA -->
                         <div class="col-md-3">
-                            <input class="form-control" type="text" name="empresa"  id="empresa"  placeholder="Empresa" value="<?= set_value('empresa') ?>" >
+                            <input class="form-control" type="text" name="empresa"  id="empresa"  placeholder="Empresa" value="<?php echo $empresaget ?>" >
                         </div>
                         <div class="col-md-2">
-                            <input class="form-control" type="text" name="idcrm"  id="idcrm"  placeholder="ID CRM" value="<?= set_value('idcrm') ?>" >
+                            <input class="form-control" type="text" name="idcrm"  id="idcrm"  placeholder="ID CRM" value="<?php echo $idcrmget ?>" >
                         </div>
                         <div class="col-md-4">
                             <select name="status" id="status" class="form-control" value="<?= set_value('status') ?>">
@@ -36,7 +36,7 @@
                                 foreach ($status as $value) {
                                     ?>
                                     <option value = "<?php echo $value->idstatus; ?>" <?php
-                                    if ($value->idstatus == $statuspost) {
+                                    if ($value->idstatus == $statusget) {
                                         echo "selected";
                                     }
                                     ?> ><?php echo $value->descricao; ?></option>
@@ -88,7 +88,7 @@
                                 foreach ($usuarios as $value) {
                                     ?>
                                     <option value = "<?php echo $value->idusuarios; ?>" <?php
-                                    if ($value->idusuarios == $vendedorpost) {
+                                    if ($value->idusuarios == $vendedorget) {
                                         echo "selected";
                                     }
                                     ?> ><?php echo $value->nome; ?></option>
@@ -105,7 +105,7 @@
                                 foreach ($indicacao as $value) {
                                     ?>
                                     <option value ="<?php echo $value->idindicacao; ?>" <?php
-                                    if ($value->idindicacao == $indicacaopost) {
+                                    if ($value->idindicacao == $indicacaoget) {
                                         echo "selected";
                                     }
                                     ?> ><?php echo $value->descricao; ?></option>
@@ -121,7 +121,7 @@
                                 foreach ($seguimento as $value) {
                                     ?>
                                     <option value ="<?php echo $value->idseguimento; ?>" <?php
-                                    if ($value->idseguimento == $seguimentopost) {
+                                    if ($value->idseguimento == $seguimentoget) {
                                         echo "selected";
                                     }
                                     ?> ><?php echo $value->descricao; ?></option>

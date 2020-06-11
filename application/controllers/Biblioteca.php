@@ -59,7 +59,7 @@ class Biblioteca extends CI_Controller {
         $this->data['status'] = $this->Biblioteca_model->getConfig('status_crm', 'idstatus,descricao,encerra', '');
         $this->data['usuarios'] = $this->Biblioteca_model->getConfig('usuarios', 'idusuarios,nome', '');
         $this->data['results'] = $this->Biblioteca_model->get('biblioteca', '*', $where_array, $config['per_page'], $this->uri->segment(3), '');
-        $this->data['upload_path'] = './biblioteca/upload/';
+        $this->data['upload_path'] = base_url().'/upload/';
         $this->load->view('biblioteca/gerenciarArquivo', $this->data);
     }
 

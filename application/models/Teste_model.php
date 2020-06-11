@@ -50,6 +50,22 @@ class Teste_model extends CI_Model {
         //return fetched data
         return $result;
     }
+    
+     function countCrmTotalProdutos() {
+        $this->db->select('numpropostas,vltotal');
+        $this->db->select_sum('vltotal');
+        $this->db->from('produtos_proposta');
+        $this->db->group_by('numpropostas');
+        return $this->db->get()->result();
+    }
+    
+    function countCrmTotalServicos() {
+        $this->db->select('numpropostas,vltotal');
+        $this->db->select_sum('vltotal');
+        $this->db->from('servicos_proposta');
+        $this->db->group_by('numpropostas');
+        return $this->db->get()->result();
+    }
 
     function contrato() {
         $DB2 = $this->load->database('wba_db', TRUE);
