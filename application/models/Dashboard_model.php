@@ -62,7 +62,7 @@ class Dashboard_model extends CI_Model {
         $this->db->group_by('numpropostas');
         return $this->db->get()->result();
     }
-    
+
     function countCrmTotalServicos() {
         $this->db->select('numpropostas,vltotal');
         $this->db->select_sum('vltotal');
@@ -77,8 +77,22 @@ class Dashboard_model extends CI_Model {
         return $this->db->count_all_results();
     }
 
+    function countCrmStatusIndividual($idStatus, $idusuarios) {
+        $this->db->from('crm');
+        $this->db->where('usuario', $idusuarios);
+        $this->db->where('status', $idStatus);
+        return $this->db->count_all_results();
+    }
+
     function countCrmFonteIndicacao($idIndicacao) {
         $this->db->from('crm');
+        $this->db->where('fonte', $idIndicacao);
+        return $this->db->count_all_results();
+    }
+
+    function countCrmFonteIndicacaoIndividual($idIndicacao, $idusuarios) {
+        $this->db->from('crm');
+        $this->db->where('usuario', $idusuarios);
         $this->db->where('fonte', $idIndicacao);
         return $this->db->count_all_results();
     }
@@ -89,8 +103,23 @@ class Dashboard_model extends CI_Model {
         return $this->db->count_all_results();
     }
 
+    function count_ultimos_7dias_individual($table, $data, $idusuarios) {
+        $this->db->from($table);
+        $this->db->where('usuario', $idusuarios);
+        $this->db->where('data >=', $data);
+        return $this->db->count_all_results();
+    }
+
     function count_fechadas_ultimos_7dias($table, $data) {
         $this->db->from($table);
+        $this->db->where('data_encerra >=', $data);
+        $this->db->where('data_encerra !=', NULL);
+        return $this->db->count_all_results();
+    }
+
+    function count_fechadas_ultimos_7dias_individual($table, $data, $idusuarios) {
+        $this->db->from($table);
+        $this->db->where('usuario', $idusuarios);
         $this->db->where('data_encerra >=', $data);
         $this->db->where('data_encerra !=', NULL);
         return $this->db->count_all_results();
