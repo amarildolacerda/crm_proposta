@@ -11,8 +11,8 @@ class Crm_model extends CI_Model {
     function __construct() {
         parent::__construct();
     }
-    
-    function getGerenciar($table, $fields, $where = '', $perpage = 0, $start = 0, $one = false, $a, $b,$whereRazaoOuFantasia) {
+
+    function getGerenciar($table, $fields, $where = '', $perpage = 0, $start = 0, $one = false, $a, $b, $whereRazaoOuFantasia) {
 
         $this->db->select($fields);
         $this->db->from($table);
@@ -40,13 +40,38 @@ class Crm_model extends CI_Model {
         if ($where) {
             $this->db->where($where);
         }
+
+        $query = $this->db->get();
+
+        $result = !$one ? $query->result() : $query->row();
+        return $result;
+    }
+
+    function getEmpresa($nome, $one = false) {
+
+        $this->db->select('idEmpresas,nomeEmpresa');
+        $this->db->from('empresas');
+        $this->db->like('nomeEmpresa', $nome);
+
+
+        $query = $this->db->get();
+
+        $result = !$one ? $query->result() : $query->row();
+        return $result;
+    }
+
+    function getTarefas($idNegocio, $one = false) {
+        $this->db->from('tarefas_negocios');
+        $this->db->where('idNegocio', $idNegocio);
+        $this->db->where('status', "aberto");
+        $this->db->order_by('data', 'cres');
         
         $query = $this->db->get();
 
         $result = !$one ? $query->result() : $query->row();
         return $result;
     }
-    
+
     function getNegocios($table, $fields, $where = '', $perpage = 0, $start = 0, $one = false, $a, $b) {
 
         $this->db->select($fields);
@@ -56,14 +81,14 @@ class Crm_model extends CI_Model {
         if ($where) {
             $this->db->where($where);
         }
-         $this->db->join('propostas','propostas.idLead_proposta = crm.idcrm');
+        $this->db->join('empresas', 'empresas.idEmpresas = negocios.idEmpresas');
 
         $query = $this->db->get();
 
         $result = !$one ? $query->result() : $query->row();
         return $result;
     }
-    
+
     function getEncerrado($table, $fields, $where = '', $perpage = 0, $start = 0, $one = false, $a, $b) {
 
         $this->db->select($fields);
@@ -80,10 +105,10 @@ class Crm_model extends CI_Model {
         $result = !$one ? $query->result() : $query->row();
         return $result;
     }
-    
-     function countNegocios($table,$where) {
+
+    function countNegocios($table, $where) {
         $this->db->from($table);
-         if ($where) {
+        if ($where) {
             $this->db->where($where);
         }
         return $this->db->count_all_results();
@@ -98,8 +123,8 @@ class Crm_model extends CI_Model {
             return FALSE;
         }
     }
-    
-     function countGerenciar($table, $where, $whereRazaoOuFantasia) {
+
+    function countGerenciar($table, $where, $whereRazaoOuFantasia) {
         $this->db->select('*');
         $this->db->from($table);
         if ($where) {
@@ -109,47 +134,6 @@ class Crm_model extends CI_Model {
             $this->db->like($whereRazaoOuFantasia);
         }
         return $this->db->count_all_results();
-    }
-
-    public function filtro($vendedor, $status, $numero, $empresa, $seguimento, $datainicial, $datafinal, $atribuido, $fonte, $probabilidade) {
-        $this->db->select('*');
-        $this->db->from('crm');
-        $this->db->order_by('idcrm', 'desc');
-        if ($vendedor) {
-            $this->db->where('usuario', $vendedor);
-        }
-        if ($status) {
-            $this->db->like('status', $status);
-        }
-        if ($numero) {
-            $this->db->where('idcrm', $numero);
-        }
-        if ($empresa) {
-            $this->db->like('empresa', $empresa);
-        }
-        if ($fonte) {
-            $this->db->where('fonte', $fonte);
-        }
-        if ($seguimento) {
-            $this->db->where('seguimento', $seguimento);
-        }
-        if ($datainicial and $datafinal) {
-            $this->db->where('data >=', $datainicial);
-            $this->db->where('data <=', $datafinal);
-        }
-        if ($atribuido) {
-            $this->db->where('atribuido', $atribuido);
-        }
-        if ($probabilidade) {
-            $this->db->where('probabilidade', $probabilidade);
-        }
-
-        $query = $this->db->get();
-        if ($query->num_rows() > 0) {
-            return $query->result();
-        } else {
-            return $query->result();
-        }
     }
 
     public function countfiltro($vendedor, $status, $numero, $empresa, $seguimento, $datainicial, $datafinal, $atribuido, $fonte, $probabilidade) {
@@ -217,9 +201,27 @@ class Crm_model extends CI_Model {
     }
 
     function getById($id) {
-        $this->db->where('idcrm', $id);
+        $this->db->where('idNegocio', $id);
         $this->db->limit(1);
-        return $this->db->get('crm')->row();
+        return $this->db->get('negocios')->row();
+    }
+
+    function getByIdEmpresas($id) {
+        $this->db->where('idEmpresas', $id);
+        $this->db->limit(1);
+        return $this->db->get('empresas')->row();
+    }
+
+    function getByIdContatos($id) {
+        $this->db->where('idEmpresas', $id);
+        $this->db->limit(1);
+        return $this->db->get('contatos')->row();
+    }
+
+    function getByIdTarefas($id) {
+        $this->db->where('idNegocio', $id);
+        $this->db->limit(1);
+        return $this->db->get('tarefas_negocios')->row();
     }
 
     function count($table) {
@@ -229,6 +231,12 @@ class Crm_model extends CI_Model {
     function countatribuido($where_array_atribuido = '') {
         $this->db->where($where_array_atribuido);
         $this->db->from('crm');
+        return $this->db->count_all_results();
+    }
+
+    function countEmpresaExiste($idEmpresas) {
+        $this->db->where('idEmpresas', $idEmpresas);
+        $this->db->from('empresas');
         return $this->db->count_all_results();
     }
 
@@ -248,6 +256,12 @@ class Crm_model extends CI_Model {
         return $this->db->get()->result();
     }
 
+    function getByIdContato($id) {
+        $this->db->where('idEmpresas', $id);
+        $this->db->limit(1);
+        return $this->db->get('contatos')->row();
+    }
+
     function getByIdStatus($id) {
         $this->db->where('idstatus', $id);
         $this->db->limit(1);
@@ -260,12 +274,12 @@ class Crm_model extends CI_Model {
         return $this->db->get($tabela)->row();
     }
 
-    public function getTimeline($id = null) {
+    public function getTimelineNegocios($id = null) {
 
         $this->db->select('*');
-        $this->db->from('timeline_crm');
-        $this->db->where('idcrm', $id);
-        $this->db->order_by('idTimeline_crm', 'desc');
+        $this->db->from('timeline_negocios');
+        $this->db->where('idNegocio', $id);
+        $this->db->order_by('idTimeline_negocios', 'desc');
         return $this->db->get()->result();
     }
 

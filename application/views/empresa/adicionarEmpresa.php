@@ -175,7 +175,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group text-left">
-                        <a title="cancelar" href="<?php echo base_url() ?>index.php/crm/gerenciar" class="btn btn-danger btn-small">CANCELAR </a>
+                        <a title="cancelar" href="<?php echo base_url() ?>index.php/empresa/gerenciar" class="btn btn-danger btn-small">CANCELAR </a>
                         <button type="submit" class="btn btn-success"> SALVAR </button>
                     </div>
                 </div>

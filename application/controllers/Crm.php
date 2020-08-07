@@ -2,8 +2,8 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+//use PhpOffice\PhpSpreadsheet\Spreadsheet;
+//use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Crm extends CI_Controller {
 
@@ -19,234 +19,69 @@ class Crm extends CI_Controller {
 
     public function index() {
 
-        $dadoslogin = $this->session->all_userdata();
-
-        //conta total de propostas do usuário
-        $this->data['dados_crm'] = $this->crm_model->crm();
-        $this->data['crm_count'] = $this->crm_model->crm_count();
-
-        $this->load->view('crm/crm', $this->data);
+        redirect(base_url() . 'index.php/crm/negociosKanban');
     }
 
-    public function sendgrid() {
-
-        // require 'vendor/autoload.php'; // If you're using Composer (recommended)
-// Comment out the above line if not using Composer
-        require("localhost/proposta_ci/index.php/third_party/sendgrid/sendgrid-php.php");
-// If not using Composer, uncomment the above line and
-// download sendgrid-php.zip from the latest release here,
-// replacing <PATH TO> with the path to the sendgrid-php.php file,
-// which is included in the download:
-// https://github.com/sendgrid/sendgrid-php/releases
-
-        $email = new \SendGrid\Mail\Mail();
-        $email->setFrom("test@example.com", "Example User");
-        $email->setSubject("Sending with SendGrid is Fun");
-        $email->addTo("test@example.com", "Example User");
-        $email->addContent("text/plain", "and easy to do anywhere, even with PHP");
-        $email->addContent(
-                "text/html", "<strong>and easy to do anywhere, even with PHP</strong>"
-        );
-        $sendgrid = new \SendGrid(getenv('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'));
-        try {
-            $response = $sendgrid->send($email);
-            print $response->statusCode() . "\n";
-            print_r($response->headers());
-            print $response->body() . "\n";
-        } catch (Exception $e) {
-            echo 'Caught exception: ' . $e->getMessage() . "\n";
-        }
-    }
-
-    public function atualizaClienteContrato() {
-        $data = file_get_contents('http://localhost:8886/OData/OData.svc/contrato?$filter=inativo%20eq%20%22N%22');
-        $data2 = json_decode($data);
-        foreach ($data2->value as $r) {
-            //echo "Codigo: ". $r->codigo. " - Nome: ".$r->nome . "<br>";
-        }
-
-        var_dump($data2->value);
-    }
-
-    public function gerenciar() {
+    public function negociosKanban() {
         if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'mCrm')) {
             $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
             redirect(base_url() . 'index.php/dashboard');
         }
-        $this->load->library('table');
-        $this->load->library('pagination');
+
+        // preciso pegar todos os crms,atribuidos separados por usuario e status
 
         $dadoslogin = $this->session->all_userdata();
+        $whereNegocios_array = array();
+        $whereNegocios_array['negocios.vendedor'] = $dadoslogin['idusuarios'];
 
-        $where_array = array();
-        $whereRazaoOuFantasia = array();
-        $whereDataEntrada = array();
-        $idcrm = $this->input->get('idcrm');
-        $empresa = $this->input->get('empresa');
-        $status = $this->input->get('status');
-        $vendedor = $this->input->get('vendedor');
-        $fantasiaCliente = $this->input->get('fantasiaCliente');
-        $indicacao = $this->input->get('indicacao');
-        $seguimento = $this->input->get('seguimento');
+//        $whereNegocios_array['crm.status'] = 1;
+//        $whereNegocios_array['crm.situacao'] = "novo";
+//        $this->data['oportunidade'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
+//        $this->data['oportunidadeNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
+//        $this->data['countOportunidade'] = $this->crm_model->countNegocios('crm', $whereNegocios_array);
 
-        $garantia = $this->input->get('garantia');
-        $encerrada = $this->input->get('encerrada');
-        $dataEntrada = $this->input->get('dataEntrada');
-        $dataEntradaMenor = $this->input->get('dataEntradaMenor');
-        $dataEntradaMaior = $this->input->get('dataEntradaMaior');
-        $dataEncerraMaior = $this->input->get('dataEncerraMaior');
-        $dataAlteracaoMenor = $this->input->get('dataAlteracaoMenor');
+        $whereNegocios_array['negocios.faseDoFunil'] = 1;
+        $whereNegocios_array['negocios.situacao'] = "aberto";
+        $this->data['oportunidade'] = $this->crm_model->getNegocios('negocios', 'negocios.idNegocio,negocios.idEmpresas,negocios.idContatos,negocios.faseDoFunil,negocios.vendedor,negocios.valorDoNegocio,negocios.nomeDoNegocio,negocios.totalProdutos,negocios.totalServicos,negocios.mensalidade,empresas.nomeEmpresa', $whereNegocios_array, 0, 0, '', 'negocios.dataCadastro', 'desc');
+        $this->data['countOportunidade'] = $this->crm_model->countNegocios('negocios', $whereNegocios_array);
 
-        if ($idcrm) {
-            $where_array['idcrm'] = $idcrm;
-            $this->data['idcrmget'] = $idcrm;
-        } else {
-            $this->data['idcrmget'] = "";
-        }
+        $whereNegocios_array['negocios.faseDoFunil'] = 2;
+        $whereNegocios_array['negocios.situacao'] = "aberto";
+        $this->data['demoagendada'] = $this->crm_model->getNegocios('negocios', 'negocios.idNegocio,negocios.idEmpresas,negocios.idContatos,negocios.faseDoFunil,negocios.vendedor,negocios.valorDoNegocio,negocios.nomeDoNegocio,negocios.totalProdutos,negocios.totalServicos,negocios.mensalidade,empresas.nomeEmpresa', $whereNegocios_array, 0, 0, '', 'negocios.dataCadastro', 'desc');
+        $this->data['countDemoagendada'] = $this->crm_model->countNegocios('negocios', $whereNegocios_array);
+        //        
 
-        if ($empresa) {
-            $whereRazaoOuFantasia['empresa'] = $empresa;
-            $this->data['empresaget'] = $empresa;
-        } else {
-            $this->data['empresaget'] = '';
-        }
+        $whereNegocios_array['negocios.faseDoFunil'] = 3;
+        $whereNegocios_array['negocios.situacao'] = "aberto";
+        $this->data['propostaentregue'] = $this->crm_model->getNegocios('negocios', 'negocios.idNegocio,negocios.idEmpresas,negocios.idContatos,negocios.faseDoFunil,negocios.vendedor,negocios.valorDoNegocio,negocios.nomeDoNegocio,negocios.totalProdutos,negocios.totalServicos,negocios.mensalidade,empresas.nomeEmpresa', $whereNegocios_array, 0, 0, '', 'negocios.dataCadastro', 'desc');
+        $this->data['countPropostaentregue'] = $this->crm_model->countNegocios('negocios', $whereNegocios_array);
 
-        if ($status) {
-            $where_array['status'] = $status;
-            $this->data['statusget'] = $status;
-        } else {
-            $this->data['statusget'] = '';
-        }
+        $whereNegocios_array['negocios.faseDoFunil'] = 4;
+        $whereNegocios_array['negocios.situacao'] = "aberto";
+        $this->data['emnegociacao'] = $this->crm_model->getNegocios('negocios', 'negocios.idNegocio,negocios.idEmpresas,negocios.idContatos,negocios.faseDoFunil,negocios.vendedor,negocios.valorDoNegocio,negocios.nomeDoNegocio,negocios.totalProdutos,negocios.totalServicos,negocios.mensalidade,empresas.nomeEmpresa', $whereNegocios_array, 0, 0, '', 'negocios.dataCadastro', 'desc');
+        $this->data['countEmnegociacao'] = $this->crm_model->countNegocios('negocios', $whereNegocios_array);
 
-        if ($vendedor) {
-            $where_array['usuario'] = $vendedor;
-            $this->data['vendedorget'] = $vendedor;
-        } else {
-            $this->data['vendedorget'] = '';
-        }
+        $whereGanho_array['situacao'] = "ganho";
+        $this->data['ganho'] = $this->crm_model->getNegocios('negocios', 'negocios.idNegocio,negocios.idEmpresas,negocios.idContatos,negocios.faseDoFunil,negocios.vendedor,negocios.valorDoNegocio,negocios.nomeDoNegocio,negocios.totalProdutos,negocios.totalServicos,negocios.mensalidade,empresas.nomeEmpresa', $whereGanho_array, 0, 0, '', 'negocios.dataCadastro', 'desc');
+        $this->data['countGanho'] = $this->crm_model->countNegocios('negocios', $whereGanho_array);
 
-        if ($indicacao) {
-            $where_array['fonte'] = $indicacao;
-            $this->data['indicacaoget'] = $indicacao;
-        } else {
-            $this->data['indicacaoget'] = '';
-        }
+        $wherePerdido_array['situacao'] = "perdido";
+        $this->data['perdido'] = $this->crm_model->getNegocios('negocios', 'negocios.idNegocio,negocios.idEmpresas,negocios.idContatos,negocios.faseDoFunil,negocios.vendedor,negocios.valorDoNegocio,negocios.nomeDoNegocio,negocios.totalProdutos,negocios.totalServicos,negocios.mensalidade,empresas.nomeEmpresa', $wherePerdido_array, 0, 0, '', 'negocios.dataCadastro', 'desc');
+        $this->data['countPerdido'] = $this->crm_model->countNegocios('negocios', $wherePerdido_array);
 
-        if ($seguimento) {
-            $where_array['seguimento'] = $seguimento;
-            $this->data['seguimentoget'] = $seguimento;
-        } else {
-            $this->data['seguimentoget'] = '';
-        }
-
-        if ($dataEntrada) {
-            $where_array['dataEntrada'] = $dataEntrada;
-        }
-
-        if ($dataEntradaMenor) {
-            $where_array['dataEntrada <'] = $dataEntradaMenor;
-        }
-
-        if ($dataEntradaMaior) {
-            $where_array['dataEntrada >'] = $dataEntradaMaior;
-        }
-
-        if ($dataEncerraMaior) {
-            $where_array['dataEncerra >='] = $dataEncerraMaior;
-        }
-
-        if ($dataAlteracaoMenor) {
-            $where_array['dataAlteracao <'] = $dataAlteracaoMenor;
-        }
-
-
-
-        $where_array['atribuido'] = 1;
-        if ($this->permission->checkPermission($this->session->userdata('permissao'), 'oLead')) {
-            $where_array['usuario'] = $dadoslogin['idusuarios'];
-        }
-        $config['base_url'] = base_url() . 'index.php/crm/gerenciar';
-        $config['total_rows'] = $this->crm_model->countGerenciar('crm', $where_array, $whereRazaoOuFantasia);
-        $config['per_page'] = 15;
-        $config['reuse_query_string'] = TRUE;
-        $config['next_link'] = 'Próxima';
-        $config['prev_link'] = 'Anterior';
-        $config['full_tag_open'] = '<div class="pagination"><ul class="pagination">';
-        $config['full_tag_close'] = '</ul></div>';
-        $config['num_tag_open'] = '<li>';
-        $config['num_tag_close'] = '</li>';
-        $config['cur_tag_open'] = '<li><a style="color: #2D335B"><b>';
-        $config['cur_tag_close'] = '</b></a></li>';
-        $config['prev_tag_open'] = '<li>';
-        $config['prev_tag_close'] = '</li>';
-        $config['next_tag_open'] = '<li>';
-        $config['next_tag_close'] = '</li>';
-        $config['first_link'] = 'Primeira';
-        $config['last_link'] = 'Última';
-        $config['first_tag_open'] = '<li>';
-        $config['first_tag_close'] = '</li>';
-        $config['last_tag_open'] = '<li>';
-        $config['last_tag_close'] = '</li>';
-
-        $this->pagination->initialize($config);
 
         $this->data['seguimento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', '');
         $this->data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', '');
         $this->data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao,encerra', '');
         $this->data['usuarios'] = $this->crm_model->getConfig('usuarios', 'idusuarios,nome', '');
-        $this->data['count'] = $this->crm_model->countGerenciar('crm', $where_array, $whereRazaoOuFantasia);
-        $this->data['results'] = $this->crm_model->getGerenciar('crm', 'idcrm,empresa,nome,telefone,status,seguimento,data,usuario', $where_array, $config['per_page'], $this->uri->segment(3), '', 'idcrm', 'desc', $whereRazaoOuFantasia);
-        $this->load->view('crm/gerenciarLead', $this->data);
+
+        $this->data['dadoslogin'] = $this->session->all_userdata();
+        $this->data['results'] = $this->crm_model->get('negocios', 'idNegocio,idEmpresas,idContatos,faseDoFunil,vendedor', $whereNegocios_array, 0, $this->uri->segment(3), '', 'idNegocio', 'desc');
+
+        $this->load->view('crm/negociosKanban', $this->data);
     }
 
-    public function filtro() {
-        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'mCrm')) {
-            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
-            redirect(base_url() . 'index.php/dashboard');
-        }
-        $this->load->library('table');
-        $this->load->library('pagination');
-
-
-        $empresa = $this->input->post('empresa');
-        $numero = $this->input->post('idcrm');
-        $status = $this->input->post('status');
-        $vendedor = $this->input->post('vendedor');
-        $fonte = $this->input->post('indicacao');
-        $seguimento = $this->input->post('seguimento');
-        $datainicial = $this->input->post('datainicial');
-        $datafinal = $this->input->post('datafinal');
-        $probabilidade = $this->input->post('probabilidade');
-        $atribuido = 1;
-        if ($this->permission->checkPermission($this->session->userdata('permissao'), 'oLead')) {
-            $dadoslogin = $this->session->all_userdata();
-            $vendedor = $dadoslogin['idusuarios'];
-        }
-
-
-//       ESTAS VARIAVEIS SERVEM PARA MANTER O CAMPO SELECIONADO DEPOIS DA PESQUISA 
-        $this->data['statuspost'] = $this->input->post('status');
-        $this->data['vendedorpost'] = $this->input->post('vendedor');
-        $this->data['seguimentopost'] = $this->input->post('seguimento');
-        $this->data['indicacaopost'] = $this->input->post('indicacao');
-        $this->data['probabilidadepost'] = $this->input->post('probabilidade');
-
-
-        if (isset($vendedor)and ! empty($vendedor) or isset($numero)and ! empty($numero) or isset($status)and ! empty($status) or isset($empresa)and ! empty($empresa) or isset($seguimento)and ! empty($seguimento) or isset($dataincial)and ! empty($datainicial) or isset($datafinal)and ! empty($datafinal) or isset($atribuido)and ! empty($atribuido) or isset($fonte)and ! empty($fonte) or isset($probabilidade)and ! empty($probabilidade)) {
-            //$this->pagination->initialize($config);
-            $this->data['results'] = $this->crm_model->filtro($vendedor, $status, $numero, $empresa, $seguimento, $datainicial, $datafinal, $atribuido, $fonte, $probabilidade);
-            $this->data['seguimento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', '');
-            $this->data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', '');
-            $this->data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao,encerra', '');
-            $this->data['usuarios'] = $this->crm_model->getConfig('usuarios', 'idusuarios,nome', '');
-            $this->data['count'] = $this->crm_model->countfiltro($vendedor, $status, $numero, $empresa, $seguimento, $datainicial, $datafinal, $atribuido, $fonte, $probabilidade);
-            $this->load->view('crm/gerenciarLead', $this->data);
-        } else {
-            redirect(base_url() . 'index.php/crm/gerenciar');
-        }
-    }
-
-    public function negocios() {
+    public function negociosKanbanOLD() {
         if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'mCrm')) {
             $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
             redirect(base_url() . 'index.php/dashboard');
@@ -309,329 +144,173 @@ class Crm extends CI_Controller {
         $this->data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao,encerra', '');
         $this->data['usuarios'] = $this->crm_model->getConfig('usuarios', 'idusuarios,nome', '');
         $this->data['count'] = $this->crm_model->countatribuido($whereNegocios_array);
+        $this->data['dadoslogin'] = $this->session->all_userdata();
         $this->data['results'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, $this->uri->segment(3), '', 'idcrm', 'desc');
 
-        $this->load->view('crm/negocios', $this->data);
+        $this->load->view('crm/negociosKanban', $this->data);
     }
 
-    public function gerenciarnaoatribuido() {
+    public function negociosLista() {
         if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'mCrm')) {
             $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
             redirect(base_url() . 'index.php/dashboard');
         }
 
-        $this->load->library('table');
-        $this->load->library('pagination');
+        // preciso pegar todos os crms,atribuidos separados por usuario e status
 
+        $dadoslogin = $this->session->all_userdata();
+        $whereNegocios_array = array();
+        $whereNegocios_array['crm.atribuido'] = 1;
+        $whereNegocios_array['crm.usuario'] = $dadoslogin['idusuarios'];
 
-        $where_array = array();
-        $where_array['atribuido'] = 0;
+//        $whereNegocios_array['crm.atribuido'] = 1;
+//        $whereNegocios_array['crm.usuario'] = $dadoslogin['idusuarios'];
+//        
+//        
+//        
+//        $whereNegocios_array['crm.status'] = 1;
+//        $this->data['oportunidade'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
+//        $this->data['countOportunidade'] = $this->crm_model->countNegocios('crm',$whereNegocios_array);
+//        
+//        
+        $whereNegocios_array['crm.status'] = 1;
+        $whereNegocios_array['crm.situacao'] = "novo";
+        $this->data['oportunidade'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
+        $this->data['oportunidadeNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
+        $this->data['countOportunidade'] = $this->crm_model->countNegocios('crm', $whereNegocios_array);
 
+        $whereNegocios_array['crm.status'] = 2;
+        $whereNegocios_array['crm.situacao'] = "novo";
+        $this->data['demoagendada'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
+        $this->data['demoagendadaNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
+        $this->data['countDemoagendada'] = $this->crm_model->countNegocios('crm', $whereNegocios_array);
 
-        $config['base_url'] = base_url() . 'index.php/crm/gerenciarnaoatribuido';
-        $config['total_rows'] = $this->crm_model->countatribuido($where_array);
-        $config['per_page'] = 10;
-        $config['next_link'] = 'Próxima';
-        $config['prev_link'] = 'Anterior';
-        $config['full_tag_open'] = '<div class="pagination"><ul class="pagination">';
-        $config['full_tag_close'] = '</ul></div>';
-        $config['num_tag_open'] = '<li>';
-        $config['num_tag_close'] = '</li>';
-        $config['cur_tag_open'] = '<li><a style="color: #2D335B"><b>';
-        $config['cur_tag_close'] = '</b></a></li>';
-        $config['prev_tag_open'] = '<li>';
-        $config['prev_tag_close'] = '</li>';
-        $config['next_tag_open'] = '<li>';
-        $config['next_tag_close'] = '</li>';
-        $config['first_link'] = 'Primeira';
-        $config['last_link'] = 'Última';
-        $config['first_tag_open'] = '<li>';
-        $config['first_tag_close'] = '</li>';
-        $config['last_tag_open'] = '<li>';
-        $config['last_tag_close'] = '</li>';
+        $whereNegocios_array['crm.status'] = 3;
+        $whereNegocios_array['crm.situacao'] = "novo";
+        $this->data['propostaentregue'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
+        $this->data['propostaentregueNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
+        $this->data['countPropostaentregue'] = $this->crm_model->countNegocios('crm', $whereNegocios_array);
 
-        $this->pagination->initialize($config);
+        $whereNegocios_array['crm.status'] = 4;
+        $whereNegocios_array['crm.situacao'] = "novo";
+        $this->data['emnegociacao'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
+        $this->data['emnegociacaoNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
+        $this->data['countEmnegociacao'] = $this->crm_model->countNegocios('crm', $whereNegocios_array);
 
+        $whereGanho_array['situacao'] = "ganho";
+        $this->data['ganho'] = $this->crm_model->getEncerrado('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereGanho_array, 0, 0, '', 'data_encerra', 'desc');
+        $this->data['ganhoNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereGanho_array, 0, 0, '', 'data_encerra', 'desc');
+        $this->data['countGanho'] = $this->crm_model->countNegocios('crm', $whereGanho_array);
 
-//       ESTAS VARIAVEIS SERVEM PARA MANTER O CAMPO SELECIONADO DEPOIS DA PESQUISA 
-        $this->data['statuspost'] = 0;
-        $this->data['vendedorpost'] = 0;
-        $this->data['seguimentopost'] = 0;
-        $this->data['indicacaopost'] = 0;
-        $this->data['probabilidadepost'] = 0;
+        $wherePerdido_array['situacao'] = "perdido";
+        $this->data['perdido'] = $this->crm_model->getEncerrado('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $wherePerdido_array, 0, 0, '', 'data_encerra', 'desc');
+        $this->data['perdidoNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $wherePerdido_array, 0, 0, '', 'data_encerra', 'desc');
+        $this->data['countPerdido'] = $this->crm_model->countNegocios('crm', $wherePerdido_array);
 
 
         $this->data['seguimento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', '');
         $this->data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', '');
         $this->data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao,encerra', '');
         $this->data['usuarios'] = $this->crm_model->getConfig('usuarios', 'idusuarios,nome', '');
-        $this->data['count'] = $this->crm_model->countatribuido($where_array);
-        $this->data['results'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,telefone,status,seguimento,data,usuario', $where_array, $config['per_page'], $this->uri->segment(3), '', 'idcrm', 'desc');
-        $this->load->view('crm/gerenciarLeadNaoAtribuido', $this->data);
+        $this->data['count'] = $this->crm_model->countatribuido($whereNegocios_array);
+        $this->data['dadoslogin'] = $this->session->all_userdata();
+        $this->data['results'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, $this->uri->segment(3), '', 'idcrm', 'desc');
+
+        $this->load->view('crm/negociosKanban', $this->data);
     }
 
-    public function filtronaoatribuido() {
-        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'mCrm')) {
-            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
-            redirect(base_url() . 'index.php/dashboard');
-        }
-        $this->load->library('table');
-        $this->load->library('pagination');
-
-
-        $empresa = $this->input->post('empresa');
-        $numero = $this->input->post('idcrm');
-        $status = $this->input->post('status');
-        $vendedor = $this->input->post('vendedor');
-        $fonte = $this->input->post('indicacao');
-        $seguimento = $this->input->post('seguimento');
-        $datainicial = $this->input->post('datainicial');
-        $datafinal = $this->input->post('datafinal');
-        $probabilidade = $this->input->post('probabilidade');
-        $atribuido = 0;
-
-//       ESTAS VARIAVEIS SERVEM PARA MANTER O CAMPO SELECIONADO DEPOIS DA PESQUISA 
-        $this->data['statuspost'] = $this->input->post('status');
-        $this->data['vendedorpost'] = $this->input->post('vendedor');
-        $this->data['seguimentopost'] = $this->input->post('seguimento');
-        $this->data['indicacaopost'] = $this->input->post('indicacao');
-        $this->data['probabilidadepost'] = $this->input->post('probabilidade');
-
-
-        if (isset($vendedor)and ! empty($vendedor) or isset($numero)and ! empty($numero) or isset($status)and ! empty($status) or isset($empresa)and ! empty($empresa) or isset($seguimento)and ! empty($seguimento) or isset($dataincial)and ! empty($datainicial) or isset($datafinal)and ! empty($datafinal) or isset($atribuido)and ! empty($atribuido) or isset($fonte)and ! empty($fonte) or isset($probabilidade)and ! empty($probabilidade)) {
-            //$this->pagination->initialize($config);
-            $this->data['results'] = $this->crm_model->filtro($vendedor, $status, $numero, $empresa, $seguimento, $datainicial, $datafinal, $atribuido, $fonte, $probabilidade);
-            $this->data['seguimento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', '');
-            $this->data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', '');
-            $this->data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao,encerra', '');
-            $this->data['count'] = $this->crm_model->countfiltro($vendedor, $status, $numero, $empresa, $seguimento, $datainicial, $datafinal, $atribuido, $fonte, $probabilidade);
-            $this->data['usuarios'] = $this->crm_model->getConfig('usuarios', 'idusuarios,nome', '');
-            $this->load->view('crm/gerenciarLeadNaoAtribuido', $this->data);
-        } else {
-            redirect(base_url() . 'index.php/crm/gerenciarnaoatribuido');
-        }
-    }
-
-    public function csv() {
-        $fileName = 'crm-wba.xlsx';
-        $where_array = array();
-        $where_array['atribuido'] = 1;
-        $employeeData = $this->crm_model->get('crm', 'empresa,nome,telefone,email,cnpj,whatsapp,endereco,bairro,cidade', $where_array, '', $this->uri->segment(3), '', 'idcrm', 'desc');
-
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setCellValue('A1', 'Nome');
-        $sheet->setCellValue('B1', 'Empresa');
-        $sheet->setCellValue('C1', 'CNPJ');
-        $sheet->setCellValue('D1', 'E-mail');
-        $sheet->setCellValue('E1', 'Telefone');
-        $sheet->setCellValue('F1', 'Whatsapp');
-        $sheet->setCellValue('G1', 'Endereço');
-        $sheet->setCellValue('H1', 'Bairro');
-        $sheet->setCellValue('I1', 'Cidade');
-        $rows = 2;
-        foreach ($employeeData as $val) {
-            $sheet->setCellValue('A' . $rows, $val->nome);
-            $sheet->setCellValue('B' . $rows, $val->empresa);
-            $sheet->setCellValue('C' . $rows, $val->cnpj);
-            $sheet->setCellValue('D' . $rows, $val->email);
-            $sheet->setCellValue('E' . $rows, $val->telefone);
-            $sheet->setCellValue('F' . $rows, $val->whatsapp);
-            $sheet->setCellValue('G' . $rows, $val->endereco);
-            $sheet->setCellValue('H' . $rows, $val->bairro);
-            $sheet->setCellValue('I' . $rows, $val->cidade);
-            $rows++;
-        }
-        $writer = new Xlsx($spreadsheet);
-        $writer->save("upload/" . $fileName);
-        header("Content-Type: application/vnd.ms-excel");
-        redirect(base_url() . "/upload/" . $fileName);
-    }
-
-    public function csvnaoatribuido() {
-        $fileName = 'crm-wba.xlsx';
-        $where_array = array();
-        $where_array['atribuido'] = 0;
-        $employeeData = $this->crm_model->get('crm', 'empresa,nome,telefone,email,cnpj,whatsapp,endereco,bairro,cidade', $where_array, '', $this->uri->segment(3), '', 'idcrm', 'desc');
-
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setCellValue('A1', 'Nome');
-        $sheet->setCellValue('B1', 'Empresa');
-        $sheet->setCellValue('C1', 'CNPJ');
-        $sheet->setCellValue('D1', 'E-mail');
-        $sheet->setCellValue('E1', 'Telefone');
-        $sheet->setCellValue('F1', 'Whatsapp');
-        $sheet->setCellValue('G1', 'Endereço');
-        $sheet->setCellValue('H1', 'Bairro');
-        $sheet->setCellValue('I1', 'Cidade');
-        $rows = 2;
-        foreach ($employeeData as $val) {
-            $sheet->setCellValue('A' . $rows, $val->nome);
-            $sheet->setCellValue('B' . $rows, $val->empresa);
-            $sheet->setCellValue('C' . $rows, $val->cnpj);
-            $sheet->setCellValue('D' . $rows, $val->email);
-            $sheet->setCellValue('E' . $rows, $val->telefone);
-            $sheet->setCellValue('F' . $rows, $val->whatsapp);
-            $sheet->setCellValue('G' . $rows, $val->endereco);
-            $sheet->setCellValue('H' . $rows, $val->bairro);
-            $sheet->setCellValue('I' . $rows, $val->cidade);
-            $rows++;
-        }
-        $writer = new Xlsx($spreadsheet);
-        $writer->save("upload/" . $fileName);
-        header("Content-Type: application/vnd.ms-excel");
-        redirect(base_url() . "/upload/" . $fileName);
-    }
-
-    public function add() {
+    public function addNegocios() {
 
         if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'aLead')) {
             $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
             redirect(base_url() . 'index.php/crm/gerenciar');
         }
         $data['dadoslogin'] = $this->session->all_userdata();
+        $vendedor = $this->session->all_userdata();
 
-        $this->form_validation->set_rules('nomeEmpresa', 'Empresa', 'trim|required|min_length[3]');
+        $this->form_validation->set_rules('nomeEmpresa', 'Empresa', 'trim|required');
 
         if ($this->form_validation->run() == FALSE) {
             $data['formErrors'] = validation_errors();
         } else {
+
+            // recebe os dados do campo nomeEmpresa. Se é uma empresa selecionada
+            //no campo select, ele traz o id da emprsa, se o texto não existir
+            //ele traz o texto digitado
             $dadosEmpresa['nomeEmpresa'] = $this->input->post('nomeEmpresa');
-            $dadosEmpresa['nomeCliente'] = $this->input->post('nomeContato');
-            $dadosEmpresa['contrato'] = 0;
-            $dadosEmpresa['cnpj'] = $this->input->post('cnpj');
-            $dadosEmpresa['whatsapp'] = $this->input->post('whatsapp');
-            $dadosEmpresa['telefone'] = $this->input->post('telefone');
-            $dadosEmpresa['email'] = $this->input->post('email');
-            $dadosEmpresa['segmento'] = $this->input->post('segmento');
-            $dadosEmpresa['numeroFuncionarios'] = $this->input->post('numeroFuncionarios');
-            $dadosEmpresa['marcador'] = $this->input->post('marcador');
-            $dadosEmpresa['enderecoEmpresa'] = $this->input->post('endereco');
-            $dadosEmpresa['bairroEmpresa'] = $this->input->post('bairro');
-            $dadosEmpresa['cidadeEmpresa'] = $this->input->post('cidade');
-            $dadosEmpresa['softwareAtual'] = $this->input->post('softwareAtual');
-            $dadosEmpresa['papelNaCompra'] = $this->input->post('papelNaCompra');
             $dadosEmpresa['dataCadastro'] = date('Y/m/d');
+            $dadosEmpresa['dataAlteracao'] = date('Y/m/d');
 
 
-            $dados['empresa'] = $this->input->post('nomeEmpresa');
-            $dados['nome'] = $this->input->post('nomeContato');
-            $dados['cnpj'] = $this->input->post('cnpj');
-            $dados['whatsapp'] = $this->input->post('whatsapp');
-            $dados['telefone'] = $this->input->post('telefone');
-            $dados['email'] = $this->input->post('email');
-            $dados['seguimento'] = $this->input->post('segmento');
-            $dados['endereco'] = $this->input->post('endereco');
-            $dados['bairro'] = $this->input->post('bairro');
-            $dados['cidade'] = $this->input->post('cidade');
-            $dados['possuisistema'] = $this->input->post('softwareAtual');
-            $dados['cargo'] = $this->input->post('cargo');
-            $dados['status'] = $this->input->post('status');
-            $dados['probabilidade'] = $this->input->post('probabilidade');
-            $dados['fonte'] = $this->input->post('fonte');
-            $dados['concorrente'] = $this->input->post('concorrente');
-            $dados['data'] = date('Y/m/d');
-            $dados['data_alteracao'] = date('Y/m/d');
-            $dados['usuario'] = $this->input->post('usuario');
-            $dados['atribuido'] = 1;
-            $dados['situacao'] = "novo";
-            
-            
-            if ($this->crm_model->add('empresas', $dadosEmpresa)) {
-                $idLead = $this->crm_model->add('crm', $dados);
-                if ($idLead != 0) {
-                    redirect(base_url() . 'index.php/crm/edit/' . $idLead);
+            //recebe os dados do contato
+            $dadosContato['nomeContato'] = $this->input->post('nomeContato');
+            $dadosContato['dataCadastro'] = date('Y/m/d');
+            $dadosContato['dataAlteracao'] = date('Y/m/d');
+
+
+            //testa para ver se existe o cadastro de empresa
+            $existeCadastro = $this->crm_model->countEmpresaExiste($this->input->post('nomeEmpresa'));
+
+
+            //se NÃO existir o cadastro de empresa, então cadastra empresa, contato e negocio
+            if ($existeCadastro == 0) {
+
+                if ($idEmpresas = $this->crm_model->add('empresas', $dadosEmpresa)) {
+                    $dadosContato['idEmpresas'] = $idEmpresas;
+                    $idContatos = $this->crm_model->add('contatos', $dadosContato);
+
+                    $dadosNegocio['idEmpresas'] = $idEmpresas;
+                    $dadosNegocio['idContatos'] = $idContatos;
+                    $dadosNegocio['nomeDoNegocio'] = $this->input->post('nomeDoNegocio');
+                    $dadosNegocio['vendedor'] = $vendedor['idusuarios'];
+                    $dadosNegocio['valorDoNegocio'] = $this->input->post('valorDoNegocio');
+                    $dadosNegocio['faseDoFunil'] = $this->input->post('faseDoFunil');
+                    $dadosNegocio['dataFechamentoEsperada'] = $this->input->post('dataFechamentoEsperada');
+                    $dadosNegocio['dataCadastro'] = date('Y/m/d');
+                    $dadosNegocio['dataAlteracao'] = date('Y/m/d');
+                    $dadosNegocio['situacao'] = "aberto";
+
+                    $idNegocio = $this->crm_model->add('negocios', $dadosNegocio);
+                    if ($idNegocio != 0) {
+                        redirect(base_url() . 'index.php/crm/editNegocios/' . $idNegocio);
+                    } else {
+                        $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
+                    }
+                }
+            } else {
+                //se existir o cadastro de empresa, então seleciona a empresa, 
+                // seleciona o contato(apaga o que foi digitado) e cria o negocio
+
+                $empresa = $this->crm_model->getByIdEmpresas($this->input->post('nomeEmpresa'));
+                $contato = $this->crm_model->getByIdContatos($this->input->post('nomeEmpresa'));
+
+                $dadosNegocio['idEmpresas'] = $empresa->idEmpresas;
+                $dadosNegocio['idContatos'] = $contato->idContatos;
+
+                $dadosNegocio['nomeDoNegocio'] = $this->input->post('nomeDoNegocio');
+                $dadosNegocio['vendedor'] = $vendedor['idusuarios'];
+                $dadosNegocio['valorDoNegocio'] = $this->input->post('valorDoNegocio');
+                $dadosNegocio['faseDoFunil'] = $this->input->post('faseDoFunil');
+                $dadosNegocio['dataFechamentoEsperada'] = $this->input->post('dataFechamentoEsperada');
+                $dadosNegocio['dataCadastro'] = date('Y/m/d');
+                $dadosNegocio['dataAlteracao'] = date('Y/m/d');
+                $dadosNegocio['situacao'] = "aberto";
+
+                $idNegocio = $this->crm_model->add('negocios', $dadosNegocio);
+                if ($idNegocio != 0) {
+                    redirect(base_url() . 'index.php/crm/editNegocios/' . $idNegocio);
                 } else {
                     $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
                 }
             }
         }
-// ESTAS VARIAVEIS SERVEM PARA MANTER O CAMPO SELECIONADO DEPOIS DA PESQUISA 
-        $data['statuspost'] = $this->input->post('status');
-        $data['fontepost'] = $this->input->post('fonte');
-        $data['segmentopost'] = $this->input->post('segmento');
-        $data['possuisistemapost'] = $this->input->post('possuisistema');
-        $data['probabilidadepost'] = $this->input->post('probabilidade');
-        $data['papelNaCompraPost'] = $this->input->post('papelNaCompra');
-        $data['marcadorPost'] = $this->input->post('marcador');
 
-
-        $data['segmento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', 'status=1');
-        $data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', 'status=1');
         $data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao', 'status=1');
-        $this->load->view('crm/adicionarNegocio', $data);
+        $this->load->view('crm/adicionarNegocios', $data);
         // $this->load->view('crm/adicionarLead', $data);
     }
 
-    public function addnaoatribuido() {
-
-        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'aLead')) {
-            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
-            redirect(base_url() . 'index.php/crm/gerenciar');
-        }
-        $data['dadoslogin'] = $this->session->all_userdata();
-
-        $this->form_validation->set_rules('empresa', 'Empresa', 'trim|required|min_length[3]');
-        $this->form_validation->set_rules('nome', 'Nome', 'trim|required|min_length[3]');
-//$this->form_validation->set_rules('whatsapp', 'whatsapp', 'trim|required|min_length[3]');
-        $this->form_validation->set_rules('telefone', 'telefone', 'trim|required|min_length[3]');
-        $this->form_validation->set_rules('email', 'E-mail', 'trim|valid_email');
-        $this->form_validation->set_rules('cargo', 'Cargo', 'trim|required|min_length[3]');
-        $this->form_validation->set_rules('endereco', 'Endereco', 'trim|required|min_length[3]');
-        $this->form_validation->set_rules('bairro', 'Bairro', 'trim|required|min_length[3]');
-        $this->form_validation->set_rules('cidade', 'Cidade', 'trim|required|min_length[3]');
-
-
-
-        if ($this->form_validation->run() == FALSE) {
-            $data['formErrors'] = validation_errors();
-        } else {
-            $dados['empresa'] = $this->input->post('empresa');
-            $dados['nome'] = $this->input->post('nome');
-            $dados['cnpj'] = $this->input->post('cnpj');
-            $dados['whatsapp'] = $this->input->post('whatsapp');
-            $dados['telefone'] = $this->input->post('telefone');
-            $dados['email'] = $this->input->post('email');
-            $dados['cargo'] = $this->input->post('cargo');
-            $dados['endereco'] = $this->input->post('endereco');
-            $dados['bairro'] = $this->input->post('bairro');
-            $dados['cidade'] = $this->input->post('cidade');
-            $dados['status'] = $this->input->post('status');
-            $dados['probabilidade'] = $this->input->post('probabilidade');
-            $dados['fonte'] = $this->input->post('fonte');
-            $dados['concorrente'] = $this->input->post('concorrente');
-            $dados['seguimento'] = $this->input->post('seguimento');
-            $dados['data'] = date('Y/m/d');
-            $dados['data_alteracao'] = date('Y/m/d');
-            $dados['possuisistema'] = $this->input->post('possuisistema');
-            $dados['usuario'] = 0;
-            $dados['atribuido'] = 0;
-            $dados['situacao'] = "novo";
-
-            $idLead = $this->crm_model->add('crm', $dados);
-            if ($idLead != 0) {
-                redirect(base_url() . 'index.php/crm/edit/' . $idLead);
-            } else {
-                $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
-            }
-        }
-
-// ESTAS VARIAVEIS SERVEM PARA MANTER O CAMPO SELECIONADO DEPOIS DA PESQUISA 
-        $data['statuspost'] = $this->input->post('status');
-        $data['fontepost'] = $this->input->post('fonte');
-        $data['seguimentopost'] = $this->input->post('seguimento');
-        $data['possuisistemapost'] = $this->input->post('possuisistema');
-        $data['probabilidadepost'] = $this->input->post('probabilidade');
-
-
-        $data['seguimento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', 'status=1');
-        $data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', 'status=1');
-        $data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao', 'status=1');
-        $this->load->view('crm/adicionarLeadNaoAtribuido', $data);
-    }
-
-    public function edit() {
+    public function editNegocios() {
         //checa se o usuário tem permissão de acessso a esta função
         if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'eLead')) {
             $this->session->set_flashdata('error', 'Você não tem permissão para visualizar produtos.');
@@ -641,22 +320,11 @@ class Crm extends CI_Controller {
         //verifica se o codigo passado no endereço do navegador é de um lead existente
         if (!$this->uri->segment(3) || !is_numeric($this->uri->segment(3))) {
             $this->session->set_flashdata('error', 'Item não pode ser encontrado, parâmetro não foi passado corretamente.');
-            redirect('crm/gerenciar');
+            redirect('empresa/gerenciar');
         }
-        $this->session->set_userdata('last_url', current_url());
-
 
         //faz a validação dos dados  que chegaram via post
-        $this->form_validation->set_rules('empresa', 'Empresa', 'trim|required|min_length[3]');
-        $this->form_validation->set_rules('nome', 'Nome', 'trim|required|min_length[3]');
-//$this->form_validation->set_rules('whatsapp', 'whatsapp', 'trim|required|min_length[3]');
-        $this->form_validation->set_rules('telefone', 'telefone', 'trim|required|min_length[3]');
-        $this->form_validation->set_rules('email', 'E-mail', 'trim|valid_email');
-        $this->form_validation->set_rules('cargo', 'Cargo', 'trim|required|min_length[3]');
-        $this->form_validation->set_rules('endereco', 'Endereco', 'trim|required|min_length[3]');
-        $this->form_validation->set_rules('bairro', 'Bairro', 'trim|required|min_length[3]');
-        $this->form_validation->set_rules('cidade', 'Cidade', 'trim|required|min_length[3]');
-
+        $this->form_validation->set_rules('idNegocio', 'idNegocio', 'trim|required');
 
         //se não passou na validação, devolve para a view os erros dos campos encontrados
         if ($this->form_validation->run() == FALSE) {
@@ -664,81 +332,223 @@ class Crm extends CI_Controller {
 
             //se passou na validação, recebe os dados via post e atribui nas variáveis
         } else {
-            $dados['empresa'] = $this->input->post('empresa');
-            $dados['nome'] = $this->input->post('nome');
-            $dados['cnpj'] = $this->input->post('cnpj');
-            $dados['whatsapp'] = $this->input->post('whatsapp');
-            $dados['telefone'] = $this->input->post('telefone');
-            $dados['email'] = $this->input->post('email');
-            $dados['cargo'] = $this->input->post('cargo');
-            $dados['endereco'] = $this->input->post('endereco');
-            $dados['bairro'] = $this->input->post('bairro');
-            $dados['cidade'] = $this->input->post('cidade');
-            $dados['status'] = $this->input->post('status');
-            $dados['probabilidade'] = $this->input->post('probabilidade');
-            $dados['fonte'] = $this->input->post('fonte');
-            $dados['concorrente'] = $this->input->post('concorrente');
-            $dados['seguimento'] = $this->input->post('seguimento');
-            $dados['data_alteracao'] = date('Y/m/d');
-            $dados['possuisistema'] = $this->input->post('possuisistema');
-            //$dados['usuario'] = $this->input->post('usuario'); comentado para nao substituir vendedor na edição
-            //pega todos os status que são considerados como encerrado
-            $where_array3['encerra'] = 1;
-            $estadoencerrado = $this->crm_model->getConfig('status_crm', 'idstatus,descricao', $where_array3);
 
-            //se o estado que recebeu via post estiver dentro dos estados considerados que encerram lead,
-            //adiciona a data atual como data de encerramento
-            foreach ($estadoencerrado as $value2) {
-                if ($dados['status'] == $value2->idstatus) {
-                    $dados['data_encerra'] = date('Y/m/d');
-                    if ($dados['status'] == 5) { //se o status é fechado ganho, escreve ganho na situação, caso contrário escreve perdido
-                        $dados['situacao'] = "ganho";
-                    } else {
-                        $dados['situacao'] = "perdido";
-                    }
-                }
-            }
+            $dadosNegocio['idNegocio'] = $this->input->post('idNegocio');
+            $dadosNegocio['nomeDoNegocio'] = $this->input->post('nomeDoNegocio');
+            $dadosNegocio['valorDoNegocio'] = $this->input->post('valorDoNegocio');
+            $dadosNegocio['faseDoFunil'] = $this->input->post('faseDoFunil');
+            $dadosNegocio['dataFechamentoEsperada'] = $this->input->post('dataFechamentoEsperada');
+            $dadosNegocio['dataAlteracao'] = date('Y/m/d');
+            $dadosNegocio['situacao'] = "aberto";
 
-            //depois de receber as variáveis no post e definir as outras variáveis nos testes anteriores, parte para o update na tabela
-            if ($this->crm_model->edit('crm', $dados, 'idcrm', $this->input->post('idcrm')) == TRUE) {
-                $this->session->set_flashdata('success_msg', 'Cadastro realizado com sucesso!');
-                $data['formErrors'] = null;
-                $where_array3['encerra'] = 1;
-                $estadoencerrado = $this->crm_model->getConfig('status_crm', 'idstatus,descricao', $where_array3);
-                foreach ($estadoencerrado as $value2) {
-                    if ($dados['status'] == $value2->idstatus) {
-                        redirect(base_url() . 'index.php/crm/gerenciar');
-                    }
-                }
-                redirect(base_url() . 'index.php/crm/edit/' . $this->input->post('idcrm'));
+            if ($this->crm_model->edit('negocios', $dadosNegocio, 'idNegocio', $dadosNegocio['idNegocio']) == TRUE) {
+                redirect(base_url() . 'index.php/crm/editNegocios/' . $dadosNegocio['idNegocio']);
             } else {
                 $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
             }
         }
-        $where_array = array();
-        $where_array['encerra'] = 0;
-        $where_array['status'] = 1;
-
-        $where_array2 = array();
-        $where_array2['encerra'] = 1;
-        $where_array2['status'] = 1;
 
         $where_array3 = array();
         $where_array3['idLead_proposta'] = $this->uri->segment(3);
 
-        $data['seguimento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', 'status=1');
+        //pega id da empresa deste negocio para utilizar na pesquisa da empresa
+        $empresa = $this->crm_model->getById($this->uri->segment(3));
+
+        //$data['statusfunil'] = $this->empresa_model->getConfig('status_empresa', 'idstatus,descricao,encerra', $where_array);
+        //$data['statusencerra'] = $this->empresa_model->getConfig('status_crm', 'idstatus,descricao', $where_array2);
+        $data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao,encerra', 'encerra=0');
+        $data['segmento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', 'status=1');
         $data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', 'status=1');
-        $data['statusfunil'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao,encerra', $where_array);
-        $data['statusencerra'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao', $where_array2);
-        $data['timeline'] = $this->crm_model->getTimeline($this->uri->segment(3));
+        $data['timelineNegocios'] = $this->crm_model->getTimelineNegocios($this->uri->segment(3));
         $data['dadoslogin'] = $this->session->all_userdata();
         $data['permissao'] = $this->crm_model->getPermissao('permissoes', 'idPermissao,nome,data,situacao');
         $data['usuarios'] = $this->crm_model->getConfig('usuarios', 'idusuarios,nome', '');
-        $data['result'] = $this->crm_model->getById($this->uri->segment(3));
+        $data['negocios'] = $this->crm_model->getById($this->uri->segment(3));
+        $data['tarefas'] = $this->crm_model->getTarefas($this->uri->segment(3));
+        $data['empresa'] = $this->crm_model->getByIdEmpresas($empresa->idEmpresas);
+        $data['contato'] = $this->crm_model->getByIdContato($empresa->idEmpresas);
         $data['proposta'] = $this->crm_model->getPropostas('propostas', 'numpropostas,fantasia,contato,data,status', $where_array3, '');
         $data['agenda'] = $this->crm_model->getConfig('calendario', 'id,title,color,start,end', $where_array3);
+        $data['tipo'] = $this->crm_model->getConfig('tipo_empresa', 'idTipoEmpresa,descricao', 'status=1');
 
-        $this->load->view('crm/alterarLead', $data);
+
+        $this->load->view('crm/alterarNegocios', $data);
+    }
+
+    public function negocioGanho() {
+        //checa se o usuário tem permissão de acessso a esta função
+        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'eLead')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar produtos.');
+            redirect(base_url() . 'index.php/crm/gerenciar');
+        }
+
+        //faz a validação dos dados  que chegaram via post
+        $this->form_validation->set_rules('idNegocio', 'idNegocio', 'trim|required');
+
+        //se não passou na validação, devolve para a view os erros dos campos encontrados
+        if ($this->form_validation->run() == FALSE) {
+            $data['formErrors'] = validation_errors();
+
+            //se passou na validação, recebe os dados via post e atribui nas variáveis
+        } else {
+
+            $dadosNegocio['idNegocio'] = $this->input->post('idNegocio');
+            $dadosNegocio['nomeDoNegocio'] = $this->input->post('nomeDoNegocio');
+            $dadosNegocio['valorDoNegocio'] = $this->input->post('valorDoNegocio');
+            $dadosNegocio['faseDoFunil'] = $this->input->post('faseDoFunil');
+            $dadosNegocio['dataFechamentoEsperada'] = $this->input->post('dataFechamentoEsperada');
+            $dadosNegocio['dataAlteracao'] = date('Y/m/d');
+            $dadosNegocio['dataEncerra'] = date('Y/m/d');
+            $dadosNegocio['situacao'] = "ganho";
+
+            if ($this->crm_model->edit('negocios', $dadosNegocio, 'idNegocio', $dadosNegocio['idNegocio']) == TRUE) {
+                redirect(base_url() . 'index.php/crm/negociosKanban');
+            } else {
+                $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
+            }
+        }
+    }
+
+    public function adicionarTarefas() {
+        //checa se o usuário tem permissão de acessso a esta função
+        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'eLead')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar produtos.');
+            redirect(base_url() . 'index.php/crm/gerenciar');
+        }
+        date_default_timezone_set('America/Sao_Paulo');
+
+        //faz a validação dos dados  que chegaram via post
+        $this->form_validation->set_rules('idNegocio', 'idNegocio', 'trim|required');
+
+        //se não passou na validação, devolve para a view os erros dos campos encontrados
+        if ($this->form_validation->run() == FALSE) {
+            $data['formErrors'] = validation_errors();
+
+            //se passou na validação, recebe os dados via post e atribui nas variáveis
+        } else {
+
+            $dadosNegocio['idNegocio'] = $this->input->post('idNegocio');
+            $dadosNegocio['titulo'] = $this->input->post('titulo');
+            $dadosNegocio['descricao'] = $this->input->post('descricao');
+            $dadosNegocio['vendedor'] = $this->session->idusuarios;
+            $dadosNegocio['tipo'] = $this->input->post('tipo');
+            $dadosNegocio['icone'] = $this->input->post('icone');
+            $dadosNegocio['data'] = $this->input->post('data');
+            $dadosNegocio['status'] = "aberto";
+
+            $dateTimeline = new DateTime($this->input->post('data'));
+            $dadosTimeline['idNegocio'] = $this->input->post('idNegocio');
+            $dadosTimeline['descricao'] = "<strong>TAREFA CRIADA <br>Título: </strong>" . $this->input->post('titulo') . "<strong> Data: </strong>" . $dateTimeline->format('d-m-Y / H:i') . "<br><br>" . "<strong>Descricao: </strong>" . $this->input->post('descricao');
+            $dadosTimeline['nome'] = $this->session->nome;
+            $dadosTimeline['tipo'] = $this->input->post('icone');
+            $dadosTimeline['data'] = date('d-m-Y H:i');
+
+            if ($this->crm_model->add('tarefas_negocios', $dadosNegocio) == TRUE) {
+                $this->crm_model->add('timeline_negocios', $dadosTimeline);
+                redirect(base_url() . 'index.php/crm/editNegocios/' . $this->input->post('idNegocio'));
+            } else {
+                $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
+            }
+        }
+    }
+
+    public function alterarTarefas() {
+        //checa se o usuário tem permissão de acessso a esta função
+        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'eLead')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar produtos.');
+            redirect(base_url() . 'index.php/crm/gerenciar');
+        }
+        date_default_timezone_set('America/Sao_Paulo');
+
+        //faz a validação dos dados  que chegaram via post
+        $this->form_validation->set_rules('idNegocio', 'idNegocio', 'trim|required');
+
+        //se não passou na validação, devolve para a view os erros dos campos encontrados
+        if ($this->form_validation->run() == FALSE) {
+            $data['formErrors'] = validation_errors();
+
+            //se passou na validação, recebe os dados via post e atribui nas variáveis
+        } else {
+            $dadosTarefa['idTarefasNegocios'] = $this->input->post('idTarefasNegocios');
+            $dadosTarefa['idNegocio'] = $this->input->post('idNegocio');
+            $dadosTarefa['titulo'] = $this->input->post('titulo');
+            $dadosTarefa['descricao'] = $this->input->post('descricao');
+            $dadosTarefa['vendedor'] = $this->session->idusuarios;
+            $dadosTarefa['tipo'] = $this->input->post('tipo');
+            $dadosTarefa['icone'] = $this->input->post('icone');
+            $dadosTarefa['data'] = $this->input->post('data');
+            $dadosTarefa['status'] = $this->input->post('status');
+            ;
+            $tarefaAlteradaEncerrada = $this->input->post('tarefaAlteradaEncerrada');
+
+            $dateTimeline = new DateTime($this->input->post('data'));
+            $dadosTimeline['idNegocio'] = $this->input->post('idNegocio');
+            $dadosTimeline['descricao'] = "<strong>" . $tarefaAlteradaEncerrada . "</strong> <br>" . "<strong>Título: </strong>" . $this->input->post('titulo') . "<strong> Data: </strong>" . $dateTimeline->format('d-m-Y / H:i') . "<br><br>" . "<strong>Descricao: </strong>" . $this->input->post('descricao');
+            $dadosTimeline['nome'] = $this->session->nome;
+            $dadosTimeline['tipo'] = $this->input->post('icone');
+            $dadosTimeline['data'] = date('d-m-Y H:i');
+
+            if ($this->crm_model->edit('tarefas_negocios', $dadosTarefa, 'idTarefasNegocios', $this->input->post('idTarefasNegocios')) == TRUE) {
+                if ($this->input->post('registraNaTimeline') == "sim") {
+                    $this->crm_model->add('timeline_negocios', $dadosTimeline);
+                }
+                redirect(base_url() . 'index.php/crm/editNegocios/' . $this->input->post('idNegocio'));
+            } else {
+                $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
+            }
+        }
+    }
+
+    function excluirTarefas() {
+
+        $ID = $this->input->post('idTarefasNegocios');
+
+        if ($this->crm_model->delete('tarefas_negocios', 'idTarefasNegocios', $ID) == true) {
+
+            redirect(base_url() . 'index.php/crm/editNegocios/' . $this->input->post('idNegocio'));
+        } else {
+            echo json_encode(array('result' => false));
+        }
+    }
+
+    public function sendgrid() {
+
+        // require 'vendor/autoload.php'; // If you're using Composer (recommended)
+// Comment out the above line if not using Composer
+        require("localhost/proposta_ci/index.php/third_party/sendgrid/sendgrid-php.php");
+// If not using Composer, uncomment the above line and
+// download sendgrid-php.zip from the latest release here,
+// replacing <PATH TO> with the path to the sendgrid-php.php file,
+// which is included in the download:
+// https://github.com/sendgrid/sendgrid-php/releases
+
+        $email = new \SendGrid\Mail\Mail();
+        $email->setFrom("test@example.com", "Example User");
+        $email->setSubject("Sending with SendGrid is Fun");
+        $email->addTo("test@example.com", "Example User");
+        $email->addContent("text/plain", "and easy to do anywhere, even with PHP");
+        $email->addContent(
+                "text/html", "<strong>and easy to do anywhere, even with PHP</strong>"
+        );
+        $sendgrid = new \SendGrid(getenv('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'));
+        try {
+            $response = $sendgrid->send($email);
+            print $response->statusCode() . "\n";
+            print_r($response->headers());
+            print $response->body() . "\n";
+        } catch (Exception $e) {
+            echo 'Caught exception: ' . $e->getMessage() . "\n";
+        }
+    }
+
+    public function atualizaClienteContrato() {
+        $data = file_get_contents('http://localhost:8886/OData/OData.svc/contrato?$filter=inativo%20eq%20%22N%22');
+        $data2 = json_decode($data);
+        foreach ($data2->value as $r) {
+            //echo "Codigo: ". $r->codigo. " - Nome: ".$r->nome . "<br>";
+        }
+
+        var_dump($data2->value);
     }
 
     public function excluirCRM() {
@@ -1112,21 +922,23 @@ class Crm extends CI_Controller {
     public function adicionarTimeline() {
         date_default_timezone_set('America/Sao_Paulo');
         $data = date('d-m-Y H:i');
-        $idcrm = $this->input->post('idcrm');
+        $idNegocio = $this->input->post('idNegocio');
         $descricao = $this->input->post('descricao');
+        $tipo = $this->input->post('tipo');
         $nome = $this->session->nome;
 
 
 
 
         $data = array(
-            'idcrm' => $idcrm,
+            'idNegocio' => $idNegocio,
             'descricao' => $descricao,
             'nome' => $nome,
+            'tipo' => $tipo,
             'data' => $data
         );
 
-        if ($this->crm_model->add('timeline_crm', $data) == true) {
+        if ($this->crm_model->add('timeline_negocios', $data) == true) {
             echo json_encode(array('result' => true));
         } else {
             echo json_encode(array('result' => false));
@@ -1135,13 +947,35 @@ class Crm extends CI_Controller {
 
     function excluirTimeline() {
 
-        $ID = $this->input->post('idTimeline_crm');
-        if ($this->crm_model->delete('timeline_crm', 'idTimeline_crm', $ID) == true) {
+        $ID = $this->input->post('idTimeline_negocios');
+        if ($this->crm_model->delete('timeline_negocios', 'idTimeline_negocios', $ID) == true) {
 
             echo json_encode(array('result' => true));
         } else {
             echo json_encode(array('result' => false));
         }
+    }
+
+    public function autocompleteCliente() {
+        $term = $this->input->get('term');
+        $data = $this->crm_model->getEmpresa($term);
+        echo json_encode($data);
+//        if ($tipo == "cpf") {
+//            $this->db->like('nome', $term);
+//            $data = file_get_contents('http://localhost:8886/OData/OData.svc/clientes?$filter=cnpj%20like%20(%27%%25' . $term . '%%25%27)');
+//            echo $data;
+//        }
+//        if ($tipo == "razao") {
+//            $this->db->like('nome', $term);
+//            $data = file_get_contents('http://localhost:8886/OData/OData.svc/clientes?$filter=nome%20like%20(%27%%25' . $term . '%%25%27)');
+//            echo $data;
+//        }
+//
+//        if ($tipo == "fantasia") {
+//            $this->db->like('nome', $term);
+//            $data = file_get_contents('http://localhost:8886/OData/OData.svc/clientes?$filter=fantasia%20like%20(%27%%25' . $term . '%%25%27)');
+//            echo $data;
+//        }
     }
 
 }

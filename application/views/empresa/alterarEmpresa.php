@@ -26,216 +26,230 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="tab_1">
-                    <div class="col-md-6">
-                        <div class="row">
-                            <div class="box box-success">
-                                <div class="box-header with-border">
-                                    <div class="col-md-10">
-                                        <h3 class="box-title">EMPRESA</h3>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <span class="label label-danger"><?php
-                                            foreach ($usuarios as $comercial) {
-                                                if ($empresa->vendedor == $comercial->idusuarios) {
-                                                    echo $comercial->nome;
-                                                }
-                                            }
-                                            ?></span>
-                                    </div>
-                                </div>
-                                <div class="box-body">
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <label>Nome da empresa / Razão Social </label>
-                                                <input type="text" class="form-control" name="nomeEmpresa" required="" minlength=3 value="<?php echo $empresa->nomeEmpresa ?>">
-                                                <input type="hidden" class="form-control" name="usuario" value="<?php echo $dadoslogin['idusuarios'] ?>">
-                                            </div>
+                    <form action="<?php echo base_url() ?>index.php/empresa/edit" method="post">
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="box box-success">
+                                    <div class="box-header with-border">
+                                        <div class="col-md-10">
+                                            <h3 class="box-title">EMPRESA</h3>
                                         </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>CNPJ</label>
-                                                <input type="text" class="form-control" maxlength="18" name="cnpjEmpresa" value="<?php echo $empresa->cnpj ?>" >
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label>Tipo</label>
-                                                <select required="" class="form-control" name="tipoEmpresa" data-toggle="tooltip" data-placement="left" title="Tipo do contato?">
-                                                    <option value = "" ></option>
-                                                    <?php
-                                                    foreach ($tipo as $value2) {
-                                                        ?>
-                                                        <option value = <?php echo $value2->idTipoEmpresa; ?> <?php
-                                                        if ($empresa->tipo == $value2->idTipoEmpresa) {
-                                                            echo "selected";
-                                                        }
-                                                        ?>><?php echo $value2->descricao; ?></option>
-                                                                <?php
-                                                            }
-                                                            ?>
-                                                </select>
+                                            <span class="label label-danger"><?php
+                                                foreach ($usuarios as $comercial) {
+                                                    if ($empresa->vendedor == $comercial->idusuarios) {
+                                                        echo $comercial->nome;
+                                                    }
+                                                }
+                                                ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <label>Nome da empresa / Razão Social </label>
+                                                    <input type="text" class="form-control" name="nomeEmpresa" required="" minlength=3 value="<?php echo $empresa->nomeEmpresa ?>">
+                                                    <input type="hidden" class="form-control" name="idEmpresas" value="<?php echo $empresa->idEmpresas ?>">
+                                                    <input type="hidden" class="form-control" name="usuario" value="<?php echo $dadoslogin['idusuarios'] ?>">
+                                                    <?php if($alterarNegocio != 0) { ?>
+                                                        <input type="hidden" class="form-control" name="idNegocios" value="<?php echo $alterarNegocio; ?>">
+                                                    <?php } ?>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>CNPJ</label>
+                                                    <input type="text" class="form-control" maxlength="18" name="cnpjEmpresa" value="<?php echo $empresa->cnpj ?>" >
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-5">
-                                            <div class="form-group">
-                                                <label>Fonte da indicação</label>
-                                                <select required="" class="form-control" name="fonte" data-toggle="tooltip" data-placement="left" title="Quem indicou?">
-                                                    <option value = "" ></option>
-                                                    <?php
-                                                    foreach ($indicacao as $value2) {
-                                                        ?>
-                                                        <option value = <?php echo $value2->idindicacao; ?> <?php
-                                                        if ($empresa->fonteIndicacao == $value2->idindicacao) {
-                                                            echo "selected";
-                                                        }
-                                                        ?>><?php echo $value2->descricao; ?></option>
-                                                                <?php
-                                                            }
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label>Tipo</label>
+                                                    <select required="" class="form-control" name="tipoEmpresa" data-toggle="tooltip" data-placement="left" title="Tipo do contato?">
+                                                        <option value = "" ></option>
+                                                        <?php
+                                                        foreach ($tipo as $value2) {
                                                             ?>
-                                                </select>
+                                                            <option value = <?php echo $value2->idTipoEmpresa; ?> <?php
+                                                            if ($empresa->tipo == $value2->idTipoEmpresa) {
+                                                                echo "selected";
+                                                            }
+                                                            ?>><?php echo $value2->descricao; ?></option>
+                                                                    <?php
+                                                                }
+                                                                ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label>Fonte da indicação</label>
+                                                    <select required="" class="form-control" name="fonte" data-toggle="tooltip" data-placement="left" title="Quem indicou?">
+                                                        <option value = "" ></option>
+                                                        <?php
+                                                        foreach ($indicacao as $value2) {
+                                                            ?>
+                                                            <option value = <?php echo $value2->idindicacao; ?> <?php
+                                                            if ($empresa->fonteIndicacao == $value2->idindicacao) {
+                                                                echo "selected";
+                                                            }
+                                                            ?>><?php echo $value2->descricao; ?></option>
+                                                                    <?php
+                                                                }
+                                                                ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label>Segmento</label>
+                                                    <select required="" class="form-control" name="segmentoEmpresa">
+                                                        <option value = "" ></option>
+                                                        <?php
+                                                        foreach ($segmento as $value2) {
+                                                            ?>
+                                                            <option value = <?php echo $value2->idseguimento; ?> <?php
+                                                            if ($empresa->segmento == $value2->idseguimento) {
+                                                                echo "selected";
+                                                            }
+                                                            ?>><?php echo $value2->descricao; ?></option>
+                                                                    <?php
+                                                                }
+                                                                ?>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-5">
-                                            <div class="form-group">
-                                                <label>Segmento</label>
-                                                <select required="" class="form-control" name="segmentoEmpresa">
-                                                    <option value = "" ></option>
-                                                    <?php
-                                                    foreach ($segmento as $value2) {
-                                                        ?>
-                                                        <option value = <?php echo $value2->idseguimento; ?> <?php
-                                                        if ($empresa->segmento == $value2->idseguimento) {
-                                                            echo "selected";
-                                                        }
-                                                        ?>><?php echo $value2->descricao; ?></option>
-                                                                <?php
-                                                            }
-                                                            ?>
-                                                </select>
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label>Endereço </label>
+                                                    <input type="text" class="form-control" name="enderecoEmpresa" value="<?php echo $empresa->enderecoEmpresa ?>" >
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <label>Compl. </label>
+                                                    <input type="text" class="form-control" name="complementoEmpresa" value="<?php echo $empresa->complementoEmpresa ?>">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Bairro </label>
+                                                    <input type="text" class="form-control" name="bairroEmpresa" value="<?php echo $empresa->bairroEmpresa ?>">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Cidade </label>
+                                                    <input type="text" class="form-control" name="cidadeEmpresa" value="<?php echo $empresa->cidadeEmpresa ?>"> 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Telefone</label>
+                                                    <input type="text" class="form-control" maxlength="15" name="telefoneEmpresa" value="<?php echo $empresa->telefone ?>">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label>Rede social / Site</label>
+                                                    <input type="text" class="form-control" name="siteEmpresa" value="<?php echo $empresa->site ?>">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Qual software usa?</label>
+                                                    <input required="" type="text" class="form-control" maxlength="15" name="softwareAtual" data-toggle="tooltip" data-placement="bottom" title="Colocar o nome do sistema" value="<?php echo $empresa->softwareAtual ?>">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-5">
-                                            <div class="form-group">
-                                                <label>Endereço </label>
-                                                <input type="text" class="form-control" name="enderecoEmpresa" value="<?php echo $empresa->enderecoEmpresa ?>" >
-                                            </div>
-                                        </div>
-                                        <div class="col-md-1">
-                                            <div class="form-group">
-                                                <label>Compl. </label>
-                                                <input type="text" class="form-control" name="complementoEmpresa" value="<?php echo $empresa->complementoEmpresa ?>">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Bairro </label>
-                                                <input type="text" class="form-control" name="bairroEmpresa" value="<?php echo $empresa->bairroEmpresa ?>">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Cidade </label>
-                                                <input type="text" class="form-control" name="cidadeEmpresa" value="<?php echo $empresa->cidadeEmpresa ?>"> 
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Telefone</label>
-                                                <input type="text" class="form-control" maxlength="15" name="telefoneEmpresa" value="<?php echo $empresa->telefone ?>">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-5">
-                                            <div class="form-group">
-                                                <label>Rede social / Site</label>
-                                                <input type="text" class="form-control" name="siteEmpresa" value="<?php echo $empresa->site ?>">
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="box box-success">
+                                    <div class="box-header with-border">
                                         <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Qual software usa?</label>
-                                                <input required="" type="text" class="form-control" maxlength="15" name="softwareAtual" data-toggle="tooltip" data-placement="bottom" title="Colocar o nome do sistema" value="<?php echo $empresa->softwareAtual ?>">
+                                            <h3 class="box-title">CONTATO</h3>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Nome do contato </label>
+                                                    <input type="hidden" class="form-control" name="idContatos" value="<?php echo $contato->idContatos ?>">
+                                                    <input type="text" class="form-control" name="nomeContato" required="" value="<?php echo $contato->nomeContato ?>">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Cargo </label>
+                                                    <input type="text" class="form-control" name="cargo" value="<?php echo $contato->cargo ?>">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Papel na compra </label>
+                                                    <select class="form-control" name="papelNaCompra" data-toggle="tooltip" data-placement="left" title="Decisor: Quem decide a compra Influenciador: Influencia compra">
+                                                        <option value="naosei" <?php
+                                                        if ($contato->papelNaCompra == "naosei") {
+                                                            echo "selected";
+                                                        }
+                                                        ?>>Não sei</option>
+                                                        <option value="decisor" <?php
+                                                        if ($contato->papelNaCompra == "decisor") {
+                                                            echo "selected";
+                                                        }
+                                                        ?>>Decisor</option>
+                                                        <option value="influenciador" <?php
+                                                        if ($contato->papelNaCompra == "influenciador") {
+                                                            echo "selected";
+                                                        }
+                                                        ?>>Influenciador</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Telefone</label>
+                                                    <input type="text" class="form-control" maxlength="15" name="telefoneContato" value="<?php echo $contato->telefoneContato ?>">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Whatsapp</label>
+                                                    <input type="text" class="form-control" maxlength="15" name="whatsappContato" value="<?php echo $contato->whatsappContato ?>">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>E-mail</label>
+                                                    <input type="email" class="form-control" name="emailContato" value="<?php echo $contato->emailContato ?>">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group text-left">
+                                                    <a title="cancelar" href="<?php echo base_url() ?>index.php/empresa/gerenciar" class="btn btn-danger btn-small">CANCELAR </a>
+                                                    <button type="submit" class="btn btn-success"> SALVAR </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="box box-success">
-                                <div class="box-header with-border">
-                                    <div class="col-md-4">
-                                        <h3 class="box-title">CONTATO</h3>
-                                    </div>
-                                </div>
-                                <div class="box-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Nome do contato </label>
-                                                <input type="text" class="form-control" name="nomeContato" required="" value="<?php echo $contato->nomeContato ?>">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Cargo </label>
-                                                <input type="text" class="form-control" name="cargo" value="<?php echo $contato->cargo ?>">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Papel na compra </label>
-                                                <select class="form-control" name="papelNaCompra" data-toggle="tooltip" data-placement="left" title="Decisor: Quem decide a compra Influenciador: Influencia compra">
-                                                    <option value="naosei" <?php
-                                                    if ($contato->papelNaCompra == "naosei") {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>Não sei</option>
-                                                    <option value="decisor" <?php
-                                                    if ($contato->papelNaCompra == "decisor") {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>Decisor</option>
-                                                    <option value="influenciador" <?php
-                                                    if ($contato->papelNaCompra == "influenciador") {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>Influenciador</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Telefone</label>
-                                                <input type="text" class="form-control" maxlength="15" name="telefoneContato" value="<?php echo $contato->telefoneContato ?>">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Whatsapp</label>
-                                                <input type="text" class="form-control" maxlength="15" name="whatsappContato" value="<?php echo $contato->whatsappContato ?>">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>E-mail</label>
-                                                <input type="email" class="form-control" name="emailContato" value="<?php echo $contato->emailContato ?>">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                     <div class="col-md-6">
                         <div class="row">
                             <div class="col-md-12">
@@ -256,7 +270,7 @@
                                     <h4 class="box-title">TIMELINE DE HISTÓRICO</h4>
                                     <form id="formTimeline" action="<?php echo base_url() ?>empresa/adicionarTimeline" method="post">
                                         <div class="col-md-10">
-                                            
+
                                             <input type="hidden" name="tipo" id="tipo" value="fa fa-comments bg-yellow" />
                                             <input type="hidden" name="idEmpresas" id="idEmpresas" value="<?php echo $empresa->idEmpresas ?>" />
                                             <label for="">Descrição</label>
@@ -373,7 +387,7 @@
                                 </form>
 
                                 <div class="box-body">
-                                    <?php if (!$proposta) { ?>
+                                    <?php if (!$negocios) { ?>
                                         <div class="widget-box">
                                             <div class="widget-content nopadding table-responsive">
                                                 <table class="table table-bordered ">
@@ -406,56 +420,44 @@
                                                 <table class="table table-bordered ">
                                                     <thead>
                                                         <tr style="backgroud-color: #2D335B">
-                                                            <th>Nº Proposta</th>
-                                                            <th>Cliente</th>
+                                                            <th>Negócio</th>
+                                                            <th>Empresa</th>
                                                             <th>Contato</th>
-                                                            <th>Data</th>
-                                                            <th>Status</th>
-                                                            <th>Ações</th>
+                                                            <th>Fase funil</th>
+                                                            <th>Valor</th>
+                                                            <th>Cadastro</th>
+                                                            <th>Fechamento esperada</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <?php foreach ($proposta as $r) { ?>
+                                                        <?php foreach ($negocios as $r) { ?>
                                                             <tr> 
-                                                                <td><?php echo $r->numpropostas; ?></td>
-                                                                <td><?php echo $r->fantasia; ?></td> 
-                                                                <td><?php echo $r->contato; ?></td> 
-                                                                <td><?php echo $r->data; ?></td> 
-                                                                <td><?php
-                                                                    if ($r->status == 1) {
-                                                                        echo "<span class='label label-primary'>Aguardando Aprovação</span>";
-                                                                    }
-                                                                    if ($r->status == 2) {
-                                                                        echo "<span class='label label-success'>Fechado Ganho</span>";
-                                                                    }
-                                                                    if ($r->status == 3) {
-                                                                        echo "<span class='label label-danger'>Fechado Perdido</span>";
-                                                                    }
-                                                                    ?>
-                                                                </td>
-
+                                                                <td><?php echo $r->idNegocio. "-" .$r->nomeDoNegocio?></td>
+                                                                <td><?php echo $r->nomeEmpresa; ?></td> 
+                                                                <td><?php echo $r->nomeContato; ?></td> 
+                                                                <td><?php echo $r->descricao; ?></td> 
+                                                                <td><?php echo "R$ ".number_format($r->valorDoNegocio, 2, ',', '.'); ?></td>
+                                                                <td><?php $dataCadastro = date_create_from_format('Y-m-d', $r->dataCadastro); echo date_format($dataCadastro, 'd-m-Y'); ?></td>
+                                                                <td><?php $dataFechamentoEsperada = date_create_from_format('Y-m-d', $r->dataFechamentoEsperada); echo date_format($dataFechamentoEsperada, 'd-m-Y'); ?></td>
 
                                                                 <td class="text-center">
-                                                                    <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'iProposta')) { ?>
-                                                                        <a title="imprimir" href="<?php echo base_url() . 'index.php/proposta/imprimir/' . $r->numpropostas ?>" class="btn btn-warning btn-small"><i class="fa-fw glyphicon glyphicon-print"></i> </a>
-                                                                    <?php } ?>
                                                                     <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'eProposta')) { ?>
-                                                                        <a title="editar" href="<?php echo base_url() ?>index.php/proposta/edit/<?php echo $r->numpropostas; ?>" class="btn btn-primary btn-small"><i class="fa-fw glyphicon glyphicon-edit"></i> </a>
+                                                                        <a title="editar" href="<?php echo base_url() ?>index.php/crm/editNegocios/<?php echo $r->idNegocio; ?>" class="btn btn-primary btn-small"><i class="fa-fw glyphicon glyphicon-edit"></i> </a>
                                                                     <?php } ?>
                                                                     <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'dProposta')) { ?>
-                                                                        <a title="excluir"  class="btn btn-danger btn-small" data-toggle="modal" data-target="#modal-danger<?php echo $r->numpropostas; ?>"><i class="fa-fw glyphicon glyphicon-trash"></i> </a>
+                                                                        <a title="excluir"  class="btn btn-danger btn-small" data-toggle="modal" data-target="#modal-danger<?php echo $r->idNegocio; ?>"><i class="fa-fw glyphicon glyphicon-trash"></i> </a>
                                                                     <?php } ?>
                                                                     <!--MODAL BOTÃO EXCLUIR-->
-                                                                    <div class="modal modal-default fade" id="modal-danger<?php echo $r->numpropostas; ?>">
+                                                                    <div class="modal modal-default fade" id="modal-danger<?php echo $r->idNegocio; ?>">
                                                                         <div class="modal-dialog">
                                                                             <div class="modal-content">
                                                                                 <div class="modal-header">
                                                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                                         <span aria-hidden="true">×</span></button>
-                                                                                    <h4 class="modal-title">Deseja excluir a proposta <?php echo $r->numpropostas; ?>?</h4>
+                                                                                    <h4 class="modal-title">Deseja excluir o negócio? <?php echo $r->idNegocio; ?>?</h4>
                                                                                 </div>
                                                                                 <form action="<?php echo base_url() ?>index.php/proposta/excluirProposta" method="post">
-                                                                                    <input type="hidden" id="numPropostasExcluir" name="numPropostasExcluir" value="<?php echo $r->numpropostas; ?>">
+                                                                                    <input type="hidden" id="numPropostasExcluir" name="numPropostasExcluir" value="<?php echo $r->idNegocio; ?>">
                                                                                     <div class="modal-footer">
                                                                                         <button type="button" class="btn btn-primary pull-left" data-dismiss="modal">Desistir</button>
                                                                                         <button type="submit" class="btn btn-danger">Excluir<i class="icon-remove icon-white"></i></button'; ?>

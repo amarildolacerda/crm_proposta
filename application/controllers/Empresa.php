@@ -180,7 +180,7 @@ class Empresa extends CI_Controller {
             $dadosContato['papelNaCompra'] = $this->input->post('papelNaCompra');
             $dadosContato['telefoneContato'] = $this->input->post('telefoneContato');
             $dadosContato['whatsappContato'] = $this->input->post('whatsappContato');
-            $dadosContato['emailContato'] = $this->input->post('email');
+            $dadosContato['emailContato'] = $this->input->post('emailContato');
             $dadosContato['dataCadastro'] = date('Y/m/d');
             $dadosContato['dataAlteracao'] = date('Y/m/d');
 
@@ -212,16 +212,13 @@ class Empresa extends CI_Controller {
             redirect(base_url() . 'index.php/empresa/gerenciar');
         }
 
-        //verifica se o codigo passado no endereço do navegador é de um lead existente
-        if (!$this->uri->segment(3) || !is_numeric($this->uri->segment(3))) {
-            $this->session->set_flashdata('error', 'Item não pode ser encontrado, parâmetro não foi passado corretamente.');
-            redirect('empresa/gerenciar');
-        }
-        $this->session->set_userdata('last_url', current_url());
-
-
+//       verifica se o codigo passado no endereço do navegador é de uma empresa existente
+//        if (!$this->uri->segment(3) || !is_numeric($this->uri->segment(3))) {
+//            $this->session->set_flashdata('error', 'Item não pode ser encontrado, parâmetro não foi passado corretamente.');
+//            redirect('empresa/gerenciar');
+//        }
         //faz a validação dos dados  que chegaram via post
-        $this->form_validation->set_rules('nomeEmpresa', 'Empresa', 'trim|required|min_length[3]');
+        $this->form_validation->set_rules('nomeEmpresa', 'Empresa', 'trim|required');
 
         //se não passou na validação, devolve para a view os erros dos campos encontrados
         if ($this->form_validation->run() == FALSE) {
@@ -229,6 +226,7 @@ class Empresa extends CI_Controller {
 
             //se passou na validação, recebe os dados via post e atribui nas variáveis
         } else {
+
             $dadosEmpresa['nomeEmpresa'] = $this->input->post('nomeEmpresa');
             $dadosEmpresa['cnpj'] = $this->input->post('cnpjEmpresa');
             $dadosEmpresa['telefone'] = $this->input->post('telefoneEmpresa');
@@ -251,37 +249,34 @@ class Empresa extends CI_Controller {
             $dadosContato['papelNaCompra'] = $this->input->post('papelNaCompra');
             $dadosContato['telefoneContato'] = $this->input->post('telefoneContato');
             $dadosContato['whatsappContato'] = $this->input->post('whatsappContato');
-            $dadosContato['emailContato'] = $this->input->post('email');
+            $dadosContato['emailContato'] = $this->input->post('emailContato');
             $dadosContato['dataAlteracao'] = date('Y/m/d');
 
-
+            $idNegocios = $this->input->post('idNegocios');
             //depois de receber as variáveis no post e definir as outras variáveis nos testes anteriores, parte para o update na tabela
-            if ($this->empresa_model->edit('crm', $dados, 'idcrm', $this->input->post('idcrm')) == TRUE) {
+            if ($this->empresa_model->edit('empresas', $dadosEmpresa, 'idEmpresas', $this->input->post('idEmpresas')) == TRUE) {
+                $this->empresa_model->edit('contatos', $dadosContato, 'idContatos', $this->input->post('idContatos'));
                 $this->session->set_flashdata('success_msg', 'Cadastro realizado com sucesso!');
-                $data['formErrors'] = null;
-                $where_array3['encerra'] = 1;
-                $estadoencerrado = $this->empresa_model->getConfig('status_crm', 'idstatus,descricao', $where_array3);
-                foreach ($estadoencerrado as $value2) {
-                    if ($dados['status'] == $value2->idstatus) {
-                        redirect(base_url() . 'index.php/crm/gerenciar');
-                    }
-                }
-                redirect(base_url() . 'index.php/crm/edit/' . $this->input->post('idcrm'));
+
+                if($idNegocios !=0){
+                redirect(base_url() . 'index.php/crm/editNegocios/' . $idNegocios);
             } else {
-                $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
+                redirect(base_url() . 'index.php/empresa/edit/' . $this->input->post('idEmpresas'));
             }
+        } else {
+            $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
         }
-        $where_array = array();
-        $where_array['encerra'] = 0;
-        $where_array['status'] = 1;
+        }
 
-        $where_array2 = array();
-        $where_array2['encerra'] = 1;
-        $where_array2['status'] = 1;
+//        $where_array3 = array();
+//        $where_array3['idLead_proposta'] = $this->uri->segment(3);
+       $whereEmpresa ['negocios.idEmpresas'] = $this->uri->segment(3);
 
-        $where_array3 = array();
-        $where_array3['idLead_proposta'] = $this->uri->segment(3);
-
+        if ($this->uri->segment(4)) {
+            $data['alterarNegocio'] = $this->uri->segment(4);
+        }else{
+            $data['alterarNegocio'] = 0;
+        }
         $data['segmento'] = $this->empresa_model->getConfig('seguimento_crm', 'idseguimento,descricao', 'status=1');
         $data['indicacao'] = $this->empresa_model->getConfig('indicacao_crm', 'idindicacao,descricao', 'status=1');
         //$data['statusfunil'] = $this->empresa_model->getConfig('status_empresa', 'idstatus,descricao,encerra', $where_array);
@@ -292,8 +287,8 @@ class Empresa extends CI_Controller {
         $data['usuarios'] = $this->empresa_model->getConfig('usuarios', 'idusuarios,nome', '');
         $data['empresa'] = $this->empresa_model->getById($this->uri->segment(3));
         $data['contato'] = $this->empresa_model->getByIdContato($this->uri->segment(3));
-        $data['proposta'] = $this->empresa_model->getPropostas('propostas', 'numpropostas,fantasia,contato,data,status', $where_array3, '');
-        $data['agenda'] = $this->empresa_model->getConfig('calendario', 'id,title,color,start,end', $where_array3);
+        $data['negocios'] = $this->empresa_model->getNegocios('negocios', 'negocios.idNegocio,negocios.idEmpresas,negocios.idContatos,negocios.valorDoNegocio,negocios.nomeDoNegocio,negocios.faseDoFunil,negocios.dataCadastro,negocios.dataFechamentoEsperada,empresas.nomeEmpresa,contatos.nomeContato,status_crm.descricao',$whereEmpresa ,'');
+       // $data['agenda'] = $this->empresa_model->getConfig('calendario', 'id,title,color,start,end', $where_array3);, $this->uri->segment(3), '', 'idEmpresas', 'desc', $whereRazaoOuFantasia
         $data['tipo'] = $this->empresa_model->getConfig('tipo_empresa', 'idTipoEmpresa,descricao', 'status=1');
 
         $this->load->view('empresa/alterarEmpresa', $data);
@@ -506,8 +501,8 @@ class Empresa extends CI_Controller {
 
         var_dump($data2->value);
     }
-    
-     public function adicionarTimeline() {
+
+    public function adicionarTimeline() {
         date_default_timezone_set('America/Sao_Paulo');
         $data = date('d-m-Y H:i');
         $idEmpresas = $this->input->post('idEmpresas');

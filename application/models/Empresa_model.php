@@ -31,6 +31,24 @@ class Empresa_model extends CI_Model {
         return $result;
     }
 
+    function getNegocios($table, $fields, $where = '', $one = false) {
+        $this->db->select($fields);
+        $this->db->from($table);
+        $this->db->order_by('idNegocio', 'desc');
+
+        if ($where) {
+            $this->db->where($where);
+        }
+        $this->db->join('empresas', 'empresas.idEmpresas = negocios.idEmpresas');
+        $this->db->join('contatos', 'contatos.idContatos = negocios.idContatos');
+        $this->db->join('status_crm', 'status_crm.idstatus = negocios.faseDoFunil');
+        
+        $query = $this->db->get();
+
+        $result = !$one ? $query->result() : $query->row();
+        return $result;
+    }
+
     function get($table, $fields, $where = '', $perpage = 0, $start = 0, $one = false, $a, $b) {
 
         $this->db->select($fields);
@@ -47,7 +65,7 @@ class Empresa_model extends CI_Model {
         return $result;
     }
 
-    function getNegocios($table, $fields, $where = '', $perpage = 0, $start = 0, $one = false, $a, $b) {
+    function getNegociosJoinPropostas($table, $fields, $where = '', $perpage = 0, $start = 0, $one = false, $a, $b) {
 
         $this->db->select($fields);
         $this->db->from($table);
@@ -111,83 +129,6 @@ class Empresa_model extends CI_Model {
         return $this->db->count_all_results();
     }
 
-    public function filtro($vendedor, $status, $numero, $empresa, $seguimento, $datainicial, $datafinal, $atribuido, $fonte, $probabilidade) {
-        $this->db->select('*');
-        $this->db->from('crm');
-        $this->db->order_by('idcrm', 'desc');
-        if ($vendedor) {
-            $this->db->where('usuario', $vendedor);
-        }
-        if ($status) {
-            $this->db->like('status', $status);
-        }
-        if ($numero) {
-            $this->db->where('idcrm', $numero);
-        }
-        if ($empresa) {
-            $this->db->like('empresa', $empresa);
-        }
-        if ($fonte) {
-            $this->db->where('fonte', $fonte);
-        }
-        if ($seguimento) {
-            $this->db->where('seguimento', $seguimento);
-        }
-        if ($datainicial and $datafinal) {
-            $this->db->where('data >=', $datainicial);
-            $this->db->where('data <=', $datafinal);
-        }
-        if ($atribuido) {
-            $this->db->where('atribuido', $atribuido);
-        }
-        if ($probabilidade) {
-            $this->db->where('probabilidade', $probabilidade);
-        }
-
-        $query = $this->db->get();
-        if ($query->num_rows() > 0) {
-            return $query->result();
-        } else {
-            return $query->result();
-        }
-    }
-
-    public function countfiltro($vendedor, $status, $numero, $empresa, $seguimento, $datainicial, $datafinal, $atribuido, $fonte, $probabilidade) {
-        $this->db->select('*');
-        $this->db->from('crm');
-        $this->db->order_by('idcrm', 'desc');
-        if ($vendedor) {
-            $this->db->where('usuario', $vendedor);
-        }
-        if ($status) {
-            $this->db->like('status', $status);
-        }
-        if ($numero) {
-            $this->db->where('idcrm', $numero);
-        }
-        if ($empresa) {
-            $this->db->like('empresa', $empresa);
-        }
-        if ($fonte) {
-            $this->db->where('fonte', $fonte);
-        }
-        if ($seguimento) {
-            $this->db->where('seguimento', $seguimento);
-        }
-        if ($datainicial and $datafinal) {
-            $this->db->where('data >=', $datainicial);
-            $this->db->where('data <=', $datafinal);
-        }
-        if ($atribuido) {
-            $this->db->where('atribuido', $atribuido);
-        }
-        if ($probabilidade) {
-            $this->db->where('probabilidade', $probabilidade);
-        }
-
-        return $this->db->count_all_results();
-    }
-
     function add($table, $dados) {
 
         $this->db->insert($table, $dados);
@@ -221,7 +162,7 @@ class Empresa_model extends CI_Model {
         $this->db->limit(1);
         return $this->db->get('empresas')->row();
     }
-    
+
     function getByIdContato($id) {
         $this->db->where('idEmpresas', $id);
         $this->db->limit(1);
@@ -274,8 +215,8 @@ class Empresa_model extends CI_Model {
         $this->db->order_by('idTimeline_crm', 'desc');
         return $this->db->get()->result();
     }
-    
-     public function getTimelineEmpresas($id = null) {
+
+    public function getTimelineEmpresas($id = null) {
 
         $this->db->select('*');
         $this->db->from('timeline_empresas');
@@ -292,20 +233,6 @@ class Empresa_model extends CI_Model {
         }
 
         return FALSE;
-    }
-
-    function getPropostas($table, $fields, $where = '', $one = false) {
-        $this->db->select($fields);
-        $this->db->from($table);
-        $this->db->order_by('numpropostas', 'desc');
-
-        if ($where) {
-            $this->db->where($where);
-        }
-        $query = $this->db->get();
-
-        $result = !$one ? $query->result() : $query->row();
-        return $result;
     }
 
     function deleteProposta($table, $where = '') {

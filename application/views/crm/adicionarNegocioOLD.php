@@ -27,16 +27,16 @@
                     <div class="col-md-4">
                         <h3 class="box-title">Adicione um negócio</h3>
                     </div>
-<!--                    <div class="col-md-2">
-                        <span class="label label-success">Cliente de carteira</span>
-                    </div>-->
+                    <!--                    <div class="col-md-2">
+                                            <span class="label label-success">Cliente de carteira</span>
+                                        </div>-->
                 </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Empresa </label>
-                                <input type="text" class="form-control" name="nomeEmpresa" required="" value="<?= set_value('nomeEmpresa') ?>">
+                                <select class="scriptEmpresas col-md-12" id="nomeEmpresa" name="nomeEmpresa" required=""></select>
                                 <input type="hidden" class="form-control" name="usuario" value="<?php echo $dadoslogin['idusuarios'] ?>">
                             </div>
                         </div>
@@ -235,10 +235,40 @@
     </form>
 
 </section>
-<script type="text/javascript">
-    $(document).ready(function () {
 
-        alert("status");
-    });
-</script>
 <?php $this->load->view('template/footer'); ?>
+<script>
+    var BASE_URL = "<?php echo base_url(); ?>";
+    $(".scriptEmpresas").select2({
+        tags: true, //PODE ESCOLHER O QUE DIGITOU MESMO QUE NAO TENHA NA BUSCA
+        //multiple: true, //PODE ESCOLHER MAIS DE UMA OPÇÃO
+
+      //  tokenSeparators: [',', ' '],
+        minimumInputLength: 3,
+        minimumResultsForSearch: 10,
+        ajax: {
+            url: BASE_URL + 'index.php/crm/autocompleteCliente',
+            dataType: "json",
+            quietMillis: 500,
+            type: "GET",
+            data: function (params) {
+                var queryParameters = {
+                    term: params.term
+                };
+                return queryParameters;
+            },
+            processResults: function (data) {
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            text: item.nomeEmpresa,
+                            id: item.idEmpresas
+                        };
+                    })
+                };
+            }
+        }
+
+    });
+
+</script>  
