@@ -68,7 +68,7 @@ class Crm extends CI_Controller {
         $this->data['ganho'] = $this->crm_model->getNegocios('negocios', 'negocios.idNegocio,negocios.idEmpresas,negocios.idContatos,negocios.faseDoFunil,negocios.vendedor,negocios.valorDoNegocio,negocios.nomeDoNegocio,negocios.totalProdutos,negocios.totalServicos,negocios.mensalidade,empresas.nomeEmpresa', $whereGanho_array, 0, 0, '', 'negocios.dataCadastro', 'desc');
         $this->data['countGanho'] = $this->crm_model->countNegocios('negocios', $whereGanho_array);
         $this->data['valorTotalGanho'] = $this->crm_model->valorTotalNegocios('negocios', $whereGanho_array);
-        
+
         $wherePerdido_array['situacao'] = "perdido";
         $this->data['perdido'] = $this->crm_model->getNegocios('negocios', 'negocios.idNegocio,negocios.idEmpresas,negocios.idContatos,negocios.faseDoFunil,negocios.vendedor,negocios.valorDoNegocio,negocios.nomeDoNegocio,negocios.totalProdutos,negocios.totalServicos,negocios.mensalidade,empresas.nomeEmpresa', $wherePerdido_array, 0, 0, '', 'negocios.dataCadastro', 'desc');
         $this->data['countPerdido'] = $this->crm_model->countNegocios('negocios', $wherePerdido_array);
@@ -497,16 +497,6 @@ class Crm extends CI_Controller {
         }
     }
 
-    public function atualizaClienteContrato() {
-        $data = file_get_contents('http://localhost:8886/OData/OData.svc/contrato?$filter=inativo%20eq%20%22N%22');
-        $data2 = json_decode($data);
-        foreach ($data2->value as $r) {
-            //echo "Codigo: ". $r->codigo. " - Nome: ".$r->nome . "<br>";
-        }
-
-        var_dump($data2->value);
-    }
-
     public function excluirCRM() {
 
         $idcrm = $this->input->post('idcrmExcluir');
@@ -533,7 +523,7 @@ class Crm extends CI_Controller {
         $dados['atribuido'] = 1;
         $dados['usuario'] = $this->input->post('vendedoratribuir');
 
-        if ($this->crm_model->edit('crm', $dados, 'idcrm', $this->input->post('idcrm')) == true) {
+        if ($this->crm_model->edit('negocios', $dados, 'idNegocios', $this->input->post('idNegocios')) == true) {
 
             redirect(base_url() . 'index.php/crm/edit/' . $this->input->post('idcrm'));
         } else {

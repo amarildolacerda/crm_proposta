@@ -144,7 +144,7 @@ class Crm_model extends CI_Model {
 
     function existeContrato($idWBA) {
         $this->db->where('idwba', $idWBA);
-        $existe = $this->db->get('crm');
+        $existe = $this->db->get('negocios');
         if ($existe->num_rows() > 0) {
             return TRUE;
         } else {
@@ -164,43 +164,7 @@ class Crm_model extends CI_Model {
         return $this->db->count_all_results();
     }
 
-    public function countfiltro($vendedor, $status, $numero, $empresa, $seguimento, $datainicial, $datafinal, $atribuido, $fonte, $probabilidade) {
-        $this->db->select('*');
-        $this->db->from('crm');
-        $this->db->order_by('idcrm', 'desc');
-        if ($vendedor) {
-            $this->db->where('usuario', $vendedor);
-        }
-        if ($status) {
-            $this->db->like('status', $status);
-        }
-        if ($numero) {
-            $this->db->where('idcrm', $numero);
-        }
-        if ($empresa) {
-            $this->db->like('empresa', $empresa);
-        }
-        if ($fonte) {
-            $this->db->where('fonte', $fonte);
-        }
-        if ($seguimento) {
-            $this->db->where('seguimento', $seguimento);
-        }
-        if ($datainicial and $datafinal) {
-            $this->db->where('data >=', $datainicial);
-            $this->db->where('data <=', $datafinal);
-        }
-        if ($atribuido) {
-            $this->db->where('atribuido', $atribuido);
-        }
-        if ($probabilidade) {
-            $this->db->where('probabilidade', $probabilidade);
-        }
-
-        return $this->db->count_all_results();
-    }
-
-    function add($table, $dados) {
+       function add($table, $dados) {
 
         $this->db->insert($table, $dados);
         if ($this->db->affected_rows() == '1') {
@@ -256,12 +220,7 @@ class Crm_model extends CI_Model {
         return $this->db->count_all($table);
     }
 
-    function countatribuido($where_array_atribuido = '') {
-        $this->db->where($where_array_atribuido);
-        $this->db->from('crm');
-        return $this->db->count_all_results();
-    }
-
+  
     function countEmpresaExiste($idEmpresas) {
         $this->db->where('idEmpresas', $idEmpresas);
         $this->db->from('empresas');
