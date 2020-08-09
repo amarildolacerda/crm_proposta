@@ -44,31 +44,35 @@ class Crm extends CI_Controller {
         $whereNegocios_array['negocios.situacao'] = "aberto";
         $this->data['oportunidade'] = $this->crm_model->getNegocios('negocios', 'negocios.idNegocio,negocios.idEmpresas,negocios.idContatos,negocios.faseDoFunil,negocios.vendedor,negocios.valorDoNegocio,negocios.nomeDoNegocio,negocios.totalProdutos,negocios.totalServicos,negocios.mensalidade,empresas.nomeEmpresa', $whereNegocios_array, 0, 0, '', 'negocios.dataCadastro', 'desc');
         $this->data['countOportunidade'] = $this->crm_model->countNegocios('negocios', $whereNegocios_array);
+        $this->data['valorTotalOportunidade'] = $this->crm_model->valorTotalNegocios('negocios', $whereNegocios_array);
 
         $whereNegocios_array['negocios.faseDoFunil'] = 2;
         $whereNegocios_array['negocios.situacao'] = "aberto";
         $this->data['demoagendada'] = $this->crm_model->getNegocios('negocios', 'negocios.idNegocio,negocios.idEmpresas,negocios.idContatos,negocios.faseDoFunil,negocios.vendedor,negocios.valorDoNegocio,negocios.nomeDoNegocio,negocios.totalProdutos,negocios.totalServicos,negocios.mensalidade,empresas.nomeEmpresa', $whereNegocios_array, 0, 0, '', 'negocios.dataCadastro', 'desc');
         $this->data['countDemoagendada'] = $this->crm_model->countNegocios('negocios', $whereNegocios_array);
-        //        
+        $this->data['valorTotalDemoagendada'] = $this->crm_model->valorTotalNegocios('negocios', $whereNegocios_array);
 
         $whereNegocios_array['negocios.faseDoFunil'] = 3;
         $whereNegocios_array['negocios.situacao'] = "aberto";
         $this->data['propostaentregue'] = $this->crm_model->getNegocios('negocios', 'negocios.idNegocio,negocios.idEmpresas,negocios.idContatos,negocios.faseDoFunil,negocios.vendedor,negocios.valorDoNegocio,negocios.nomeDoNegocio,negocios.totalProdutos,negocios.totalServicos,negocios.mensalidade,empresas.nomeEmpresa', $whereNegocios_array, 0, 0, '', 'negocios.dataCadastro', 'desc');
         $this->data['countPropostaentregue'] = $this->crm_model->countNegocios('negocios', $whereNegocios_array);
+        $this->data['valorTotalPropostaentregue'] = $this->crm_model->valorTotalNegocios('negocios', $whereNegocios_array);
 
         $whereNegocios_array['negocios.faseDoFunil'] = 4;
         $whereNegocios_array['negocios.situacao'] = "aberto";
         $this->data['emnegociacao'] = $this->crm_model->getNegocios('negocios', 'negocios.idNegocio,negocios.idEmpresas,negocios.idContatos,negocios.faseDoFunil,negocios.vendedor,negocios.valorDoNegocio,negocios.nomeDoNegocio,negocios.totalProdutos,negocios.totalServicos,negocios.mensalidade,empresas.nomeEmpresa', $whereNegocios_array, 0, 0, '', 'negocios.dataCadastro', 'desc');
         $this->data['countEmnegociacao'] = $this->crm_model->countNegocios('negocios', $whereNegocios_array);
+        $this->data['valorTotalEmnegociacao'] = $this->crm_model->valorTotalNegocios('negocios', $whereNegocios_array);
 
         $whereGanho_array['situacao'] = "ganho";
         $this->data['ganho'] = $this->crm_model->getNegocios('negocios', 'negocios.idNegocio,negocios.idEmpresas,negocios.idContatos,negocios.faseDoFunil,negocios.vendedor,negocios.valorDoNegocio,negocios.nomeDoNegocio,negocios.totalProdutos,negocios.totalServicos,negocios.mensalidade,empresas.nomeEmpresa', $whereGanho_array, 0, 0, '', 'negocios.dataCadastro', 'desc');
         $this->data['countGanho'] = $this->crm_model->countNegocios('negocios', $whereGanho_array);
-
+        $this->data['valorTotalGanho'] = $this->crm_model->valorTotalNegocios('negocios', $whereGanho_array);
+        
         $wherePerdido_array['situacao'] = "perdido";
         $this->data['perdido'] = $this->crm_model->getNegocios('negocios', 'negocios.idNegocio,negocios.idEmpresas,negocios.idContatos,negocios.faseDoFunil,negocios.vendedor,negocios.valorDoNegocio,negocios.nomeDoNegocio,negocios.totalProdutos,negocios.totalServicos,negocios.mensalidade,empresas.nomeEmpresa', $wherePerdido_array, 0, 0, '', 'negocios.dataCadastro', 'desc');
         $this->data['countPerdido'] = $this->crm_model->countNegocios('negocios', $wherePerdido_array);
-
+        $this->data['valorTotalPerdido'] = $this->crm_model->valorTotalNegocios('negocios', $wherePerdido_array);
 
         $this->data['seguimento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', '');
         $this->data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', '');
@@ -81,142 +85,59 @@ class Crm extends CI_Controller {
         $this->load->view('crm/negociosKanban', $this->data);
     }
 
-    public function negociosKanbanOLD() {
-        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'mCrm')) {
-            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
-            redirect(base_url() . 'index.php/dashboard');
-        }
-
-        // preciso pegar todos os crms,atribuidos separados por usuario e status
-
-        $dadoslogin = $this->session->all_userdata();
-        $whereNegocios_array = array();
-        $whereNegocios_array['crm.atribuido'] = 1;
-        $whereNegocios_array['crm.usuario'] = $dadoslogin['idusuarios'];
-
-//        $whereNegocios_array['crm.atribuido'] = 1;
-//        $whereNegocios_array['crm.usuario'] = $dadoslogin['idusuarios'];
-//        
-//        
-//        
-//        $whereNegocios_array['crm.status'] = 1;
-//        $this->data['oportunidade'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-//        $this->data['countOportunidade'] = $this->crm_model->countNegocios('crm',$whereNegocios_array);
-//        
-//        
-        $whereNegocios_array['crm.status'] = 1;
-        $whereNegocios_array['crm.situacao'] = "novo";
-        $this->data['oportunidade'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['oportunidadeNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['countOportunidade'] = $this->crm_model->countNegocios('crm', $whereNegocios_array);
-
-        $whereNegocios_array['crm.status'] = 2;
-        $whereNegocios_array['crm.situacao'] = "novo";
-        $this->data['demoagendada'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['demoagendadaNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['countDemoagendada'] = $this->crm_model->countNegocios('crm', $whereNegocios_array);
-
-        $whereNegocios_array['crm.status'] = 3;
-        $whereNegocios_array['crm.situacao'] = "novo";
-        $this->data['propostaentregue'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['propostaentregueNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['countPropostaentregue'] = $this->crm_model->countNegocios('crm', $whereNegocios_array);
-
-        $whereNegocios_array['crm.status'] = 4;
-        $whereNegocios_array['crm.situacao'] = "novo";
-        $this->data['emnegociacao'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['emnegociacaoNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['countEmnegociacao'] = $this->crm_model->countNegocios('crm', $whereNegocios_array);
-
-        $whereGanho_array['situacao'] = "ganho";
-        $this->data['ganho'] = $this->crm_model->getEncerrado('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereGanho_array, 0, 0, '', 'data_encerra', 'desc');
-        $this->data['ganhoNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereGanho_array, 0, 0, '', 'data_encerra', 'desc');
-        $this->data['countGanho'] = $this->crm_model->countNegocios('crm', $whereGanho_array);
-
-        $wherePerdido_array['situacao'] = "perdido";
-        $this->data['perdido'] = $this->crm_model->getEncerrado('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $wherePerdido_array, 0, 0, '', 'data_encerra', 'desc');
-        $this->data['perdidoNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $wherePerdido_array, 0, 0, '', 'data_encerra', 'desc');
-        $this->data['countPerdido'] = $this->crm_model->countNegocios('crm', $wherePerdido_array);
-
-
-        $this->data['seguimento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', '');
-        $this->data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', '');
-        $this->data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao,encerra', '');
-        $this->data['usuarios'] = $this->crm_model->getConfig('usuarios', 'idusuarios,nome', '');
-        $this->data['count'] = $this->crm_model->countatribuido($whereNegocios_array);
-        $this->data['dadoslogin'] = $this->session->all_userdata();
-        $this->data['results'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, $this->uri->segment(3), '', 'idcrm', 'desc');
-
-        $this->load->view('crm/negociosKanban', $this->data);
-    }
-
     public function negociosLista() {
         if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'mCrm')) {
             $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
             redirect(base_url() . 'index.php/dashboard');
         }
 
-        // preciso pegar todos os crms,atribuidos separados por usuario e status
+        $this->load->library('table');
+        $this->load->library('pagination');
 
         $dadoslogin = $this->session->all_userdata();
         $whereNegocios_array = array();
-        $whereNegocios_array['crm.atribuido'] = 1;
-        $whereNegocios_array['crm.usuario'] = $dadoslogin['idusuarios'];
+        $whereNegocios_array['negocios.vendedor'] = $dadoslogin['idusuarios'];
 
-//        $whereNegocios_array['crm.atribuido'] = 1;
-//        $whereNegocios_array['crm.usuario'] = $dadoslogin['idusuarios'];
-//        
-//        
-//        
-//        $whereNegocios_array['crm.status'] = 1;
-//        $this->data['oportunidade'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-//        $this->data['countOportunidade'] = $this->crm_model->countNegocios('crm',$whereNegocios_array);
-//        
-//        
-        $whereNegocios_array['crm.status'] = 1;
-        $whereNegocios_array['crm.situacao'] = "novo";
-        $this->data['oportunidade'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['oportunidadeNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['countOportunidade'] = $this->crm_model->countNegocios('crm', $whereNegocios_array);
+        if ($this->permission->checkPermission($this->session->userdata('permissao'), 'oLead')) {
+            $where_array['usuario'] = $dadoslogin['idusuarios'];
+        }
+        $config['base_url'] = base_url() . 'index.php/crm/negociosLista';
+        $config['total_rows'] = $this->crm_model->countNegocios('negocios', $whereNegocios_array);
+        $config['per_page'] = 10;
+        $config['next_link'] = 'Próxima';
+        $config['prev_link'] = 'Anterior';
+        $config['full_tag_open'] = '<div class="pagination"><ul class="pagination">';
+        $config['full_tag_close'] = '</ul></div>';
+        $config['num_tag_open'] = '<li>';
+        $config['num_tag_close'] = '</li>';
+        $config['cur_tag_open'] = '<li><a style="color: #2D335B"><b>';
+        $config['cur_tag_close'] = '</b></a></li>';
+        $config['prev_tag_open'] = '<li>';
+        $config['prev_tag_close'] = '</li>';
+        $config['next_tag_open'] = '<li>';
+        $config['next_tag_close'] = '</li>';
+        $config['first_link'] = 'Primeira';
+        $config['last_link'] = 'Última';
+        $config['first_tag_open'] = '<li>';
+        $config['first_tag_close'] = '</li>';
+        $config['last_tag_open'] = '<li>';
+        $config['last_tag_close'] = '</li>';
 
-        $whereNegocios_array['crm.status'] = 2;
-        $whereNegocios_array['crm.situacao'] = "novo";
-        $this->data['demoagendada'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['demoagendadaNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['countDemoagendada'] = $this->crm_model->countNegocios('crm', $whereNegocios_array);
+        $this->pagination->initialize($config);
 
-        $whereNegocios_array['crm.status'] = 3;
-        $whereNegocios_array['crm.situacao'] = "novo";
-        $this->data['propostaentregue'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['propostaentregueNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['countPropostaentregue'] = $this->crm_model->countNegocios('crm', $whereNegocios_array);
 
-        $whereNegocios_array['crm.status'] = 4;
-        $whereNegocios_array['crm.situacao'] = "novo";
-        $this->data['emnegociacao'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['emnegociacaoNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereNegocios_array, 0, 0, '', 'idcrm', 'desc');
-        $this->data['countEmnegociacao'] = $this->crm_model->countNegocios('crm', $whereNegocios_array);
-
-        $whereGanho_array['situacao'] = "ganho";
-        $this->data['ganho'] = $this->crm_model->getEncerrado('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereGanho_array, 0, 0, '', 'data_encerra', 'desc');
-        $this->data['ganhoNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $whereGanho_array, 0, 0, '', 'data_encerra', 'desc');
-        $this->data['countGanho'] = $this->crm_model->countNegocios('crm', $whereGanho_array);
-
-        $wherePerdido_array['situacao'] = "perdido";
-        $this->data['perdido'] = $this->crm_model->getEncerrado('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $wherePerdido_array, 0, 0, '', 'data_encerra', 'desc');
-        $this->data['perdidoNegocios'] = $this->crm_model->getNegocios('crm', 'crm.idcrm,crm.empresa,crm.nome,crm.whatsapp,crm.telefone,crm.status,crm.usuario,propostas.idLead_proposta,propostas.numpropostas,propostas.usuario,propostas.totalequip, propostas.totalservico, propostas.totalmensalidade', $wherePerdido_array, 0, 0, '', 'data_encerra', 'desc');
-        $this->data['countPerdido'] = $this->crm_model->countNegocios('crm', $wherePerdido_array);
+        // preciso pegar todos os crms,atribuidos separados por usuario e status
 
 
         $this->data['seguimento'] = $this->crm_model->getConfig('seguimento_crm', 'idseguimento,descricao', '');
         $this->data['indicacao'] = $this->crm_model->getConfig('indicacao_crm', 'idindicacao,descricao', '');
         $this->data['status'] = $this->crm_model->getConfig('status_crm', 'idstatus,descricao,encerra', '');
         $this->data['usuarios'] = $this->crm_model->getConfig('usuarios', 'idusuarios,nome', '');
-        $this->data['count'] = $this->crm_model->countatribuido($whereNegocios_array);
+        $this->data['count'] = $this->crm_model->countNegocios('negocios', $whereNegocios_array);
         $this->data['dadoslogin'] = $this->session->all_userdata();
-        $this->data['results'] = $this->crm_model->get('crm', 'idcrm,empresa,nome,whatsapp,telefone,status,usuario', $whereNegocios_array, 0, $this->uri->segment(3), '', 'idcrm', 'desc');
+        $this->data['results'] = $this->crm_model->getNegociosLista('negocios', 'negocios.idNegocio,negocios.idEmpresas,negocios.idContatos,negocios.faseDoFunil,negocios.vendedor,negocios.dataCadastro,negocios.dataFechamentoEsperada,negocios.situacao,empresas.segmento,empresas.nomeEmpresa,contatos.nomeContato,contatos.telefoneContato,contatos.whatsappContato,usuarios.nome', $whereNegocios_array, 0, $this->uri->segment(3), '', 'idNegocio', 'desc');
 
-        $this->load->view('crm/negociosKanban', $this->data);
+        $this->load->view('crm/negociosLista', $this->data);
     }
 
     public function addNegocios() {
@@ -400,6 +321,41 @@ class Crm extends CI_Controller {
             $dadosNegocio['dataAlteracao'] = date('Y/m/d');
             $dadosNegocio['dataEncerra'] = date('Y/m/d');
             $dadosNegocio['situacao'] = "ganho";
+
+            if ($this->crm_model->edit('negocios', $dadosNegocio, 'idNegocio', $dadosNegocio['idNegocio']) == TRUE) {
+                redirect(base_url() . 'index.php/crm/negociosKanban');
+            } else {
+                $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
+            }
+        }
+    }
+
+    public function negocioPerdido() {
+        //checa se o usuário tem permissão de acessso a esta função
+        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'eLead')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar produtos.');
+            redirect(base_url() . 'index.php/crm/gerenciar');
+        }
+
+        //faz a validação dos dados  que chegaram via post
+        $this->form_validation->set_rules('idNegocio', 'idNegocio', 'trim|required');
+
+        //se não passou na validação, devolve para a view os erros dos campos encontrados
+        if ($this->form_validation->run() == FALSE) {
+            $data['formErrors'] = validation_errors();
+
+            //se passou na validação, recebe os dados via post e atribui nas variáveis
+        } else {
+
+            $dadosNegocio['idNegocio'] = $this->input->post('idNegocio');
+            $dadosNegocio['nomeDoNegocio'] = $this->input->post('nomeDoNegocio');
+            $dadosNegocio['valorDoNegocio'] = $this->input->post('valorDoNegocio');
+            $dadosNegocio['faseDoFunil'] = $this->input->post('faseDoFunil');
+            $dadosNegocio['dataFechamentoEsperada'] = $this->input->post('dataFechamentoEsperada');
+            $dadosNegocio['dataAlteracao'] = date('Y/m/d');
+            $dadosNegocio['dataEncerra'] = date('Y/m/d');
+            $dadosNegocio['situacao'] = "perdido";
+            $dadosNegocio['motivoPerda'] = $this->input->post('motivoPerda');
 
             if ($this->crm_model->edit('negocios', $dadosNegocio, 'idNegocio', $dadosNegocio['idNegocio']) == TRUE) {
                 redirect(base_url() . 'index.php/crm/negociosKanban');

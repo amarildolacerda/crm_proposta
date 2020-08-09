@@ -385,22 +385,6 @@
                             </div>
                             <div class="row">
                                 <div class="box-body">
-                                    <div class="box-body box box-primary">
-                                        <h4 class="box-title">TIMELINE DE HISTÓRICO</h4>
-                                        <form id="formTimeline" action="<?php echo base_url() ?>crm/adicionarTimeline" method="post">
-                                            <div class="col-md-10">
-
-                                                <input type="hidden" name="tipo" id="tipo" value="fa fa-comments bg-yellow" />
-                                                <input type="hidden" name="idNegocio" id="idEmpresas" value="<?php echo $negocios->idNegocio ?>" />
-                                                <label for="">Descrição</label>
-                                                <textarea class="form-control" name="descricao" id="descricao" rows="3" placeholder="Descreva o que foi conversado com o cliente"></textarea>
-                                            </div>
-                                            <div class="col-md-1">
-                                                <label for="">.</label>
-                                                <button class="btn btn-primary span12" id="btnAdicionarProduto"><i class="icon-white icon-plus"></i> Adicionar</button>
-                                            </div>
-                                        </form>
-                                    </div>
                                     <div class="box box-primary">
                                         <div class="box-header ui-sortable-handle" style="cursor: move;">
                                             <i class="ion ion-clipboard"></i>
@@ -558,6 +542,22 @@
 
                                             </ul>
                                         </div>
+                                    </div>
+                                    <div class="box-body box box-primary">
+                                        <h4 class="box-title">TIMELINE DE HISTÓRICO</h4>
+                                        <form id="formTimeline" action="<?php echo base_url() ?>crm/adicionarTimeline" method="post">
+                                            <div class="col-md-10">
+
+                                                <input type="hidden" name="tipo" id="tipo" value="fa fa-comments bg-yellow" />
+                                                <input type="hidden" name="idNegocio" id="idEmpresas" value="<?php echo $negocios->idNegocio ?>" />
+                                                <label for="">Descrição</label>
+                                                <textarea class="form-control" name="descricao" id="descricao" rows="3" placeholder="Descreva o que foi conversado com o cliente"></textarea>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <label for="">.</label>
+                                                <button class="btn btn-primary span12" id="btnAdicionarProduto"><i class="icon-white icon-plus"></i> Adicionar</button>
+                                            </div>
+                                        </form>
                                     </div>
                                     <ul class="timeline" id="divTimeline">
                                         <?php

@@ -1,14 +1,8 @@
 <?php $this->load->view('template/menu'); ?>
-<section class="content-header">
-    <h1>
-        CRM
-        <small>Gerenciar Leads</small>
-    </h1>
-    <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"> Gerenciar Leads não atribuídos a Vendedor</li>
-    </ol>
-</section>
+
+<div class="row">
+    <a href="<?php echo base_url(); ?>index.php/crm/negociosKanban" class="btn btn-light btn-sm col-sm-12" style="font-size:20px; color: green">Mostrar em Kanban <i class="glyphicon glyphicon-list"></i></a>   
+</div>
 <section class="content">
     <div class="row">
         <div class="col-md-12">
@@ -22,21 +16,21 @@
                     </div><!-- /.box-tools -->
                 </div> <!-- /.box-header -->
                 <div class="box-body">
-                    <form method="post" action="<?php echo base_url(); ?>index.php/crm/filtronaoatribuido"> <!-- INICIO DE FORM DE FILTRO DE BUSCA -->
+                    <form method="get" action="<?php echo base_url(); ?>index.php/crm/negociosLista"> <!-- INICIO DE FORM DE FILTRO DE BUSCA -->
                         <div class="col-md-3">
-                            <input class="form-control" type="text" name="empresa"  id="empresa"  placeholder="Empresa" value="<?= set_value('empresa') ?>" >
+                            <input class="form-control" type="text" name="empresa"  id="empresa"  placeholder="Empresa"  >
                         </div>
                         <div class="col-md-2">
-                            <input class="form-control" type="text" name="idcrm"  id="idcrm"  placeholder="ID CRM" value="<?= set_value('idcrm') ?>" >
+                            <input class="form-control" type="text" name="idNegocio"  id="idcrm"  placeholder="Id Negocio"  >
                         </div>
                         <div class="col-md-4">
-                            <select name="status" id="status" class="form-control" value="<?= set_value('status') ?>">
+                            <select name="status" id="status" class="form-control" >
                                 <option value="">Selecione status</option>
                                 <?php
                                 foreach ($status as $value) {
                                     ?>
                                     <option value = "<?php echo $value->idstatus; ?>" <?php
-                                    if ($value->idstatus == $statuspost) {
+                                    if ($value->idstatus == $statusget) {
                                         echo "selected";
                                     }
                                     ?> ><?php echo $value->descricao; ?></option>
@@ -45,42 +39,25 @@
                                         ?>
                             </select>
                         </div>
+
+                        <br><br><br>
                         <div class="col-md-3">
-                            <select class="form-control" name="probabilidade">
-                                <option value="0">Selecione a propabilidade</option>
-                                <option value="10"<?php
-                                if (10 == $probabilidadepost) {
-                                    echo "selected";
-                                }
-                                ?> >0%</option>
-                                <option value="20" <?php
-                                if (20 == $probabilidadepost) {
-                                    echo "selected";
-                                }
-                                ?>>20%</option>
-                                <option value="40" <?php
-                                if (40 == $probabilidadepost) {
-                                    echo "selected";
-                                }
-                                ?>>40%</option>
-                                <option value="60" <?php
-                                if (60 == $probabilidadepost) {
-                                    echo "selected";
-                                }
-                                ?>>60%</option>
-                                <option value="80" <?php
-                                if (80 == $probabilidadepost) {
-                                    echo "selected";
-                                }
-                                ?>>80%</option>
-                                <option value="100" <?php
-                                if (100 == $probabilidadepost) {
-                                    echo "selected";
-                                }
-                                ?>>100%</option>
+                            <select name="vendedor" id="vendedor" class="form-control">
+                                <option value="">Selecione o vendedor</option>
+                                <?php
+                                foreach ($usuarios as $value) {
+                                    ?>
+                                    <option value = "<?php echo $value->idusuarios; ?>" <?php
+                                    if ($value->idusuarios == $vendedorget) {
+                                        echo "selected";
+                                    }
+                                    ?> ><?php echo $value->nome; ?></option>
+                                            <?php
+                                        }
+                                        ?>
                             </select>
                         </div>
-                        <br><br><br>
+
                         <div class="col-md-3">
                             <select name="indicacao" id="indicacao" class="form-control">
                                 <option value="">Selecione a fonte de indicação</option>
@@ -88,7 +65,7 @@
                                 foreach ($indicacao as $value) {
                                     ?>
                                     <option value ="<?php echo $value->idindicacao; ?>" <?php
-                                    if ($value->idindicacao == $indicacaopost) {
+                                    if ($value->idindicacao == $indicacaoget) {
                                         echo "selected";
                                     }
                                     ?> ><?php echo $value->descricao; ?></option>
@@ -104,7 +81,7 @@
                                 foreach ($seguimento as $value) {
                                     ?>
                                     <option value ="<?php echo $value->idseguimento; ?>" <?php
-                                    if ($value->idseguimento == $seguimentopost) {
+                                    if ($value->idseguimento == $seguimentoget) {
                                         echo "selected";
                                     }
                                     ?> ><?php echo $value->descricao; ?></option>
@@ -144,18 +121,18 @@
         <div class="col-md-12">
             <div class="box box-success">
                 <div class="box-header with-border">
-                    <h3 class="box-title">GERENCIAR LEADS NÃO ATRIBUÍDOS A VENDEDOR</h3>
+                    <h3 class="box-title">NEGÓCIOS CADASTRADOS</h3>
                 </div>
                 <div class="box-body">
                     <div class="col-md-1">
                         <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'aLead')) { ?>
-                            <a href="<?php echo base_url(); ?>index.php/crm/addnaoatribuido" class="btn btn-success btn-sm"><i class="glyphicon glyphicon-plus-sign"></i> Adicionar Lead não atribuído</a>
+                            <a href="<?php echo base_url(); ?>index.php/crm/add" class="btn btn-success btn-sm"><i class="glyphicon glyphicon-plus-sign"></i> Adicionar Lead</a>
                         <?php } ?>
                     </div>
                     <div class="col-md-11 text-right">
                         <span class='label label-primary'>Total: <?php echo $count; ?></span>
                         <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'mPermissao')) { ?>
-                            <a href="<?php echo base_url(); ?>index.php/crm/csvnaoatribuido" class="btn btn-success btn-xs"><i class="fa fa-file-excel-o"></i> Exportar</a>
+                            <a href="<?php echo base_url(); ?>index.php/crm/csv" class="btn btn-success btn-xs"><i class="fa fa-file-excel-o"></i> Exportar</a>
                         <?php } ?>
                     </div>
                     <br>
@@ -163,9 +140,7 @@
                     <?php if (!$results) { ?>
                         <div class="widget-box">
                             <div class="widget-title">
-                                <span class="icon">
-                                    <i class="icon-barcode"></i>
-                                </span>
+
                                 <h5>Gerenciar Leads</h5>
                             </div>
                             <div class="widget-content nopadding table-responsive">
@@ -202,78 +177,63 @@
                                             <th>Contato</th>
                                             <th>Telefone</th>
                                             <th>Seguimento</th>
-                                            <th>Data</th>
+                                            <th>Cadastro</th>
+                                            <th>Fechamento esperado</th>
                                             <th>Comercial</th>
-                                            <th>Status</th>
+                                            <th>Funil</th>
                                             <th>Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php foreach ($results as $r) { ?>
                                             <tr> 
-                                                <td text-middle ng-binding><?php echo $r->idcrm; ?></td>
-                                                <td text-middle ng-binding><?php echo $r->empresa; ?></td> 
-                                                <td text-middle ng-binding><?php echo $r->nome; ?></td> 
-                                                <td text-middle ng-binding><?php echo $r->telefone; ?></td> 
-                                                <td text-middle ng-binding><?php
+                                                <td class="text-middle ng-binding"><?php echo $r->idNegocio; ?></td>
+                                                <td class="text-middle ng-binding"><?php echo $r->nomeEmpresa; ?></td> 
+                                                <td class="text-middle ng-binding"><?php echo $r->nomeContato; ?></td> 
+                                                <td class="text-middle ng-binding"><?php echo $r->telefoneContato. " / ". $r->whatsappContato;//$r->telefoneContato . " / ". $r->celularContato; ?></td> 
+                                                <td class="text-middle ng-binding"><?php 
                                                     foreach ($seguimento as $value) {
-                                                        if ($r->seguimento == $value->idseguimento) {
+                                                        if ($r->segmento == $value->idseguimento) {
                                                             echo $value->descricao;
                                                         }
                                                     }
                                                     ?>
                                                 </td>
-                                                <td text-middle ng-binding><?php echo $r->data; ?></td> 
-                                                <td text-middle ng-binding>
-                                                    <?php
-                                                    foreach ($usuarios as $value) {
-                                                        if ($r->usuario == $value->idusuarios) {
-                                                            echo $value->nome;
-                                                        }
-                                                    }
-                                                    ?>
-                                                </td>
-                                                <td text-middle ng-binding>
-                                                    <?php
-                                                    foreach ($status as $value) {
-                                                        if ($r->status == $value->idstatus) {
+                                                <td class="text-middle ng-binding"><?php $date = new DateTime($r->dataCadastro);echo  $date->format('d-m-Y'); ?></td> 
+                                                <td class="text-middle ng-binding"><?php $date = new DateTime($r->dataFechamentoEsperada);echo  $date->format('d-m-Y');  ?></td> 
+                                                <td class="text-middle ng-binding"><?php echo $r->nome; ?></td>
+                                                <td class="text-middle ng-binding"><?php 
+                                                foreach ($status as $value) {
+                                                        if ($r->faseDoFunil == $value->idstatus) {
                                                             echo $value->descricao;
                                                         }
                                                     }
-                                                    ?>
-                                                </td>
-                                                <td class="text-center" text-middle ng-binding>
-                                                    <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#ModalAtribuir<?php echo $r->idcrm; ?>">
-                                                        Atribuir
-                                                    </button>
-
-                                                    <a title="editar" href="<?php echo base_url() ?>index.php/crm/edit/<?php echo $r->idcrm; ?>" 
+                                                ?></td>
+                                                <td class="text-center">
+                                                    <a title="visualizar" href="<?php echo base_url() ?>index.php/crm/view/<?php echo $r->idNegocio; ?>" class="btn btn-success btn-xs"><i class="fa-fw glyphicon glyphicon-eye-open"></i> </a>
+                                                    <a title="editar" href="<?php echo base_url() ?>index.php/crm/editNegocios/<?php echo $r->idNegocio; ?>" 
                                                        class="btn btn-primary btn-xs
                                                        <?php
-                                                       foreach ($status as $value) {
-                                                           if ($r->status == $value->idstatus) {
-                                                               if ($value->encerra == 1) {
-                                                                   echo "disabled";
-                                                               }
-                                                           }
+                                                       if ($r->situacao == "ganho" or $r->situacao == "perdido") {
+                                                           echo "disabled";
                                                        }
                                                        ?>
                                                        "><i class="fa-fw glyphicon glyphicon-edit"></i> 
                                                     </a>
                                                     <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'dLead')) { ?>
-                                                        <a title="excluir"  class="btn btn-danger btn-xs" data-toggle="modal" data-target="#modal-danger<?php echo $r->idcrm; ?>"><i class="fa-fw glyphicon glyphicon-trash"></i> </a>
+                                                        <a title="excluir"  class="btn btn-danger btn-xs" data-toggle="modal" data-target="#modal-danger<?php echo $r->idNegocio; ?>"><i class="fa-fw glyphicon glyphicon-trash"></i> </a>
                                                     <?php } ?>
                                                     <!--MODAL BOTÃO EXCLUIR-->
-                                                    <div class="modal modal-default fade" id="modal-danger<?php echo $r->idcrm; ?>">
+                                                    <div class="modal modal-default fade" id="modal-danger<?php echo $r->idNegocio; ?>">
                                                         <div class="modal-dialog">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                         <span aria-hidden="true">×</span></button>
-                                                                    <h4 class="modal-title">Deseja excluir o LEAD <?php echo $r->idcrm; ?> e todas as proposta(s), agenda(s) e timeline(s) associados a ele? ?</h4>
+                                                                    <h4 class="modal-title">Deseja excluir o LEAD <?php echo $r->idNegocio; ?> e todas as proposta(s), agenda(s) e timeline(s) associados a ele?  ?</h4>
                                                                 </div>
                                                                 <form action="<?php echo base_url() ?>index.php/crm/excluirCRM" method="post">
-                                                                    <input type="hidden" id="idcrmExcluir" name="idcrmExcluir" value="<?php echo $r->idcrm; ?>">
+                                                                    <input type="hidden" id="idcrmExcluir" name="idcrmExcluir" value="<?php echo $r->idNegocio; ?>">
                                                                     <div class="modal-footer">
                                                                         <button type="button" class="btn btn-primary pull-left" data-dismiss="modal">Desistir</button>
                                                                         <button type="submit" class="btn btn-danger ">Excluir<i class="icon-remove icon-white"></i></button>
@@ -285,51 +245,9 @@
                                                     <!--MODAL BOTÃO EXCLUIR-->
                                                 </td>
                                             </tr>
-
-                                            <!-- Modal ATRIBUIR CLIENTE -->
-                                        <div class="modal fade" id="ModalAtribuir<?php echo $r->idcrm; ?>" tabindex="-1" role="dialog" aria-labelledby="ModalAtribuir" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLabel">Atribuir Lead a um Consultor</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <form action="<?php echo base_url() ?>index.php/crm/atribuir" method="post">
-                                                        <div class="modal-body">
-
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <?php echo form_hidden('idcrm', $r->idcrm) ?>
-                                                                    <select name="vendedoratribuir" id="vendedoratribuir" class="form-control">
-                                                                        <option value="">Selecione o vendedor</option>
-                                                                        <?php
-                                                                        foreach ($usuarios as $value) {
-                                                                            ?>
-                                                                            <option value = "<?php echo $value->idusuarios; ?>" <?php
-                                                                            if ($value->idusuarios == $vendedorpost) {
-                                                                                echo "selected";
-                                                                            }
-                                                                            ?> ><?php echo $value->nome; ?></option>
-                                                                                    <?php
-                                                                                }
-                                                                                ?>
-                                                                    </select>
-                                                                </div> 
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-danger" data-dismiss="modal">VOLTAR</button>
-                                                            <button type="submit" class="btn btn-success">SALVAR</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <?php
-                                    }
-                                    ?>
+                                            <?php
+                                        }
+                                        ?>
 
                                     </tbody>
                                 </table>
@@ -344,7 +262,5 @@
         </div>
     </div>
 </section>
-
-
 
 <?php $this->load->view('template/footer'); ?>

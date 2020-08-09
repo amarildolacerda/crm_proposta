@@ -13,7 +13,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <small>R$500,00 - <?php echo $countOportunidade; ?> negócios</small>
+                        <small><?php echo "R$".$valorTotalOportunidade.",00"; ?> - <?php echo $countOportunidade; ?> negócios</small>
                     </div>
                 </div>
                 <div class="row text-center">
@@ -62,7 +62,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <small style="color: blue">R$500,00 - <?php echo $countDemoagendada; ?> negócios</small>
+                        <small style="color: blue"><?php echo "R$".$valorTotalDemoagendada.",00"; ?> - <?php echo $countDemoagendada; ?> negócios</small>
                     </div>
                 </div>
                 <div class="row text-center">
@@ -111,7 +111,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <small style="color: purple">R$500,00 - <?php echo $countPropostaentregue; ?> negócios</small>
+                        <small style="color: purple"><?php echo "R$".$valorTotalPropostaentregue.",00"; ?> - <?php echo $countPropostaentregue; ?> negócios</small>
                     </div>
                 </div>
                 <div class="row text-center">
@@ -158,7 +158,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <small style="color: orange">R$500,00 - <?php echo $countEmnegociacao; ?> negócios</small>
+                        <small style="color: orange"><?php echo "R$".$valorTotalEmnegociacao.",00"; ?> - <?php echo $countEmnegociacao; ?> negócios</small>
                     </div>
                 </div>
                 <div class="row text-center">
@@ -205,7 +205,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <small style="color: green">R$500,00</small>
+                        <small style="color: green"><?php echo "R$".$valorTotalGanho.",00"; ?></small>
                     </div>
                 </div>
                 <div class="row">
@@ -249,7 +249,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <small style="color: red">R$500,00</small>
+                        <small style="color: red"><?php echo "R$".$valorTotalPerdido.",00"; ?></small>
                     </div>
                 </div>
                 <div class="row">

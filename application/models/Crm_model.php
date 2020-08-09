@@ -65,7 +65,7 @@ class Crm_model extends CI_Model {
         $this->db->where('idNegocio', $idNegocio);
         $this->db->where('status', "aberto");
         $this->db->order_by('data', 'cres');
-        
+
         $query = $this->db->get();
 
         $result = !$one ? $query->result() : $query->row();
@@ -82,6 +82,25 @@ class Crm_model extends CI_Model {
             $this->db->where($where);
         }
         $this->db->join('empresas', 'empresas.idEmpresas = negocios.idEmpresas');
+
+        $query = $this->db->get();
+
+        $result = !$one ? $query->result() : $query->row();
+        return $result;
+    }
+
+    function getNegociosLista($table, $fields, $where = '', $perpage = 0, $start = 0, $one = false, $a, $b) {
+
+        $this->db->select($fields);
+        $this->db->from($table);
+        $this->db->order_by($a, $b);
+        $this->db->limit($perpage, $start);
+        if ($where) {
+            $this->db->where($where);
+        }
+        $this->db->join('empresas', 'empresas.idEmpresas = negocios.idEmpresas');
+        $this->db->join('contatos', 'contatos.idContatos = negocios.idContatos');
+        $this->db->join('usuarios', 'usuarios.idusuarios = negocios.vendedor');
 
         $query = $this->db->get();
 
@@ -112,6 +131,15 @@ class Crm_model extends CI_Model {
             $this->db->where($where);
         }
         return $this->db->count_all_results();
+    }
+
+    function valorTotalNegocios($table, $where) {
+        $this->db->select_sum('valorDoNegocio');
+        $this->db->from($table);
+        if ($where) {
+            $this->db->where($where);
+        }
+        return $this->db->get()->row()->valorDoNegocio;
     }
 
     function existeContrato($idWBA) {

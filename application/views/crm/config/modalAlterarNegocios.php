@@ -89,16 +89,16 @@
                     <span aria-hidden="true">×</span></button>
                 <h4 class="modal-title">Deseja encerrar esse negócio como PERDIDO? </h4>
             </div>
-            <form action="<?php echo base_url() ?>index.php/crm/negocioGanho" method="post">
+            <form action="<?php echo base_url() ?>index.php/crm/negocioPerdido" method="post">
                 <div class="col-md-12">
                     <label style="color: white; font-size:20px">Motivo da perda</label>
-                    <input type="text" class="form-control" name="motivoPerda" required="">
+                    <textarea class="form-control" rows="3" name="motivoPerda" required=""></textarea>
                 </div>
                 <input type="hidden" name="idNegocio" value="<?php echo $negocios->idNegocio ?>">
                 <input type="hidden" name="nomeDoNegocio" value="<?php echo $negocios->nomeDoNegocio ?>">
                 <input type="hidden" name="valorDoNegocio" value="<?php echo $negocios->valorDoNegocio ?>">
                 <input type="hidden" name="dataFechamentoEsperada" value="<?php echo $negocios->dataFechamentoEsperada ?>">
-                <input type="hidden" name="faseDoFunil" value="5">
+                <input type="hidden" name="faseDoFunil" value="6">
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary pull-left" data-dismiss="modal">Não</button>
                     <button type="submit" class="btn btn-success ">Sim<i class="icon-remove icon-white"></i></button>
