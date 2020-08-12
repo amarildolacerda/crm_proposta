@@ -257,6 +257,7 @@ class Crm extends CI_Controller {
             $dadosNegocio['idNegocio'] = $this->input->post('idNegocio');
             $dadosNegocio['nomeDoNegocio'] = $this->input->post('nomeDoNegocio');
             $dadosNegocio['valorDoNegocio'] = $this->input->post('valorDoNegocio');
+            $dadosNegocio['mensalidade'] = $this->input->post('mensalidade');
             $dadosNegocio['faseDoFunil'] = $this->input->post('faseDoFunil');
             $dadosNegocio['dataFechamentoEsperada'] = $this->input->post('dataFechamentoEsperada');
             $dadosNegocio['dataAlteracao'] = date('Y/m/d');

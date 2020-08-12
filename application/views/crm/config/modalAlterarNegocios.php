@@ -41,6 +41,7 @@
                 <input type="hidden" name="nomeDoNegocio" value="<?php echo $negocios->nomeDoNegocio ?>">
                 <input type="hidden" name="dataFechamentoEsperada" value="<?php echo $negocios->dataFechamentoEsperada ?>">
                 <input type="hidden" name="faseDoFunil" value="<?php echo $negocios->faseDoFunil ?>">
+                <input type="hidden" name="mensalidade" value="<?php echo $negocios->mensalidade ?>">
                 <div class="col-md-12">
                     <label style="color: white; font-size: 20px">Valor do negócio</label>
                     <input type="number" class="form-control"  name="valorDoNegocio" >
@@ -54,6 +55,35 @@
     </div><!-- /.modal-dialog -->
 </div>
 <!--MODAL Alterar valor negócio-->
+
+<!--MODAL Alterar mensalidade-->
+<div class="modal modal-success fade" id="modal-mensalidade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span></button>
+                <h4 class="modal-title">Alterar mensalidade</h4>
+            </div>
+            <form action="<?php echo current_url(); ?>" method="post">
+                <input type="hidden" name="idNegocio" value="<?php echo $negocios->idNegocio ?>">
+                <input type="hidden" name="nomeDoNegocio" value="<?php echo $negocios->nomeDoNegocio ?>">
+                <input type="hidden" name="dataFechamentoEsperada" value="<?php echo $negocios->dataFechamentoEsperada ?>">
+                <input type="hidden" name="faseDoFunil" value="<?php echo $negocios->faseDoFunil ?>">
+                <input type="hidden" name="valorDoNegocio" value="<?php echo $negocios->valorDoNegocio?>">
+                <div class="col-md-12">
+                    <label style="color: white; font-size: 20px">Mensalidade</label>
+                    <input type="number" class="form-control"  name="mensalidade" >
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary pull-left" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success ">Salvar<i class="icon-remove icon-white"></i></button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<!--MODAL Alterar mensalidade-->
 
 <!--MODAL NEGÓCIO GANHO-->
 <div class="modal modal-success fade" id="modal-negocioGanho">
@@ -69,6 +99,7 @@
                 <input type="hidden" name="nomeDoNegocio" value="<?php echo $negocios->nomeDoNegocio ?>">
                 <input type="hidden" name="valorDoNegocio" value="<?php echo $negocios->valorDoNegocio ?>">
                 <input type="hidden" name="dataFechamentoEsperada" value="<?php echo $negocios->dataFechamentoEsperada ?>">
+                <input type="hidden" name="mensalidade" value="<?php echo $negocios->mensalidade ?>">
                 <input type="hidden" name="faseDoFunil" value="5">
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary pull-left" data-dismiss="modal">Não</button>
@@ -98,6 +129,7 @@
                 <input type="hidden" name="nomeDoNegocio" value="<?php echo $negocios->nomeDoNegocio ?>">
                 <input type="hidden" name="valorDoNegocio" value="<?php echo $negocios->valorDoNegocio ?>">
                 <input type="hidden" name="dataFechamentoEsperada" value="<?php echo $negocios->dataFechamentoEsperada ?>">
+                <input type="hidden" name="mensalidade" value="<?php echo $negocios->mensalidade ?>">
                 <input type="hidden" name="faseDoFunil" value="6">
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary pull-left" data-dismiss="modal">Não</button>

@@ -29,7 +29,7 @@
                 <?php foreach ($oportunidade as $opt) { ?>
                     <a data-toggle="tooltip" data-placement="top" 
                        title="<?php
-                       echo "Total do negócio: " . number_format($opt->valorDoNegocio, 2, ',', '.');
+                       echo "Total do negócio: " . number_format($opt->valorDoNegocio, 2, ',', '.'). " Mensalidade: ". number_format($opt->mensalidade, 2, ',', '.');
                        //echo "Produtos: R$" . $opt->totalProdutos . ",00 " . "Serviços: R$" . $opt->totalServicos . ",00 " . "Mensalidade: R$" . $opt->mensalidade . ",00";
                        ?>" 
                        href="<?php echo base_url(); ?>index.php/crm/editNegocios/<?php echo $opt->idNegocio; ?>">  
@@ -41,7 +41,7 @@
                                         <small><?php echo $opt->nomeEmpresa; ?></small><br>
                                         <i class="fa fa-dollar"></i>
                                         <?php
-                                        echo number_format($opt->valorDoNegocio, 2, ',', '.');
+                                        echo number_format($opt->valorDoNegocio, 2, ',', '.')." | ".number_format($opt->mensalidade, 2, ',', '.');
                                         ?>
                                     </div>
                                 </div>
@@ -77,7 +77,7 @@
                 <?php foreach ($demoagendada as $demo) { ?>
                     <a data-toggle="tooltip" data-placement="top" 
                        title="<?php
-                       echo "Total do negócio: " . number_format($demo->valorDoNegocio, 2, ',', '.');
+                       echo "Total do negócio: " . number_format($demo->valorDoNegocio, 2, ',', '.'). " Mensalidade: ". number_format($demo->mensalidade, 2, ',', '.');
                        //echo "Produtos: R$" . $opt->totalProdutos . ",00 " . "Serviços: R$" . $opt->totalServicos . ",00 " . "Mensalidade: R$" . $opt->mensalidade . ",00";
                        ?>" 
                        href="<?php echo base_url(); ?>index.php/crm/editNegocios/<?php echo $demo->idNegocio; ?>">  
@@ -89,7 +89,7 @@
                                         <small><?php echo $demo->nomeEmpresa; ?></small><br>
                                         <i class="fa fa-dollar"></i>
                                         <?php
-                                        echo number_format($demo->valorDoNegocio, 2, ',', '.');
+                                        echo number_format($demo->valorDoNegocio, 2, ',', '.')." | ".number_format($demo->mensalidade, 2, ',', '.');
                                         ?>
 
                                     </div>
@@ -125,7 +125,7 @@
             <div class="box-body overflow-auto">
                 <?php foreach ($propostaentregue as $entregue) { ?>
                     <a data-toggle="tooltip" data-placement="top" title="<?php
-                    echo "Total do negócio: " . number_format($entregue->valorDoNegocio, 2, ',', '.');
+                    echo "Total do negócio: " . number_format($entregue->valorDoNegocio, 2, ',', '.'). " Mensalidade: ". number_format($entregue->mensalidade, 2, ',', '.');
                     //echo "Produtos: R$" . $opt->totalProdutos . ",00 " . "Serviços: R$" . $opt->totalServicos . ",00 " . "Mensalidade: R$" . $opt->mensalidade . ",00";
                     ?>"href="<?php echo base_url(); ?>index.php/crm/editNegocios/<?php echo $entregue->idNegocio; ?>">  
                         <div class="row ">
@@ -136,7 +136,7 @@
                                         <small><?php echo $entregue->nomeEmpresa; ?></small><br>
                                         <i class="fa fa-dollar"></i>
                                         <?php
-                                        echo number_format($entregue->valorDoNegocio, 2, ',', '.');
+                                        echo number_format($entregue->valorDoNegocio, 2, ',', '.')." | ".number_format($entregue->mensalidade, 2, ',', '.');
                                         ?>
 
                                     </div>
@@ -172,7 +172,7 @@
             <div class="box-body overflow-auto">
                 <?php foreach ($emnegociacao as $negociacao) { ?>
                     <a data-toggle="tooltip" data-placement="top" title="<?php
-                    echo "Total do negócio: " . number_format($negociacao->valorDoNegocio, 2, ',', '.');
+                    echo "Total do negócio: " . number_format($negociacao->valorDoNegocio, 2, ',', '.'). " Mensalidade: ". number_format($negociacao->mensalidade, 2, ',', '.');
                     //echo "Produtos: R$" . $opt->totalProdutos . ",00 " . "Serviços: R$" . $opt->totalServicos . ",00 " . "Mensalidade: R$" . $opt->mensalidade . ",00";
                     ?>"   href="<?php echo base_url(); ?>index.php/crm/editNegocios/<?php echo $negociacao->idNegocio; ?>">  
                         <div class="row ">
@@ -183,7 +183,7 @@
                                         <small><?php echo $negociacao->nomeEmpresa; ?></small><br>
                                         <i class="fa fa-dollar"></i>
                                         <?php
-                                        echo number_format($negociacao->valorDoNegocio, 2, ',', '.');
+                                        echo number_format($negociacao->valorDoNegocio, 2, ',', '.')." | ".number_format($negociacao->mensalidade, 2, ',', '.');
                                         ?>
 
                                     </div>
@@ -217,7 +217,7 @@
             <div class="box-body overflow-auto">
                 <?php foreach ($ganho as $gain) { ?>
                     <a data-toggle="tooltip" data-placement="top" title="<?php
-                     echo "Total do negócio: " . number_format($gain->valorDoNegocio, 2, ',', '.');
+                     echo "Total do negócio: " . number_format($gain->valorDoNegocio, 2, ',', '.'). " Mensalidade: ". number_format($gain->mensalidade, 2, ',', '.');
                     //echo "Produtos: R$" . $opt->totalProdutos . ",00 " . "Serviços: R$" . $opt->totalServicos . ",00 " . "Mensalidade: R$" . $opt->mensalidade . ",00";
                     ?>"  href="<?php echo base_url(); ?>index.php/crm/viewNegocios/<?php echo $gain->idNegocio; ?>">  
                         <div class="row ">
@@ -228,7 +228,7 @@
                                         <small><?php echo $gain->nomeEmpresa; ?></small><br>
                                         <i class="fa fa-dollar"></i>
                                         <?php
-                                        echo number_format($gain->valorDoNegocio, 2, ',', '.');
+                                        echo number_format($gain->valorDoNegocio, 2, ',', '.')." | ".number_format($gain->mensalidade, 2, ',', '.');
                                         ?>
                                     </div>
                                 </div>
@@ -261,7 +261,7 @@
             <div class="box-body overflow-auto">
                 <?php foreach ($perdido as $perd) { ?>
                     <a data-toggle="tooltip" data-placement="top" title="<?php
-                    echo "Total do negócio: " . number_format($perd->valorDoNegocio, 2, ',', '.');
+                    echo "Total do negócio: " . number_format($perd->valorDoNegocio, 2, ',', '.'). " Mensalidade: ". number_format($perd->mensalidade, 2, ',', '.');
                     //echo "Produtos: R$" . $opt->totalProdutos . ",00 " . "Serviços: R$" . $opt->totalServicos . ",00 " . "Mensalidade: R$" . $opt->mensalidade . ",00";
                     ?>"    href="<?php echo base_url(); ?>index.php/crm/viewNegocios/<?php echo $perd->idNegocio; ?>">  
                         <div class="row ">
@@ -272,7 +272,7 @@
                                         <small><?php echo $perd->nomeEmpresa; ?></small><br>
                                         <i class="fa fa-dollar"></i>
                                         <?php
-                                        echo number_format($perd->valorDoNegocio, 2, ',', '.');
+                                        echo number_format($perd->valorDoNegocio, 2, ',', '.')." | ".number_format($perd->mensalidade, 2, ',', '.');
                                         ?>
                                     </div>
                                 </div>
@@ -284,7 +284,7 @@
         </div>
     </div>
 
-    <!--MODAL BOTÃO EXCLUIR-->
+    <!--MODAL BOTÃO ADICIONAR NEGOCIO RAPIDO-->
     <div class="modal modal-default fade" id="modal-negocioRapido">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -320,6 +320,12 @@
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
+                            <label>Mensalidade </label>
+                            <input type="number" class="form-control" name="mensalidade" >
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
                             <label>Data fechamento esperada </label>
                             <input type="date" class="form-control" name="dataFechamentoEsperada" >
                         </div>
@@ -346,7 +352,7 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div>
-    <!--MODAL BOTÃO EXCLUIR-->
+    <!--MODAL BOTÃO ADICIONAR NEGOCIO RAPIDO-->
 </div>
 <?php $this->load->view('template/footer'); ?>
 <script>

@@ -17,6 +17,7 @@
                                     <input type="hidden" name="nomeDoNegocio" value="<?php echo $negocios->nomeDoNegocio ?>">
                                     <input type="hidden" name="valorDoNegocio" value="<?php echo $negocios->valorDoNegocio ?>">
                                     <input type="hidden" name="dataFechamentoEsperada" value="<?php echo $negocios->dataFechamentoEsperada ?>">
+                                    <input type="hidden" name="mensalidade" value="<?php echo $negocios->mensalidade ?>">
                                     <input type="hidden" name="faseDoFunil" value="1">
                                     <button class="btn col-md-12 " type="submit" style="background: gray; color: white">Oportunidade <i class="fa fa-arrow-right"></i></button>
                                 </form>
@@ -27,6 +28,7 @@
                                     <input type="hidden" name="nomeDoNegocio" value="<?php echo $negocios->nomeDoNegocio ?>">
                                     <input type="hidden" name="valorDoNegocio" value="<?php echo $negocios->valorDoNegocio ?>">
                                     <input type="hidden" name="dataFechamentoEsperada" value="<?php echo $negocios->dataFechamentoEsperada ?>">
+                                    <input type="hidden" name="mensalidade" value="<?php echo $negocios->mensalidade ?>">
                                     <input type="hidden" name="faseDoFunil" value="2">
                                     <button class="btn btn-primary col-md-12 " type="submit" >Demo agendada <i class="fa fa-arrow-right"></i></button>
                                 </form>
@@ -37,6 +39,7 @@
                                     <input type="hidden" name="nomeDoNegocio" value="<?php echo $negocios->nomeDoNegocio ?>">
                                     <input type="hidden" name="valorDoNegocio" value="<?php echo $negocios->valorDoNegocio ?>">
                                     <input type="hidden" name="dataFechamentoEsperada" value="<?php echo $negocios->dataFechamentoEsperada ?>">
+                                    <input type="hidden" name="mensalidade" value="<?php echo $negocios->mensalidade ?>">
                                     <input type="hidden" name="faseDoFunil" value="3">
                                     <button class="btn col-md-12 " type="submit" style="background: purple; color: white" >Proposta entregue <i class="fa fa-arrow-right"></i></button>
                                 </form>
@@ -47,6 +50,7 @@
                                     <input type="hidden" name="nomeDoNegocio" value="<?php echo $negocios->nomeDoNegocio ?>">
                                     <input type="hidden" name="valorDoNegocio" value="<?php echo $negocios->valorDoNegocio ?>">
                                     <input type="hidden" name="dataFechamentoEsperada" value="<?php echo $negocios->dataFechamentoEsperada ?>">
+                                    <input type="hidden" name="mensalidade" value="<?php echo $negocios->mensalidade ?>">
                                     <input type="hidden" name="faseDoFunil" value="4">
                                     <button class="btn btn-warning col-md-12 " type="submit" >Em negociação <i class="fa fa-arrow-right"></i></button>
                                 </form>
@@ -95,6 +99,10 @@
                                                 <div class="col-md-9">
                                                     <div class="form-group">
                                                         <input type="hidden" name="idNegocio" value="<?php echo $negocios->idNegocio ?>">
+                                                        <input type="hidden" name="nomeDoNegocio" value="<?php echo $negocios->nomeDoNegocio ?>">
+                                                        <input type="hidden" name="valorDoNegocio" value="<?php echo $negocios->valorDoNegocio ?>">
+                                                        <input type="hidden" name="dataFechamentoEsperada" value="<?php echo $negocios->dataFechamentoEsperada ?>">
+                                                        <input type="hidden" name="mensalidade" value="<?php echo $negocios->mensalidade ?>">
                                                         <p style="font-size:30px">Valor do negócio R$<?php echo number_format($negocios->valorDoNegocio, 2, ',', '.'); ?><a class="btn btn-primary btn-xs" data-toggle="modal" data-target="#modal-valorNegocio">Alterar <i class="fa fa-dollar"></i></a>
                                                     </div>
                                                 </div>
@@ -106,6 +114,13 @@
                                                 </div>
                                                 <div class="col-md-1">
                                                     <a class="btn btn-success" target="blank" href="https://api.whatsapp.com/send?phone=<?php echo $contato->whatsappContato ?>"><i class="fa fa-whatsapp"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-9">
+                                                    <div class="form-group">
+                                                        <p style="font-size:30px">Mensalidade R$<?php echo number_format($negocios->mensalidade, 2, ',', '.'); ?><a class="btn btn-primary btn-xs" data-toggle="modal" data-target="#modal-mensalidade">Alterar <i class="fa fa-dollar"></i></a>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -456,9 +471,9 @@
                                                                             <label>Data</label>
                                                                             <input type="datetime-local" name="data" class="form-control" required="" value="<?php echo $date->format('Y-m-d') . "T" . $date->format('h:i') ?>">
                                                                         </div>
-                                                                      </div>
+                                                                    </div>
                                                                     <div class="col-md-12">
-                                                                       <div>
+                                                                        <div>
                                                                             <div class="form-group">
                                                                                 <label>Registrar alterações na Timeline?</label>
                                                                                 <input type="checkbox" name="registraNaTimeline" value="sim" checked="">
