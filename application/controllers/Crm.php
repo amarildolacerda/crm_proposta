@@ -541,7 +541,7 @@ class Crm extends CI_Controller {
 
         require_once(APPPATH . 'third_party/autoload.php');
 
-        $config = SendinBlue\Client\Configuration::getDefaultConfiguration()->setApiKey('api-key', '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');
+        $config = SendinBlue\Client\Configuration::getDefaultConfiguration()->setApiKey('api-key', 'chaveaqui');
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
 // $config = SendinBlue\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('partner-key', 'Bearer');
 
