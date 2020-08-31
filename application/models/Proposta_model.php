@@ -121,7 +121,7 @@ class Proposta_model extends CI_Model {
 
         $this->db->select('*');
         $this->db->from('modulos');
-        $this->db->order_by('posicaoMenu', 'desc');
+        $this->db->order_by('posicaoMenu', 'CRES');
         $this->db->where('status', 1);
         return $this->db->get()->result();
     }
