@@ -83,49 +83,38 @@ class Proposta extends CI_Controller {
         $this->load->view('proposta/gerenciarProposta', $this->data);
     }
 
-    public function add() {
+    public function adicionarProposta() {
 
         if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'aProposta')) {
             $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
             redirect(base_url() . 'index.php/proposta/gerenciar');
         }
 
-        //$this->form_validation->set_rules('cnpj', 'Cnpj', 'trim|required');
-        $this->form_validation->set_rules('fantasia', 'Fantasia', 'trim|required');
-        //$this->form_validation->set_rules('email', 'E-mail', 'trim|valid_email');
-
+        $this->form_validation->set_rules('idNegocio', 'idNegocio', 'trim|required');
 
         if ($this->form_validation->run() == FALSE) {
             $data['formErrors'] = validation_errors();
         } else {
-            $dados['fantasia'] = $this->input->post('fantasia');
-            $dados['cnpj'] = $this->input->post('cnpj');
-            $dados['endereco'] = $this->input->post('endereco');
-            $dados['cidade'] = $this->input->post('cidade');
-            $dados['estado'] = $this->input->post('estado');
-            $dados['email'] = $this->input->post('email');
-            $dados['contato'] = $this->input->post('contato');
-            $dados['telefone'] = $this->input->post('telefone');
-            $dados['data'] = date('d/m/Y');
-            $dados['status'] = 1;
-            $dados['fatdireto'] = 0;
-            $dados['idLead_proposta'] = $this->input->post('idLead_proposta');
-            $dados['usuario'] = $this->input->post('usuario');
+            $dados['idEmpresas'] = $this->input->post('idEmpresas');
+            $dados['idContatos'] = $this->input->post('idContatos');
+            $dados['idNegocio'] = $this->input->post('idNegocio');
+            $dados['prazoPagamento'] = $this->input->post('prazoPagamento');
+            $dados['validade'] = $this->input->post('validade');
+            $dados['previsaoInstalacao'] = $this->input->post('previsaoInstalacao');
+            $dados['vendedor'] = $this->input->post('vendedor');
+            $dados['dataCadastro'] = date('Y-m-d');
+            $dados['dataAlteracao'] = date('Y-m-d');
 
-            $numproposta = $this->proposta_model->adicionar($dados);
-            if ($numproposta != 0) {
-                redirect(base_url() . 'index.php/proposta/edit/' . $numproposta);
+            $idProposta = $this->proposta_model->adicionar($dados);
+            if ($idProposta != 0) {
+                redirect(base_url() . 'index.php/proposta/editarProposta/' . $idProposta);
             } else {
                 $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
             }
         }
-        $data['senhaIntranet'] = $this->proposta_model->getSenhasEstrutura('intranet');
-        $data['dadoslogin'] = $this->session->all_userdata();
-
-        $this->load->view('proposta/adicionarProposta', $data);
     }
 
-    public function edit() {
+    public function editarProposta() {
 
         if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'eProposta')) {
             $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
@@ -138,30 +127,26 @@ class Proposta extends CI_Controller {
         }
 
         // $this->form_validation->set_rules('cnpj', 'Cnpj', 'trim|required');
-        $this->form_validation->set_rules('fantasia', 'Fantasia', 'trim|required');
+        $this->form_validation->set_rules('idPropostas', 'idPropostas', 'trim|required');
 
         if ($this->form_validation->run() == FALSE) {
             $data['formErrors'] = validation_errors();
         } else {
-            $dados['fantasia'] = $this->input->post('fantasia');
-            $dados['cnpj'] = $this->input->post('cnpj');
-            $dados['endereco'] = $this->input->post('endereco');
-            $dados['cidade'] = $this->input->post('cidade');
-            $dados['estado'] = $this->input->post('estado');
-            $dados['email'] = $this->input->post('email');
-            $dados['contato'] = $this->input->post('contato');
-            $dados['telefone'] = $this->input->post('telefone');
-            $dados['prazopagamento'] = $this->input->post('prazo');
-            $dados['validade'] = $this->input->post('validade');
-            $dados['previsaoinst'] = $this->input->post('previsao');
+            $dados['idPropostas'] = $this->input->post('idPropostas');
+            $dados['idEmpresas'] = $this->input->post('idEmpresas');
+            $dados['idContatos'] = $this->input->post('idContatos');
+            $dados['idNegocio'] = $this->input->post('idNegocio');
+            $dados['prazoPagamento'] = $this->input->post('prazoPagamento');
             $dados['observacao'] = $this->input->post('observacao');
-            $dados['fatdireto'] = $this->input->post('fatdireto');
-            $dados['status'] = $this->input->post('status');
+            $dados['validade'] = $this->input->post('validade');
+            $dados['previsaoInstalacao'] = $this->input->post('previsaoInstalacao');
+            $dados['vendedor'] = $this->input->post('vendedor');
+            $dados['dataAlteracao'] = date('Y-m-d');
 
-            if ($this->proposta_model->edit('propostas', $dados, 'numpropostas', $this->input->post('numpropostas')) == TRUE) {
+            if ($this->proposta_model->edit('propostas', $dados, 'idPropostas', $this->input->post('idPropostas')) == TRUE) {
                 $this->session->set_flashdata('success_msg', 'Cadastro atualizado com sucesso!');
                 $data['formErrors'] = null;
-                redirect(base_url() . 'index.php/proposta/edit/' . $this->input->post('numpropostas'));
+                redirect(base_url() . 'index.php/proposta/editarProposta/' . $this->input->post('idPropostas'));
             } else {
                 $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
             }
@@ -170,8 +155,81 @@ class Proposta extends CI_Controller {
         $data['produtos'] = $this->proposta_model->getProdutos($this->uri->segment(3));
         $data['servicos'] = $this->proposta_model->getServicos($this->uri->segment(3));
         $data['modulos'] = $this->proposta_model->getModulos($this->uri->segment(3));
-        $data['result'] = $this->proposta_model->getById($this->uri->segment(3));
+        $data['modulosCadastrados'] = $this->proposta_model->getModulosCadastrados();
+        $data['proposta'] = $this->proposta_model->getProposta('propostas.idPropostas,propostas.idEmpresas,propostas.idContatos,propostas.idNegocio,propostas.prazoPagamento,propostas.validade,propostas.previsaoInstalacao,propostas.observacao,propostas.vendedor,propostas.dataCadastro,propostas.dataAlteracao,propostas.mensalidade,propostas.totalProdutos,propostas.totalServicos,empresas.nomeEmpresa,empresas.cnpj,empresas.enderecoEmpresa,empresas.bairroEmpresa,empresas.cidadeEmpresa,contatos.emailContato,contatos.nomeContato,contatos.telefoneContato,contatos.whatsappContato', $this->uri->segment(3));
         $this->load->view('proposta/alterarProposta', $data);
+    }
+
+    public function mensalidadeProposta() {
+        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'eProposta')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
+            redirect(base_url() . 'index.php/dashboard');
+        }
+        $this->form_validation->set_rules('idPropostas', 'idPropostas', 'trim|required');
+
+        if ($this->form_validation->run() == FALSE) {
+            $data['formErrors'] = validation_errors();
+        } else {
+            $dados['idPropostas'] = $this->input->post('idPropostas');
+            $dados['mensalidade'] = $this->input->post('mensalidade');
+            $dados['dataAlteracao'] = date('Y-m-d');
+
+            if ($this->proposta_model->edit('propostas', $dados, 'idPropostas', $this->input->post('idPropostas')) == TRUE) {
+                redirect(base_url() . 'index.php/proposta/editarProposta/' . $this->input->post('idPropostas'));
+            } else {
+                $this->data['custom_error'] = '<div class="form_error"><p>Ocorreu um erro.</p></div>';
+            }
+        }
+    }
+
+    public function adicionarModulosProposta() {
+        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'eProposta')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar propostas.');
+            redirect(base_url() . 'index.php/dashboard');
+        }
+        $this->form_validation->set_rules('idPropostas', 'idPropostas', 'trim|required');
+
+        if ($this->form_validation->run() == FALSE) {
+            $dados['formErrors'] = validation_errors();
+        } else {
+            $dados['idPropostas'] = $this->input->post('idPropostas');
+            $dados['modulo'] = $this->input->post('idModulo');
+            $dados['quantidade'] = $this->input->post('quantidade');
+
+            if ($this->proposta_model->add('modulos_proposta', $dados) == TRUE) {
+                echo json_encode(array('result' => true));
+            } else {
+                echo json_encode(array('result' => false));
+            }
+        }
+    }
+
+    function excluirModulo() {
+
+        $ID = $this->input->post('idModulo_proposta');
+        if ($this->proposta_model->delete('modulos_proposta', 'idModulo_proposta', $ID) == true) {
+
+            echo json_encode(array('result' => true));
+        } else {
+            echo json_encode(array('result' => false));
+        }
+    }
+
+    function excluirProposta() {
+
+        $idPropostas = $this->input->post('idPropostaExcluir');
+        $idNegocio = $this->input->post('idNegocio');
+
+
+        if ($this->proposta_model->delete('propostas', 'idPropostas', $idPropostas) == true) {
+            $this->proposta_model->delete('produtos_proposta', 'idPropostas', $idPropostas);
+            $this->proposta_model->delete('modulos_proposta', 'idPropostas', $idPropostas);
+            $this->proposta_model->delete('servicos_proposta', 'idPropostas', $idPropostas);
+
+            redirect(base_url() . 'index.php/crm/editNegocios/' . $idNegocio);
+        } else {
+            echo json_encode(array('result' => false));
+        }
     }
 
     public function pesquisaProduto() {
@@ -213,16 +271,14 @@ class Proposta extends CI_Controller {
     }
 
     public function adicionarProduto() {
-        $numpropostas = $this->input->post('numpropostas');
-        $codigo = $this->input->post('codigo');
-        $produto = $this->input->post('produto');
-        $quantidade = $this->input->post('quantidade');
-        $vlunitario = $this->input->post('vlunitario');
+        $idPropostas = $this->input->post('idPropostas');
+        $produto = $this->input->post('descricaoProduto');
+        $quantidade = $this->input->post('quantidadeProduto');
+        $vlunitario = $this->input->post('vlunitarioProduto');
         $vltotal = $vlunitario * $quantidade;
 
         $data = array(
-            'numpropostas' => $numpropostas,
-            'codigo' => $codigo,
+            'idPropostas' => $idPropostas,
             'produto' => $produto,
             'quantidade' => $quantidade,
             'vlunitario' => $vlunitario,
@@ -230,9 +286,29 @@ class Proposta extends CI_Controller {
         );
 
         if ($this->proposta_model->add('produtos_proposta', $data) == true) {
-            $data['result'] = $this->proposta_model->getById($numpropostas);
-            $dados['totalequip'] = $data['result']->totalequip + $vltotal;
-            if ($this->proposta_model->edit('propostas', $dados, 'numpropostas', $this->input->post('numpropostas')) == TRUE) {
+            $data['result'] = $this->proposta_model->getById($idPropostas);
+            $dados['totalProdutos'] = $data['result']->totalProdutos + $vltotal;
+            if ($this->proposta_model->edit('propostas', $dados, 'idPropostas', $this->input->post('idPropostas')) == TRUE) {
+                echo json_encode(array('result' => true));
+            } else {
+                echo json_encode(array('result' => false));
+            }
+        }
+    }
+    
+    function excluirProduto() {
+//recebe o id do serviço na tabela de produto proposta e o valor total desse serviço
+        // recebe também a ID da proposta 
+        $teste = $this->input->get('idProduto_proposta');
+        $a = explode("-",$teste);
+        $ID = $a[0];
+        $idPropostas = $a[1];
+        $vltotal = $a[2];
+       //se retornar true para o delete desse serviço, então ele pega os dados e subtrai o total no total do serviço
+        if ($this->proposta_model->delete('produtos_proposta', 'idProduto_proposta', $ID) == true) {
+            $data['result'] = $this->proposta_model->getById($idPropostas);
+            $dados['totalProdutos'] = $data['result']->totalProdutos - $vltotal;
+            if ($this->proposta_model->edit('propostas', $dados, 'idPropostas', $idPropostas) == true) {
                 echo json_encode(array('result' => true));
             } else {
                 echo json_encode(array('result' => false));
@@ -241,14 +317,14 @@ class Proposta extends CI_Controller {
     }
 
     public function adicionarServico() {
-        $numpropostas = $this->input->post('numpropostas');
-        $servico = $this->input->post('servico');
-        $quantidade = $this->input->post('quantidadeserv');
-        $vlunitario = $this->input->post('vlunitarioserv');
+        $idPropostas = $this->input->post('idPropostas');
+        $servico = $this->input->post('descricaoServico');
+        $quantidade = $this->input->post('quantidadeServico');
+        $vlunitario = $this->input->post('vlunitarioServico');
         $vltotal = $vlunitario * $quantidade;
 
         $data = array(
-            'numpropostas' => $numpropostas,
+            'idPropostas' => $idPropostas,
             'servico' => $servico,
             'quantidade' => $quantidade,
             'vlunitario' => $vlunitario,
@@ -256,9 +332,29 @@ class Proposta extends CI_Controller {
         );
 
         if ($this->proposta_model->add('servicos_proposta', $data) == true) {
-            $data['result'] = $this->proposta_model->getById($numpropostas);
-            $dados['totalservico'] = $data['result']->totalservico + $vltotal;
-            if ($this->proposta_model->edit('propostas', $dados, 'numpropostas', $this->input->post('numpropostas')) == TRUE) {
+            $data['result'] = $this->proposta_model->getById($idPropostas);
+            $dados['totalServicos'] = $data['result']->totalServicos + $vltotal;
+            if ($this->proposta_model->edit('propostas', $dados, 'idPropostas', $this->input->post('idPropostas')) == TRUE) {
+                echo json_encode(array('result' => true));
+            } else {
+                echo json_encode(array('result' => false));
+            }
+        }
+    }
+
+    function excluirServico() {
+//recebe o id do serviço na tabela de produto proposta e o valor total desse serviço
+        // recebe também a ID da proposta 
+        $teste = $this->input->get('idServico_proposta');
+        $a = explode("-",$teste);
+        $ID = $a[0];
+        $idPropostas = $a[1];
+        $vltotal = $a[2];
+       //se retornar true para o delete desse serviço, então ele pega os dados e subtrai o total no total do serviço
+        if ($this->proposta_model->delete('servicos_proposta', 'idServico_proposta', $ID) == true) {
+            $data['result'] = $this->proposta_model->getById($idPropostas);
+            $dados['totalServicos'] = $data['result']->totalServicos - $vltotal;
+            if ($this->proposta_model->edit('propostas', $dados, 'idPropostas', $idPropostas) == true) {
                 echo json_encode(array('result' => true));
             } else {
                 echo json_encode(array('result' => false));
@@ -300,69 +396,5 @@ class Proposta extends CI_Controller {
             echo json_encode(array('result' => false));
         }
     }
-
-    function excluirProposta() {
-
-        $numpropostas = $this->input->post('numPropostasExcluir');
-
-        if ($this->proposta_model->delete('propostas', 'numpropostas', $numpropostas) == true) {
-            $this->proposta_model->delete('produtos_proposta', 'numpropostas', $numpropostas);
-            $this->proposta_model->delete('modulos_proposta', 'numpropostas', $numpropostas);
-            $this->proposta_model->delete('servicos_proposta', 'numpropostas', $numpropostas);
-
-            redirect(base_url() . 'index.php/proposta/gerenciar');
-        } else {
-            echo json_encode(array('result' => false));
-        }
-    }
-
-    function excluirProduto() {
-//recebe o id do produto na tabela de produto proposta e o valor total desse produto
-        // recebe também a ID do crm 
-        $ID = $this->input->post('idProduto_proposta');
-        $idCrm = $this->input->post('idCrm');
-        $vltotal = $this->input->post('vltotal');
-
-        //se retornar true para o delete desse produto, então ele pega os dados e subtrai o total no total da proposta
-        if ($this->proposta_model->delete('produtos_proposta', 'idProduto_proposta', $ID) == true) {
-            $data['result'] = $this->proposta_model->getById($idCrm);
-            $dados['totalequip'] = $data['result']->totalequip - $vltotal;
-            if ($this->proposta_model->edit('propostas', $dados, 'numpropostas', $idCrm) == TRUE) {
-                echo json_encode(array('result' => true));
-            } else {
-                echo json_encode(array('result' => false));
-            }
-        }
-    }
-
-    function excluirServico() {
-//recebe o id do serviço na tabela de produto proposta e o valor total desse serviço
-        // recebe também a ID do crm 
-        $ID = $this->input->post('idServico_proposta');
-        $idCrm = $this->input->post('idCrm');
-        $vltotal = $this->input->post('vltotal');
-
-        //se retornar true para o delete desse serviço, então ele pega os dados e subtrai o total no total do serviço
-        if ($this->proposta_model->delete('servicos_proposta', 'idServico_proposta', $ID) == true) {
-            $data['result'] = $this->proposta_model->getById($idCrm);
-            $dados['totalservico'] = $data['result']->totalservico - $vltotal;
-            if ($this->proposta_model->edit('propostas', $dados, 'numpropostas', $idCrm) == TRUE) {
-                echo json_encode(array('result' => true));
-            } else {
-                echo json_encode(array('result' => false));
-            }
-        }
-    }
-
-    function excluirModulo() {
-
-        $ID = $this->input->post('idModulo_proposta');
-        if ($this->proposta_model->delete('modulos_proposta', 'idModulo_proposta', $ID) == true) {
-
-            echo json_encode(array('result' => true));
-        } else {
-            echo json_encode(array('result' => false));
-        }
-    }
-
+   
 }

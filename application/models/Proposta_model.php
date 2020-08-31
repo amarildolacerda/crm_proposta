@@ -45,13 +45,13 @@ class Proposta_model extends CI_Model {
         if ($where) {
             $this->db->where($where);
         }
-       
+
         $query = $this->db->get();
 
         $result = !$one ? $query->result() : $query->row();
         return $result;
     }
-    
+
     function getSenhasEstrutura($servico) {
         $this->db->from('senhas_estruturas');
         $this->db->where('servico', $servico);
@@ -59,9 +59,21 @@ class Proposta_model extends CI_Model {
     }
 
     function getById($id) {
-        $this->db->where('numpropostas', $id);
+        $this->db->where('idPropostas', $id);
         $this->db->limit(1);
         return $this->db->get('propostas')->row();
+    }
+
+    function getProposta($fields, $idProposta, $one = false) {
+
+        $this->db->select($fields);
+        $this->db->from('propostas');
+        $this->db->where('idPropostas', $idProposta);
+
+        $this->db->join('empresas', 'empresas.idEmpresas = propostas.idEmpresas');
+        $this->db->join('contatos', 'contatos.idContatos = propostas.idContatos');
+
+        return $this->db->get()->row();
     }
 
     function count($table, $idusuario) {
@@ -71,10 +83,10 @@ class Proposta_model extends CI_Model {
         return $this->db->count_all_results();
     }
 
-    function count_impressao($table, $numproposta) {
+    function count_impressao($table, $idProposta) {
         $this->db->select('*');
         $this->db->from($table);
-        $this->db->where('numpropostas', $numproposta);
+        $this->db->where('idPropostas', $idProposta);
         return $this->db->count_all_results();
     }
 
@@ -83,7 +95,7 @@ class Proposta_model extends CI_Model {
         $this->db->select('*');
         $this->db->from('produtos_proposta');
         //$this->db->join('produtos','produtos.idProdutos = produtos_os.produtos_id');
-        $this->db->where('numpropostas', $id);
+        $this->db->where('idPropostas', $id);
         return $this->db->get()->result();
     }
 
@@ -92,7 +104,7 @@ class Proposta_model extends CI_Model {
         $this->db->select('*');
         $this->db->from('servicos_proposta');
         //$this->db->join('produtos','produtos.idProdutos = produtos_os.produtos_id');
-        $this->db->where('numpropostas', $id);
+        $this->db->where('idPropostas', $id);
         return $this->db->get()->result();
     }
 
@@ -100,10 +112,20 @@ class Proposta_model extends CI_Model {
 
         $this->db->select('*');
         $this->db->from('modulos_proposta');
-        //$this->db->join('produtos','produtos.idProdutos = produtos_os.produtos_id');
-        $this->db->where('numpropostas', $id);
+        $this->db->join('modulos','modulos.idModulos = modulos_proposta.modulo');
+        $this->db->where('idPropostas', $id);
         return $this->db->get()->result();
     }
+    
+    public function getModulosCadastrados() {
+
+        $this->db->select('*');
+        $this->db->from('modulos');
+        $this->db->order_by('posicaoMenu', 'desc');
+        $this->db->where('status', 1);
+        return $this->db->get()->result();
+    }
+
 
     function add($table, $data, $returnId = false) {
 

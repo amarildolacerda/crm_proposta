@@ -1,777 +1,475 @@
 <?php $this->load->view('template/menu'); ?>
-<section class="content-header">
-    <h1>
-        Propostas
-        <small>Editar propostas</small>
-    </h1>
-    <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li> Gerenciar propostas</li>
-        <li class="active"> Editar propostas</li>
-    </ol>
-</section>
 <section class="content">
-    <div class="col-md-8 col-md-offset-2">
-        <?php if ($formErrors) { ?>
-            <div class="alert alert-danger">
-                <?= $formErrors ?>
-            </div>
-            <?php
-        } else {
-            if ($this->session->flashdata('success_msg')) {
-                ?>
-                <div class="alert alert-success">
-                    <?= $this->session->flashdata('success_msg') ?>
+    <div class="row">
+        <div class="col-md-12">
+            <form action="<?php echo current_url(); ?>" method="post">
+                <div class="box box-success">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Informações da proposta</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label style="font-size:30px">Proposta #<?php echo $proposta->idPropostas . " | " ?></label>
+                                    <label style="font-size:30px">Negócio #<?php echo $proposta->idNegocio ?></label>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Prazo de pagamento</label>
+                                    <input type="text" class="form-control" name="prazoPagamento" value="<?php echo $proposta->prazoPagamento ?>">
+                                    <input type="hidden" class="form-control" name="idNegocio" value="<?php echo $proposta->idNegocio ?>">
+                                    <input type="hidden" class="form-control" name="idPropostas" value="<?php echo $proposta->idPropostas ?>">
+                                    <input type="hidden" class="form-control" name="idEmpresas" value="<?php echo $proposta->idEmpresas ?>">
+                                    <input type="hidden" class="form-control" name="idContatos" value="<?php echo $proposta->idContatos ?>">
+                                    <input type="hidden" class="form-control" name="vendedor" value="<?php echo $proposta->vendedor ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Validade da proposta</label>
+                                    <input type="number" class="form-control" name="validade"  value="<?php echo $proposta->validade ?>">
+                                </div>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label>Previsão de instalação</label>
+                                <input type="number" class="form-control" name="previsaoInstalacao" value="<?php echo $proposta->previsaoInstalacao ?>">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label>Observações</label>
+                                <textarea name="observacao" class="form-control" rows="4" ><?php echo $proposta->observacao ?></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group text-left">
+                                    <a title="cancelar" href="<?php echo base_url() ?>index.php/crm/editNegocios/<?php echo $proposta->idNegocio ?>" class="btn btn-danger btn-small">CANCELAR </a>
+                                    <button type="submit" class="btn btn-success"> SALVAR </button>
+                                    <a title="imprimir" href="<?php echo base_url() . 'index.php/proposta/imprimir/' . $proposta->idPropostas ?>" class="btn btn-warning btn-small"><i class="fa-fw glyphicon glyphicon-print"></i> </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- /.box-body -->
+                </div> <!-- /.box box-info-->
+            </form>
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Informações do cliente</h3>
                 </div>
-                <?php
-            }
-        }
-        ?>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Nome da empresa / Razão Social</label>
+                                <input type="text" class="form-control" id="fantasia" readonly="" value="<?php echo $proposta->nomeEmpresa ?>" >
+                                <input type="hidden" class="form-control" name="usuario" value="<?php echo $proposta->vendedor ?>">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>CNPJ</label>
+                                <input type="text" class="form-control" id="cnpj" readonly="" name="cnpj" value="<?php echo $proposta->cnpj ?>" >
+                            </div>
+                        </div>
 
-    </div>
-    <form action="<?php echo current_url(); ?>" method="post">
-        <div class="row">
-
-            <div class="col-md-12">
-                <!-- Custom Tabs (Pulled to the right) -->
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active"><a href="#tab_1-1" data-toggle="tab">Cliente / proposta</a></li>
-                        <li><a href="#tab_2-2" data-toggle="tab">Produtos</a></li>
-                        <li><a href="#tab_3-2" data-toggle="tab">Serviços</a></li>
-                        <li><a href="#tab_4-2" data-toggle="tab">Módulos</a></li>
-                        <li class="btn-small btn-warning btn-small"><a title="imprimir" href="<?php echo base_url() . 'index.php/proposta/imprimir/' . $result->numpropostas ?>" >Imprimir <i class="fa-fw glyphicon glyphicon-print"></i> </a></li>
-
-                        <li class="pull-right header"><i class="fa fa-th"></i> Selecione as abas desejadas</li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="tab_1-1">
-                            <form action="<?php echo current_url(); ?>" method="post">
-                                <div class="box box-success" >
-                                    <div class="box-header with-border">
-                                        <div class="col-md-6">
-                                            <div class="info-box-text bg-green">
-                                                <h3 class="box-title">Faturamento direto?&nbsp;&nbsp;&nbsp;</h3>
-                                                <label class="radio-inline"><input type="radio" name="fatdireto" id="fatdireto" value="1" <?php
-                                                    if ($result->fatdireto == 1) {
-                                                        echo "checked";
-                                                    }
-                                                    ?>>SIM
-                                                </label>
-                                                <label class="radio-inline"><input type="radio" name="fatdireto" id="fatdireto" value="0" <?php
-                                                    if ($result->fatdireto == 0) {
-                                                        echo "checked";
-                                                    }
-                                                    ?>>NÃO
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <select name="status" class="form-control">
-                                                <option value="1"<?php
-                                                if ($result->status == 1) {
-                                                    echo "selected";
-                                                }
-                                                ?>>Aguardando Aprovação
-                                                </option>
-                                                <option value="2" <?php
-                                                if ($result->status == 2) {
-                                                    echo "selected";
-                                                }
-                                                ?>>Fechado Ganho
-                                                </option>
-                                                <option value="3" <?php
-                                                if ($result->status == 3) {
-                                                    echo "selected";
-                                                }
-                                                ?>>Fechado Perdido
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="box-body">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>CNPJ</label>
-                                                <input type="text" class="form-control" id="cnpj" name="cnpj" placeholder="Ex.: 11.111.111/0001-01" onblur="loginPesquisaCliente()" value="<?php echo $result->cnpj; ?>">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <?php echo form_hidden('numpropostas', $result->numpropostas) ?>
-                                                <label>Nome Fantasia</label>
-                                                <input type="text" class="form-control" id="fantasia" name="fantasia" readonly="" placeholder="Ex.: Empresa X" value="<?php echo $result->fantasia; ?>" >
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                            <label>Endereço</label>
-                                            <input type="text" class="form-control" id="endereco" name="endereco" readonly="" placeholder="Ex.: Rua Euclides da cunha,198" value="<?php echo $result->endereco; ?>">
-                                        </div>
-                                        <div class="form-group col-md-3">
-                                            <label>Cidade</label>
-                                            <input type="text" class="form-control" id="cidade" name="cidade" readonly="" placeholder="Ex.: Santos" value="<?php echo $result->cidade; ?>">
-                                        </div>
-                                        <div class="form-group col-md-3">
-                                            <div class="form-group">
-                                                <label>Estado</label>
-                                                <select class="form-control" name="estado">
-                                                    <option <?php
-                                                    if ($result->estado == 'AC') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>AC</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'AL') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>AL</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'AP') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>AP</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'AM') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>AM</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'BA') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>BA</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'CE') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>CE</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'DF') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>DF</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'ES') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>ES</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'GO') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>GO</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'MA') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>MA</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'MT') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>MT</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'MS') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>MS</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'MG') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>MG</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'PA') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>PA</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'PB') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>PB</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'PR') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>PR</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'PE') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>PE</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'PI') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>PI</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'RJ') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>RJ</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'RN') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>RN</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'RS') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>RS</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'RO') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>RO</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'RR') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>RR</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'SC') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>SC</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'SP') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>SP</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'SE') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>SE</option>
-                                                    <option <?php
-                                                    if ($result->estado == 'TO') {
-                                                        echo "selected";
-                                                    }
-                                                    ?>>TO</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                            <label>E-mail</label>
-                                            <input type="email" class="form-control" id="email" name="email" placeholder="Ex.: email@dominio.com.br" value="<?php echo $result->email; ?>">
-                                        </div>
-                                        <div class="form-group col-md-3">
-                                            <label>Contato</label>
-                                            <input type="text" class="form-control" id="contato" name="contato" placeholder="Ex.: Sr. João" value="<?php echo $result->contato; ?>">
-                                        </div>
-                                        <div class="form-group col-md-3">
-                                            <label>Telefone</label>
-                                            <input type="tel" class="form-control" id="telefone" name="telefone" placeholder="Ex.: (13)XXXX-XXXX" maxlength="15" name="phone" value="<?php echo $result->telefone; ?>">
-                                        </div>
-                                    </div> <!-- /.box-body -->
-                                    <div class="box box-success">
-                                        <div class="box-header with-border">
-                                            <h3 class="box-title">Informações da Proposta</h3>
-                                        </div>
-                                        <div class="box-body">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Prazo de pagamento</label>
-                                                    <input type="text" class="form-control" name="prazo" value="<?php echo $result->prazopagamento; ?>">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Validade da proposta</label>
-                                                    <input type="number" class="form-control" name="validade" value="<?php echo $result->validade; ?>">
-                                                </div>
-                                            </div>
-                                            <div class="form-group col-md-4">
-                                                <label>Previsão de instalação</label>
-                                                <input type="number" class="form-control" name="previsao" value="<?php echo $result->previsaoinst; ?>">
-                                            </div>
-                                            <div class="form-group col-md-12">
-                                                <label>Observações</label>
-                                                <textarea name="observacao" class="form-control" rows="4" ><?php echo $result->observacao; ?></textarea>
-                                            </div>
-                                            <div  class="col-md-3">
-                                            </div>
-                                            <div  class="col-md-3">
-                                                <button class="btn btn-block btn-success">Alterar proposta<i class="fa-fw glyphicon glyphicon-ok"></i></button>
-                                            </div>
-                                            <div  class="col-md-3">
-                                                <a href="<?php echo base_url() ?>index.php/proposta/gerenciar" class="btn btn-block btn-danger"> Voltar<i class="fa-fw glyphicon glyphicon-remove"></i></a>
-                                            </div>
-                                        </div> <!-- /.box-body -->
-                                    </div> <!-- /.box box-info-->
-                                </div> <!-- /.box box-info-->
+                        <div class="form-group col-md-4">
+                            <label>Endereço</label>
+                            <input type="text" class="form-control" readonly="" id="endereco" name="endereco"value="<?php echo $proposta->enderecoEmpresa . ', ' . $proposta->bairroEmpresa ?>">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Cidade</label>
+                            <input type="text" class="form-control" readonly="" id="cidade" name="cidade" value="<?php echo $proposta->cidadeEmpresa ?>" >
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-5">
+                            <label>E-mail</label>
+                            <input type="email" class="form-control" readonly="" id="email" name="email" value="<?php echo $proposta->emailContato ?>" >
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Contato</label>
+                            <input type="text" class="form-control" readonly="" id="contato" name="contato"  value="<?php echo $proposta->nomeContato ?>">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Telefone</label>
+                            <input type="tel" class="form-control" readonly="" id="telefone" name="telefone"  maxlength="15" name="phone" value="<?php echo $proposta->telefoneContato ?>">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Whatsapp</label>
+                            <input type="tel" class="form-control" readonly="" id="whatsapp" name="whatsapp"  maxlength="15" name="phone" value="<?php echo $proposta->whatsappContato ?>">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- MENSALIDADE -->
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="box box-success">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Mensalidade</h3>
+                        </div>
+                        <div class="box-body">
+                            <form action="<?php echo base_url() ?>index.php/proposta/mensalidadeProposta" method="post">
+                                <div class="col-md-10">
+                                    <label>Mensalidade</label>
+                                    <input type="text" class="form-control" name="mensalidade" value="<?php echo $proposta->mensalidade ?>">
+                                    <input type="hidden" class="form-control" name="idPropostas" value="<?php echo $proposta->idPropostas ?>">
+                                </div>
+                                <div class="col-md-1">
+                                    <label>.</label>
+                                    <button class="btn btn-success span6" id="atualizarMensalidade"><i class="fa fa-calculator"></i></button>
+                                </div>
                             </form>
                         </div>
-                        <!-- /.tab-pane -->
-
-                        <div class="tab-pane" id="tab_2-2">
-
-                            <div class="box box-success">
-                                <div class="box-header with-border">
-                                    <h3 class="box-title">Insira os produtos na sua proposta</h3>
-                                </div>
-                                <div class="box-body">
-
-                                   <form id="formProdutos" action="<?php echo base_url() ?>proposta/adicionarProduto" method="post">
-                                        <div class="col-md-2">
-                                            <label for="">Codigo</label>
-                                            <input type="text" class="form-control" maxlength="48" name="codigo" id="codigo"  onblur="loginPesquisaProduto()" placeholder="Ex.: 125">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <input type="hidden" name="numpropostas" id="idOsProduto" value="<?php echo $result->numpropostas ?>" />
-                                            <label for="">Produto</label>
-                                            <input type="text" name="produto" id="produto" class="form-control" placeholder="Digite o produto">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label for="">Quantidade</label>
-                                            <input type="number" placeholder="Quantidade" id="quantidade" name="quantidade" class="form-control" />
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label>Unitario</label>
-                                            <input type="number" min="0" step=0.01 class="form-control" name="vlunitario" id="vlunitario" placeholder="Ex.: 1300,00">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <br>
-                                            <button class="btn btn-success span6" id="btnAdicionarProduto"><i class="fa fa-plus"></i></button>
-                                        </div>
-                                    </form>
-                                </div>
-
-                            </div>
-
-                            <div class="box">
-                                <div class="box-header">
-                                    <h3 class="box-title">Produtos adicionados à proposta</h3>
-                                </div>
-                                <!-- /.box-header -->
-                                <div  id="divProdutos" class="box-body table-responsive no-padding">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Código</th>
-                                                <th>Produto</th>
-                                                <th>Quantidade</th>
-                                                <th>Unitário</th>
-                                                <th>Sub-total</th>
-                                                <th>Ações</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                            $totalProdutos = 0;
-                                            foreach ($produtos as $p) {
-
-                                                $totalProdutos = $totalProdutos + $p->vltotal;
-                                                echo '<tr>';
-                                                echo '<td>' . $p->codigo . '</td>';
-                                                echo '<td>' . $p->produto . '</td>';
-                                                echo '<td>' . $p->quantidade . '</td>';
-                                                echo '<td>R$ ' . number_format($p->vlunitario, 2, ',', '.') . '</td>';
-                                                echo '<td>R$ ' . number_format($p->vltotal, 2, ',', '.') . '</td>';
-                                                echo '<td><a href="" vltotal="'.$p->vltotal.'" idCrm="' . $result->numpropostas . '" idAcao="' . $p->idProduto_proposta . '"  class="btn btn-danger">Excluir<i class="icon-remove icon-white"></i></a></td>';
-                                                echo '</tr>';
-                                            }
-                                            ?>
-
-                                            <tr>
-                                                <td colspan="4" style="text-align: right"><strong>Total:</strong></td>
-                                                <td><strong>R$ <?php echo number_format($totalProdutos, 2, ',', '.'); ?><input type="hidden" id="total-venda" value="<?php echo number_format($totalProdutos, 2); ?>"></strong></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <!-- /.box-body -->
-                            </div>
-                            <!-- /.box -->
-                        </div>
-                        <!-- /.tab-pane -->
-
-                        
-                        <!-- ABA DE SERVIÇOS -->
-
-                        <div class="tab-pane" id="tab_3-2">
-                            <div class="box box-success">
-                                <div class="box-header with-border">
-                                    <h3 class="box-title">Insira os serviços na sua proposta</h3>
-                                </div>
-                                <div class="box-body">
-                                    <form id="formServicos" action="<?php echo base_url() ?>proposta/adicionarServico" method="post">
-                                        <div class="col-md-7">
-                                            <input type="hidden" name="numpropostas" id="idOsServico" value="<?php echo $result->numpropostas ?>" />
-                                            <label for="">Serviço</label>
-                                            <input type="text" name="servico" id="servico" class="form-control" placeholder="Digite o serviço">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label >Quantidade</label>
-                                            <input type="number" placeholder="Quantidade" id="quantidadeserv" name="quantidadeserv" class="form-control" />
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label>Unitario</label>
-                                            <input type="number" min="0" step=0.01 class="form-control" name="vlunitarioserv" id="vlunitarioserv" placeholder="Ex.: 1300,00">
-                                        </div>
-                                        <div class="col-md-1">
-                                            <label >.</label>
-                                            <button class="btn btn-success span12" id="btnAdicionarServico"><i class="icon-white icon-plus"></i> Adicionar</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
-                            <div class="box">
-                                <div class="box-header">
-                                    <h3 class="box-title">Serviços adicionados à proposta</h3>
-                                </div>
-                                <!-- /.box-header -->
-                                <div  id="divServicos" class="box-body table-responsive no-padding">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Serviço</th>
-                                                <th>Quantidade</th>
-                                                <th>Unitário</th>
-                                                <th>Sub-total</th>
-                                                <th>Ações</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                            $total = 0;
-                                            foreach ($servicos as $p) {
-
-                                                $total = $total + $p->vltotal;
-                                                echo '<tr>';
-                                                echo '<td>' . $p->servico . '</td>';
-                                                echo '<td>' . $p->quantidade . '</td>';
-                                                echo '<td>R$ ' . number_format($p->vlunitario, 2, ',', '.') . '</td>';
-                                                echo '<td>R$ ' . number_format($p->vltotal, 2, ',', '.') . '</td>';
-                                                echo '<td><span href="" vltotal="'.$p->vltotal.'" idCrm="' . $result->numpropostas . '" idAcao="' . $p->idServico_proposta . '"  class="btn btn-danger">Excluir<i class="icon-remove icon-white"></i></span></td>';
-                                                echo '</tr>';
-                                            }
-                                            ?>
-                                            <tr>
-                                                <td colspan="4" style="text-align: right"><strong>Total:</strong></td>
-                                                <td><strong>R$ <?php echo number_format($total, 2, ',', '.'); ?><input type="hidden" id="total-venda" value="<?php echo number_format($total, 2); ?>"></strong></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <!-- /.box-body -->
-                            </div>
-                            <!-- /.box -->
-                        </div>
-                        <!-- /.tab-pane -->
-                        <!-- /.tab-pane -->
-                        <div class="tab-pane" id="tab_4-2">
-                            <div class="box box-success">
-                                <div class="box-header with-border">
-                                    <h3 class="box-title">Insira o valor da mensalidade</h3>
-                                </div>
-                                <div class="box-body">
-                                    <form id="formMensalidade" action="<?php echo base_url() ?>proposta/adicionarMensalidade" method="post">
-                                        <div class="col-md-4">
-                                            <input type="hidden" name="numpropostas" value="<?php echo $result->numpropostas ?>" />
-                                            <label for="">Valor da mensalidade</label>
-                                            <input type="text" name="totalmensalidade" id="totalmensalidade" class="form-control" placeholder="Digite o valor da mensalidade">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label >.</label><br>
-                                            <button class="btn btn-success span12" id="btnAdicionarMensalidade"><i class="icon-white icon-plus"></i> Adicionar/alterar</button>
-                                        </div>
-                                    </form>
-                                    <div class="col-md-1">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>
-                                            Valor de mensalidade adicionado à proposta
-                                        </label>
-                                        <div id="divMensalidade" class="small-box bg-blue-active">
-                                            <div class="inner">
-                                                <h3><?php echo number_format($result->totalmensalidade, 2, ',', '.') ?></h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="box box-success">
-                                <div class="box-header with-border">
-                                    <h3 class="box-title">Insira os módulos na sua proposta</h3>
-                                </div>
-                                <div class="box-body">
-                                    <form id="formModulos" action="<?php echo base_url() ?>proposta/adicionarModulo" method="post">
-                                        <div class="col-md-7">
-                                            <input type="hidden" name="numpropostas" value="<?php echo $result->numpropostas ?>" />
-                                            <!-- <label for="">Módulo</label>
-                                             <input type="text" name="modulo" id="modulo" class="form-control" placeholder="Digite o serviço">-->
-                                            <div class="form-group">
-                                                <label>Módulos</label>
-                                                <select name="modulo" id="modulo" class="form-control">
-                                                    <option></option>
-                                                    <option>Supervisor</option>
-                                                    <option>Pedido</option>
-                                                    <option>PDV</option>
-                                                    <option>Estoque</option>
-                                                    <option>Financeiro</option>
-                                                    <option>NF-e</option>
-                                                    <option>Vendas</option>
-                                                    <option>PDVSync</option>
-                                                    <option>Comanda Cel/tablet</option>
-                                                    <option>Comanda</option>
-                                                    <option>Store Pet</option>
-                                                    <option>Cobrebem</option>
-                                                    <option>Estação Storeware</option>
-                                                    <option>Busca preço</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label >Quantidade</label>
-                                            <input type="number" placeholder="Quantidade" id="quantidademod" name="quantidademod" class="form-control" />
-                                        </div>
-                                        <div class="col-md-1">
-                                            <label >.</label>
-                                            <button class="btn btn-success span12" id="btnAdicionarModulo"><i class="icon-white icon-plus"></i> Adicionar</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
-                            <div class="box">
-                                <div class="box-header">
-                                    <h3 class="box-title">Módulos adicionados à proposta</h3>
-                                </div>
-                                <!-- /.box-header -->
-                                <div  id="divModulos" class="box-body table-responsive no-padding">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Módulo</th>
-                                                <th>Quantidade</th>
-                                                <th>Ações</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                            $total = 0;
-                                            foreach ($modulos as $p) {
-
-                                                //$total = $total + $p->vltotal;
-                                                echo '<tr>';
-                                                echo '<td>' . $p->modulo . '</td>';
-                                                echo '<td>' . $p->quantidade . '</td>';
-                                                //echo '<td>R$ ' . number_format($p->vlunitario, 2, ',', '.') . '</td>';
-                                                // echo '<td>R$ ' . number_format($p->vltotal, 2, ',', '.') . '</td>';
-                                                echo '<td><button href="" idAcao="' . $p->idModulo_proposta . '"  class="btn btn-danger">Excluir<i class="icon-remove icon-white"></i></button></td>';
-                                                echo '</tr>';
-                                            }
-                                            ?>
-
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <!-- /.box-body -->
-                            </div>
-                            <!-- /.box -->
-                        </div>
-                        <!-- /.tab-pane -->
-
                     </div>
-                    <!-- /.tab-content -->
                 </div>
-                <!-- nav-tabs-custom -->
+                <div class="col-md-7">
+                    <div class="row">
+                        <div class="form-group">
+                            <label style="font-size:30px">Mensalidade <?php echo "R$" . $proposta->mensalidade . ",00" ?></label>
+                        </div>
+                    </div>
+                    <div class="row" id="totalGeral">
+                        <div class="form-group">
+                            <label style="font-size:30px">Total da Proposta <?php $totalGeral=$proposta->totalServicos + $proposta->totalProdutos; echo "R$" . $totalGeral . ",00" ?></label>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <!-- /.row -->
-    </form>
+
+            <!-- MODULOS -->
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="box box-success">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Módulos</h3>
+                        </div>
+                        <div class="box-body">
+                            <form id="formModulos" action="<?php echo base_url() ?>index.php/proposta/adicionarModulosProposta" method="post">
+                                <div class="col-md-9">
+                                    <label>Módulos </label>
+                                    <input type="hidden" class="form-control" name="idPropostas" value="<?php echo $proposta->idPropostas ?>">
+                                    <select class="form-control" id="idModulo" name="idModulo" required="">
+                                        <option></option>
+                                        <?php
+                                        foreach ($modulosCadastrados as $value2) {
+                                            ?>
+                                            <option value="<?php echo $value2->idModulos; ?>">
+                                                <?php echo $value2->descricao; ?>
+                                            </option>
+                                            <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label >Qtde</label>
+                                    <input type="number" id="quantidade" name="quantidade" class="form-control" value="1" />
+                                </div>
+                                <div class="col-md-1">
+                                    <br>
+                                    <button class="btn btn-success span6" ><i class="fa fa-plus"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="box box-success">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Módulos adicionados</h3>
+                        </div>
+                        <div class="box-body">
+
+                            <div  id="divModulos" class="box-body table-responsive no-padding">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Descricao</th>
+                                            <th>Qtde</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        foreach ($modulos as $m) {
+
+                                            echo '<tr>';
+                                            echo '<td>' . $m->descricao . '</td>';
+                                            echo '<td>' . $m->quantidade . '</td>';
+                                            echo '<td><a href="" idAcao="' . $m->idModulo_proposta . '" class="btn btn-danger"><i class="fa-fw glyphicon glyphicon-trash"></i></a></td>';
+                                            echo '</tr>';
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRODUTOS -->
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="box box-success">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Adicionar produtos</h3>
+                        </div>
+                        <div class="box-body">
+                            <form id="formProdutos" action="<?php echo base_url() ?>index.php/proposta/adicionarProduto" method="post">
+                                <div class="row">
+                                    <div class="col-md-7">
+                                        <label>Produtos </label>
+                                        <input type="hidden" class="form-control" name="idPropostas" value="<?php echo $proposta->idPropostas ?>>">
+    <!--                                    <select class="scriptProdutos" id="idProduto" name="idProdutos" style="width: 100%">></select>-->
+                                        <input type="text" class="form-control" id="descricaoProduto" name="descricaoProduto" required="" >
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Valor </label>
+                                        <input type="number" class="form-control" id="vlunitarioProduto" name="vlunitarioProduto" required="">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label >Qtde</label>
+                                        <input type="number" id="quantidadeProduto" name="quantidadeProduto" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-right">
+                                        <br>
+                                        <button class="btn btn-success span6" id="btnAdicionarProduto"><i class="fa fa-plus"></i> Adicionar</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="box box-success">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Produtos adicionados</h3>
+                        </div>
+                        <div class="box-body">
+
+                            <div  id="divProdutos" class="box-body table-responsive no-padding">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Produto</th>
+                                            <th>Qtde</th>
+                                            <th>Unitário</th>
+                                            <th>Sub-total</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $totalProdutos = 0;
+                                        foreach ($produtos as $p) {
+
+                                            $totalProdutos = $totalProdutos + $p->vltotal;
+                                            echo '<tr>';
+                                            echo '<td>' . $p->idProduto_proposta . '</td>';
+                                            echo '<td>' . $p->produto . '</td>';
+                                            echo '<td>' . $p->quantidade . '</td>';
+                                            echo '<td>R$ ' . number_format($p->vlunitario, 2, ',', '.') . '</td>';
+                                            echo '<td>R$ ' . number_format($p->vltotal, 2, ',', '.') . '</td>';
+                                             echo '<td><button  onclick="excluirProdutos(' . $p->idProduto_proposta . ',' . $proposta->idPropostas . ',' . $p->vltotal . ')" class="btn btn-danger"><i class="fa-fw glyphicon glyphicon-trash"></i></button></td>';
+                                            echo '</tr>';
+                                        }
+                                        ?>
+
+                                        <tr>
+                                            <td colspan="4" style="text-align: right"><strong>Total:</strong></td>
+                                            <td><strong>R$ <?php echo number_format($totalProdutos, 2, ',', '.'); ?><input type="hidden" id="total-venda" value="<?php echo number_format($totalProdutos, 2); ?>"></strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- SERVIÇOS -->
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="box box-success">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Adicionar serviços</h3>
+                        </div>
+                        <div class="box-body">
+                            <form id="formServicos" action="<?php echo base_url() ?>index.php/proposta/adicionarServico" method="post">
+                                <div class="row">
+                                    <div class="col-md-7">
+                                        <label>Serviços </label>
+<!--                                        <input type="hidden" class="scriptServicos" id="idServicos" name="idServicos" value="1">-->
+                                        <input type="hidden" class="form-control" name="idPropostas" id="idPropostas" value="<?php echo $proposta->idPropostas ?>">
+                                        <input type="text" class="form-control" id="descricaoServico" name="descricaoServico" required="" >
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Valor </label>
+                                        <input type="number" class="form-control" id="vlunitarioServico" name="vlunitarioServico" required="">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label >Qtde</label>
+                                        <input type="number" id="quantidadeServico" name="quantidadeServico" class="form-control" required="" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-right">
+                                        <br>
+                                        <button class="btn btn-success span6" id="btnAdicionarServico"><i class="fa fa-plus"></i> Adicionar</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="box box-success">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Serviços adicionados</h3>
+                        </div>
+                        <div class="box-body">
+
+                            <div  id="divServicos" class="box-body table-responsive no-padding">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Produto</th>
+                                            <th>Qtde</th>
+                                            <th>Unitário</th>
+                                            <th>Sub-total</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $totalServicos = 0;
+                                        foreach ($servicos as $s) {
+
+                                            $totalServicos = $totalServicos + $s->vltotal;
+                                            echo '<tr>';
+                                            echo '<td>' . $s->idServico_proposta . '</td>';
+                                            echo '<td>' . $s->servico . '</td>';
+                                            echo '<td>' . $s->quantidade . '</td>';
+                                            echo '<td>R$ ' . number_format($s->vlunitario, 2, ',', '.') . '</td>';
+                                            echo '<td>R$ ' . number_format($s->vltotal, 2, ',', '.') . '</td>';
+                                            echo '<td><button  onclick="excluirServicos(' . $s->idServico_proposta . ',' . $proposta->idPropostas . ',' . $s->vltotal . ')" class="btn btn-danger"><i class="fa-fw glyphicon glyphicon-trash"></i></button></td>';
+                                            echo '</tr>';
+                                        }
+                                        ?>
+
+                                        <tr>
+                                            <td colspan="4" style="text-align: right"><strong>Total:</strong></td>
+                                            <td><strong>R$ <?php echo number_format($totalServicos, 2, ',', '.'); ?><input type="hidden" id="total-venda" value="<?php echo number_format($totalProdutos, 2); ?>"></strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> <!--/.col md-12) -->
+    </div>
+</form>
 
 </section>
-<?php $this->load->view('proposta/script'); ?>
 <?php $this->load->view('template/footer'); ?>
+
+<script>
+    function excluirProdutos(a, b, c) {
+        var idProduto_proposta = a;
+        var idProdutos = b;
+        var vltotal = c;
+        if ((idProduto_proposta % 1) == 0) {
+            $("#divProdutos").html("<div class='progress'><div class='progress-bar progress-bar-primary progress-bar-striped' style='width: 100%'></div></div>");
+            $.ajax({
+                type: "GET",
+                url: "<?php echo base_url(); ?>index.php/proposta/excluirProduto",
+                data: "idProduto_proposta=" + idProduto_proposta + "-" + idProdutos + "-" + vltotal,
+                dataType: 'json',
+                success: function (data)
+                {
+                    if (data.result == true) {
+                        $("#totalGeral").load("<?php echo current_url(); ?> #totalGeral");
+                        $("#divProdutos").load("<?php echo current_url(); ?> #divProdutos");
+                        $("#idProdutos").val('').focus();
+                    } else {
+                        alert('Ocorreu um erro ao tentar excluir o serviço.');
+                    }
+                }
+            });
+            return false;
+        }
+    }
+</script>
+
+<script>
+    function excluirServicos(a, b, c) {
+        var idServico_proposta = a;
+        var idServicos = b;
+        var vltotal = c;
+        if ((idServico_proposta % 1) == 0) {
+            $("#divServicos").html("<div class='progress'><div class='progress-bar progress-bar-primary progress-bar-striped' style='width: 100%'></div></div>");
+            $.ajax({
+                type: "GET",
+                url: "<?php echo base_url(); ?>index.php/proposta/excluirServico",
+                data: "idServico_proposta=" + idServico_proposta + "-" + idServicos + "-" + vltotal,
+                dataType: 'json',
+                success: function (data)
+                {
+                    if (data.result == true) {
+                        $("#totalGeral").load("<?php echo current_url(); ?> #totalGeral");
+                        $("#divServicos").load("<?php echo current_url(); ?> #divServicos");
+                        $("#idServicos").val('').focus();
+                    } else {
+                        alert('Ocorreu um erro ao tentar excluir o serviço.');
+                    }
+                }
+            });
+            return false;
+        }
+    }
+</script>
+
 <script type="text/javascript">
     $(document).ready(function () {
-        $(function () {
-            $("#btAtualizarValor").click(function () {
-                $("#codigo").val($("#codprod").val());
-                $("#produto").val($("#nomeprod").val());
-                $("#quantidade").val('1');
-                $("#vlunitario").val($("#vlunitariomodal").val());
-
-
-            });
-        });
-
-        $("#formProdutos").validate({
-            rules: {
-                codigo: {required: true},
-                vlunitario: {required: true},
-                quantidade: {required: true}
-            },
-            messages: {
-                codigo: {required: 'Insira o codigo'},
-                vlunitario: {required: 'Verifique se o produto/preço estão digitados corretamente'},
-                quantidade: {required: 'Digite a quantidade'}
-            },
-            submitHandler: function (form) {
-
-                var dados = $(form).serialize();
-                $("#divProdutos").html("<div class='progress'><div class='progress-bar progress-bar-primary progress-bar-striped' style='width: 100%'></div></div>");
-                $.ajax({
-                    type: "POST",
-                    url: "<?php echo base_url(); ?>index.php/proposta/adicionarProduto",
-                    data: dados,
-                    dataType: 'json',
-                    success: function (data)
-                    {
-                        if (data.result == true) {
-                            $("#divProdutos").load("<?php echo current_url(); ?> #divProdutos");
-                            $("#codigo").val('');
-                            $("#produto").val('');
-                            $("#quantidade").val('');
-                            $("#vlunitario").val('');
-                            $("#codigo").val('').focus();
-                        } else {
-                            alert('Ocorreu um erro ao tentar adicionar produto.');
-                        }
-                    }
-                });
-
-                return false;
-
-
-            }
-
-        });
-
-
-        $(document).on('click', 'a', function (event) {
-            var idProduto_proposta = $(this).attr('idAcao');
-            var idCrm = $(this).attr('idCrm');
-            var vltotal = $(this).attr('vltotal');
-           
-            if ((idProduto_proposta % 1) == 0) {
-                $("#divProdutos").html("<div class='progress'><div class='progress-bar progress-bar-primary progress-bar-striped' style='width: 100%'></div></div>");
-                $.ajax({
-                    type: "POST",
-                    url: "<?php echo base_url(); ?>index.php/proposta/excluirProduto",
-                    data: {'idProduto_proposta':idProduto_proposta,'idCrm':idCrm,'vltotal':vltotal},
-                    dataType: 'json',
-                    success: function (data)
-                    {
-                        if (data.result == true) {
-                            $("#divProdutos").load("<?php echo current_url(); ?> #divProdutos");
-
-                        } else {
-                            alert('Ocorreu um erro ao tentar excluir produto.');
-                        }
-                    }
-                });
-                return false;
-            }
-
-        });
-
-        $("#formServicos").validate({
-            rules: {
-                servico: {required: true},
-                quantidadeserv: {required: true},
-                vlunitarioserv: {required: true}
-            },
-            messages: {
-                servico: {required: 'Insira o nome do serviço'},
-                quantidadeserv: {required: 'Digite a quantidade'},
-                vlunitarioserv: {required: 'Digite o valor unitário'}
-            },
-            submitHandler: function (form) {
-                var dados = $(form).serialize();
-                $("#divServicos").html("<div class='progress'><div class='progress-bar progress-bar-primary progress-bar-striped' style='width: 100%'></div></div>");
-                $.ajax({
-                    type: "POST",
-                    url: "<?php echo base_url(); ?>index.php/proposta/adicionarServico",
-                    data: dados,
-                    dataType: 'json',
-                    success: function (data)
-                    {
-                        if (data.result == true) {
-                            $("#divServicos").load("<?php echo current_url(); ?> #divServicos");
-                            $("#servico").val('');
-                            $("#quantidadeserv").val('');
-                            $("#vlunitarioserv").val('');
-                            $("#servico").val('').focus();
-                        } else {
-                            alert('Ocorreu um erro ao tentar adicionar produto.');
-                        }
-                    }
-                });
-
-                return false;
-            }
-        });
-
-        $(document).on('click', 'span', function (event) {
-            var idServico_proposta = $(this).attr('idAcao');
-            var idCrm = $(this).attr('idCrm');
-            var vltotal = $(this).attr('vltotal');
-
-            if ((idServico_proposta % 1) == 0) {
-                $("#divServicos").html("<div class='progress'><div class='progress-bar progress-bar-primary progress-bar-striped' style='width: 100%'></div></div>");
-                $.ajax({
-                    type: "POST",
-                    url: "<?php echo base_url(); ?>index.php/proposta/excluirServico",
-                    data: {'idServico_proposta':idServico_proposta,'idCrm':idCrm,'vltotal':vltotal},
-                    dataType: 'json',
-                    success: function (data)
-                    {
-                        if (data.result == true) {
-                            $("#divServicos").load("<?php echo current_url(); ?> #divServicos");
-
-                        } else {
-                            alert('Ocorreu um erro ao tentar excluir produto.');
-                        }
-                    }
-                });
-                return false;
-            }
-
-        });
 
         $("#formModulos").validate({
-            rules: {
-                modulo: {required: true},
-                quantidademod: {required: true}
-            },
-            messages: {
-                modulo: {required: 'Selecione o módulo'},
-                quantidademod: {required: 'Digite a quantidade'}
-            },
             submitHandler: function (form) {
+
                 var dados = $(form).serialize();
                 $("#divModulos").html("<div class='progress'><div class='progress-bar progress-bar-primary progress-bar-striped' style='width: 100%'></div></div>");
                 $.ajax({
                     type: "POST",
-                    url: "<?php echo base_url(); ?>index.php/proposta/adicionarModulo",
+                    url: "<?php echo base_url(); ?>index.php/proposta/adicionarModulosProposta",
                     data: dados,
                     dataType: 'json',
                     success: function (data)
                     {
                         if (data.result == true) {
                             $("#divModulos").load("<?php echo current_url(); ?> #divModulos");
-                            $("#modulo").val('');
-                            $("#quantidademod").val('');
-                            $("#modulo").val('').focus();
+                            $("#idModulo").val('');
+                            $("#quantidade").val('1');
+                            $("#idModulo").val('').focus();
                         } else {
-                            alert('Ocorreu um erro ao tentar adicionar produto.');
+                            alert('Ocorreu um erro ao tentar adicionar timeline.');
                         }
                     }
                 });
-
                 return false;
             }
+
         });
-
-        $(document).on('click', 'button', function (event) {
+        $(document).on('click', 'a', function (event) {
             var idModulo_proposta = $(this).attr('idAcao');
-
             if ((idModulo_proposta % 1) == 0) {
                 $("#divModulos").html("<div class='progress'><div class='progress-bar progress-bar-primary progress-bar-striped' style='width: 100%'></div></div>");
                 $.ajax({
@@ -785,7 +483,7 @@
                             $("#divModulos").load("<?php echo current_url(); ?> #divModulos");
 
                         } else {
-                            alert('Ocorreu um erro ao tentar excluir produto.');
+                            alert('Ocorreu um erro ao tentar excluir timeline.');
                         }
                     }
                 });
@@ -794,77 +492,169 @@
 
         });
 
-
-        $("#formMensalidade").validate({
-            rules: {
-                totalmensalidade: {required: true},
-            },
-            messages: {
-                totalmensalidade: {required: 'Selecione o módulo'},
-            },
+        $("#formProdutos").validate({
             submitHandler: function (form) {
+
                 var dados = $(form).serialize();
-                $("#divMensalidade").html("<div class='progress'><div class='progress-bar progress-bar-primary progress-bar-striped' style='width: 100%'></div></div>");
+                $("#divProdutos").html("<div class='progress'><div class='progress-bar progress-bar-primary progress-bar-striped' style='width: 100%'></div></div>");
                 $.ajax({
                     type: "POST",
-                    url: "<?php echo base_url(); ?>index.php/proposta/adicionarMensalidade",
+                    url: "<?php echo base_url(); ?>index.php/proposta/adicionarProduto",
                     data: dados,
                     dataType: 'json',
                     success: function (data)
                     {
                         if (data.result == true) {
-                            $("#divMensalidade").load("<?php echo current_url(); ?> #divMensalidade");
-                            $("#totalmensalidade").val('');
-                            $("#totalmensalidade").val('').focus();
+                            $("#totalGeral").load("<?php echo current_url(); ?> #totalGeral");
+                            $("#divProdutos").load("<?php echo current_url(); ?> #divProdutos");
+                            $("#descricaoProduto").val('');
+                            $("#vlunitarioProduto").val('');
+                            $("#quantidadeProduto").val(1);
+                            $("#descricaoProduto").val('').focus();
                         } else {
-                            alert('Ocorreu um erro ao tentar adicionar produto.');
+                            alert('Ocorreu um erro ao tentar adicionar timeline.');
                         }
                     }
                 });
-
                 return false;
             }
+
         });
 
+        $("#formServicos").validate({
+            submitHandler: function (form) {
 
-        $(".datepicker").datepicker({dateFormat: 'dd/mm/yy'});
+                var dados = $(form).serialize();
+                $("#divServicos").html("<div class='progress'><div class='progress-bar progress-bar-primary progress-bar-striped' style='width: 100%'></div></div>");
+                $.ajax({
+                    type: "POST",
+                    url: "<?php echo base_url(); ?>index.php/proposta/adicionarServico",
+                    data: dados,
+                    dataType: 'json',
+                    success: function (data)
+                    {
+                        if (data.result == true) {
+                            $("#totalGeral").load("<?php echo current_url(); ?> #totalGeral");
+                            $("#divServicos").load("<?php echo current_url(); ?> #divServicos");
+                            $("#descricaoServico").val('');
+                            $("#vlunitarioServico").val('');
+                            $("#quantidadeServico").val('1');
+                            $("#descricaoServico").val('').focus();
+                        } else {
+                            alert('Ocorreu um erro ao tentar adicionar timeline.');
+                        }
+                    }
+                });
+                return false;
+            }
 
+        });
+    });
+</script>
 
+<!--<script>
+var BASE_URL = "<?php echo base_url(); ?>";
+$(".scriptServicos").select2({
+    tags: true, //PODE ESCOLHER O QUE DIGITOU MESMO QUE NAO TENHA NA BUSCA
+    //multiple: true, //PODE ESCOLHER MAIS DE UMA OPÇÃO
 
+    //  tokenSeparators: [',', ' '],
+    minimumInputLength: 3,
+    minimumResultsForSearch: 10,
+    ajax: {
+        url: BASE_URL + 'index.php/crm/autocompleteServico',
+        dataType: "json",
+        quietMillis: 500,
+        type: "GET",
+        data: function (params) {
+            var queryParameters = {
+                term: params.term
+            };
+            return queryParameters;
+        },
+        processResults: function (data) {
+            return {
+                results: $.map(data, function (item) {
+                    return {
+                        text: "Código: " + item.idServicos + " - " + item.descricao + " - " + item.valorUnitario,
+                        id: item.idServicos
+                    };
+                })
+            };
+        }
+    }
+
+});
+</script> -->
+
+<!--<script> ESSE É O QUE PEGA DADOS DO BANCO E DA PRA ALTERAR VALOR, POREM NAO FICA ALINHADO
+    var BASE_URL = "<?php echo base_url(); ?>";
+    $(document).ready(function () {
+
+        $("#cliente").autocomplete({
+            source: function (request, response) {
+                var ele = document.getElementsByName('optionsRadios');
+
+                for (i = 0; i < ele.length; i++) {
+                    if (ele[i].checked) {
+
+                        $.ajax({
+                            url: BASE_URL + "index.php/os/autocompleteCliente",
+                            data: {
+                                term: request.term,
+                                tipo: ele[i].value
+                            },
+                            dataType: "json",
+                            success: function (data) {
+
+                                var resp = $.map(data.value, function (obj) {
+                                    return obj.codigo + " - " + obj.nome + " - " + obj.ender + " - " + obj.cidade;
+                                });
+                                response(resp);
+                            }
+                        });
+                    }
+                }
+            },
+            minLength: 3,
+            delay: 1000
+        });
+    });
+</script>   -->
+
+<!--<script> ESSE É O QUE PEGA RODUTOS DO BANCO, MAS NAO DA PRA MUDAR NADA
+    var BASE_URL = "<?php echo base_url(); ?>";
+    $(".scriptProdutos").select2({
+        //tags: true, //PODE ESCOLHER O QUE DIGITOU MESMO QUE NAO TENHA NA BUSCA
+        //multiple: true, //PODE ESCOLHER MAIS DE UMA OPÇÃO
+
+        //  tokenSeparators: [',', ' '],
+        minimumInputLength: 3,
+        minimumResultsForSearch: 10,
+        ajax: {
+            url: BASE_URL + 'index.php/crm/autocompleteProduto',
+            dataType: "json",
+            quietMillis: 500,
+            type: "GET",
+            data: function (params) {
+                var queryParameters = {
+                    term: params.term
+                };
+                return queryParameters;
+            },
+            processResults: function (data) {
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            text: "Código: " + item.idProdutos + " - " + item.descricao + " - " + item.valorUnitario,
+                            id: item.idProdutos
+                        };
+                        $("#formProdutos").load("<?php echo current_url(); ?> #divServicos");
+                        $("#quantidade").val('2')
+                    })
+                };
+            }
+        }
 
     });
-
-</script>
-<script>
-  var BASE_URL = "<?php echo base_url(); ?>";
- 
- $(document).ready(function() {
-      
-    $( "#produto" ).autocomplete({
-
-        source: function(request, response) {
-            $.ajax({
-            url: BASE_URL + "index.php/teste/search",
-            data: {
-                    term : request.term
-                    
-             },
-            dataType: "json",
-            success: function(data){
-               var resp = $.map(data.value,function(obj){
-                    return obj.nome + " - " + "R$" +obj.precovenda;
-                    
-               }); 
-               
-               response(resp);
-               
-            }
-        });
-    },
-    minLength: 3,
-    delay: 1000
- 
- });
-});
- 
-</script> 
+</script> -->

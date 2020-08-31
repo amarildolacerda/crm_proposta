@@ -21,7 +21,7 @@
                             <input class="form-control" type="text" name="empresa"  id="empresa"  placeholder="Empresa"  >
                         </div>
                         <div class="col-md-2">
-                            <input class="form-control" type="text" name="idNegocio"  id="idcrm"  placeholder="Id Negocio"  >
+                            <input class="form-control" type="text" name="idNegocio"  id="idNegocio"  placeholder="Id Negocio"  >
                         </div>
                         <div class="col-md-4">
                             <select name="status" id="status" class="form-control" >
@@ -108,7 +108,7 @@
                             </div>
                         </div>
                         <div class="col-md-12 text-right">
-                            <a href="<?php echo base_url(); ?>index.php/crm/gerenciar" class="btn btn-primary"><i class="glyphicon glyphicon-erase"></i></a>
+                            <a href="<?php echo base_url(); ?>index.php/crm/negociosLista" class="btn btn-primary"><i class="glyphicon glyphicon-erase"></i></a>
                             <button class="btn btn-danger"> <i class="glyphicon glyphicon-search"></i></button>
                         </div>
                         <br><br>

@@ -52,7 +52,7 @@
                                                     <input type="text" class="form-control" name="nomeEmpresa" required="" minlength=3 value="<?php echo $empresa->nomeEmpresa ?>">
                                                     <input type="hidden" class="form-control" name="idEmpresas" value="<?php echo $empresa->idEmpresas ?>">
                                                     <input type="hidden" class="form-control" name="usuario" value="<?php echo $dadoslogin['idusuarios'] ?>">
-                                                    <?php if($alterarNegocio != 0) { ?>
+                                                    <?php if ($alterarNegocio != 0) { ?>
                                                         <input type="hidden" class="form-control" name="idNegocios" value="<?php echo $alterarNegocio; ?>">
                                                     <?php } ?>
                                                 </div>
@@ -372,20 +372,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="box box-success">
-                                <form action="<?php echo base_url() ?>index.php/proposta/add" method="post">
-                            <!--                        <input type="hidden" class="form-control" name="fantasia" value="<?php echo $empresa->empresa; ?>">
-                                        <input type="hidden" class="form-control" name="cnpj" value="0">
-                                        <input type="hidden" class="form-control" name="endereco" value="<?php echo $empresa->endereco; ?>">
-                                        <input type="hidden" class="form-control" name="estado" value="SP">
-                                        <input type="hidden" class="form-control" name="cidade" value="<?php echo $empresa->cidade; ?>">
-                                        <input type="hidden" class="form-control" name="email" value="<?php echo $empresa->email; ?>">
-                                        <input type="hidden" class="form-control" name="contato" value="<?php echo $empresa->nome; ?>">
-                                        <input type="hidden" class="form-control" name="telefone" value="<?php echo $result->telefone; ?>">
-                                        <input type="hidden" class="form-control" name="usuario" value="<?php echo $dadoslogin['idusuarios'] ?>">
-                                        <input type="hidden" class="form-control" name="idLead_proposta" value="<?php echo $result->idcrm ?>">-->
-                                    <button type="submit" class="btn btn-success"><i class="fa fa-plus-circle"></i> Novo</button>
-                                </form>
-
+                                <a  class="btn btn-success" data-toggle="modal" data-target="#modal-negocioRapido"><i class="fa fa-plus-circle"></i> Novo</a>
                                 <div class="box-body">
                                     <?php if (!$negocios) { ?>
                                         <div class="widget-box">
@@ -432,13 +419,19 @@
                                                     <tbody>
                                                         <?php foreach ($negocios as $r) { ?>
                                                             <tr> 
-                                                                <td><?php echo $r->idNegocio. "-" .$r->nomeDoNegocio?></td>
+                                                                <td><?php echo $r->idNegocio . "-" . $r->nomeDoNegocio ?></td>
                                                                 <td><?php echo $r->nomeEmpresa; ?></td> 
                                                                 <td><?php echo $r->nomeContato; ?></td> 
                                                                 <td><?php echo $r->descricao; ?></td> 
-                                                                <td><?php echo "R$ ".number_format($r->valorDoNegocio, 2, ',', '.'); ?></td>
-                                                                <td><?php $dataCadastro = date_create_from_format('Y-m-d', $r->dataCadastro); echo date_format($dataCadastro, 'd-m-Y'); ?></td>
-                                                                <td><?php $dataFechamentoEsperada = date_create_from_format('Y-m-d', $r->dataFechamentoEsperada); echo date_format($dataFechamentoEsperada, 'd-m-Y'); ?></td>
+                                                                <td><?php echo "R$ " . number_format($r->valorDoNegocio, 2, ',', '.'); ?></td>
+                                                                <td><?php
+                                                                    $dataCadastro = date_create_from_format('Y-m-d', $r->dataCadastro);
+                                                                    echo date_format($dataCadastro, 'd-m-Y');
+                                                                    ?></td>
+                                                                <td><?php
+                                                                    $dataFechamentoEsperada = date_create_from_format('Y-m-d', $r->dataFechamentoEsperada);
+                                                                    echo date_format($dataFechamentoEsperada, 'd-m-Y');
+                                                                    ?></td>
 
                                                                 <td class="text-center">
                                                                     <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'eProposta')) { ?>
@@ -487,6 +480,65 @@
                             </div>
                         </div>
                     </div>
+                    <!--MODAL BOTÃO ADICIONAR NEGOCIO RAPIDO-->
+                    <div class="modal modal-default fade" id="modal-negocioRapido">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span></button>
+                                    <h4 class="modal-title">Negócio rápido</h4>
+                                </div>
+                                <form action="<?php echo base_url() ?>index.php/crm/addNegocios" method="post">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Nome do negócio </label>
+                                            <input type="hidden" class="form-control" name="nomeEmpresa" value="<?php echo $empresa->idEmpresas; ?>">
+                                            <input type="hidden" class="form-control" name="nomeContato" value="<?php echo $contato->idContatos; ?>">
+                                            <input type="text" class="form-control" name="nomeDoNegocio" required="">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Valor do negócio </label>
+                                            <input type="number" class="form-control" name="valorDoNegocio" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Mensalidade </label>
+                                            <input type="number" class="form-control" name="mensalidade" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Data fechamento esperada </label>
+                                            <input type="date" class="form-control" name="dataFechamentoEsperada" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Fase do fúnil</label>
+                                            <select class="form-control" name="faseDoFunil" >
+                                                <?php
+                                                foreach ($status as $value) {
+                                                    ?>
+                                                    <option value = <?php echo $value->idstatus; ?>> <?php echo $value->descricao; ?></option>
+                                                    <?php
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary pull-left" data-dismiss="modal">Desistir</button>
+                                        <button type="submit" class="btn btn-success ">Salvar<i class="icon-remove icon-white"></i></button>
+                                    </div>
+                                </form>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+                    <!--MODAL BOTÃO ADICIONAR NEGOCIO RAPIDO-->
                 </div>
             </div>
             <!-- /.tab-content -->

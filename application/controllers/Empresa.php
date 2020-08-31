@@ -290,6 +290,7 @@ class Empresa extends CI_Controller {
         $data['negocios'] = $this->empresa_model->getNegocios('negocios', 'negocios.idNegocio,negocios.idEmpresas,negocios.idContatos,negocios.valorDoNegocio,negocios.nomeDoNegocio,negocios.faseDoFunil,negocios.dataCadastro,negocios.dataFechamentoEsperada,empresas.nomeEmpresa,contatos.nomeContato,status_crm.descricao',$whereEmpresa ,'');
        // $data['agenda'] = $this->empresa_model->getConfig('calendario', 'id,title,color,start,end', $where_array3);, $this->uri->segment(3), '', 'idEmpresas', 'desc', $whereRazaoOuFantasia
         $data['tipo'] = $this->empresa_model->getConfig('tipo_empresa', 'idTipoEmpresa,descricao', 'status=1');
+        $data['status'] = $this->empresa_model->getConfig('status_crm', 'idstatus,descricao,encerra', 'encerra=0');
 
         $this->load->view('empresa/alterarEmpresa', $data);
     }

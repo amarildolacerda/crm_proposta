@@ -59,6 +59,32 @@ class Crm_model extends CI_Model {
         $result = !$one ? $query->result() : $query->row();
         return $result;
     }
+    
+    function getProduto($descricao, $one = false) {
+
+        $this->db->select('idProdutos,descricao,valorUnitario');
+        $this->db->from('produtos');
+        $this->db->like('descricao', $descricao);
+
+
+        $query = $this->db->get();
+
+        $result = !$one ? $query->result() : $query->row();
+        return $result;
+    }
+    
+    function getServico($descricao, $one = false) {
+
+        $this->db->select('idServicos,descricao,valorUnitario');
+        $this->db->from('servicos');
+        $this->db->like('descricao', $descricao);
+
+
+        $query = $this->db->get();
+
+        $result = !$one ? $query->result() : $query->row();
+        return $result;
+    }
 
     function getTarefas($idNegocio, $one = false) {
         $this->db->from('tarefas_negocios');
@@ -283,7 +309,7 @@ class Crm_model extends CI_Model {
     function getPropostas($table, $fields, $where = '', $one = false) {
         $this->db->select($fields);
         $this->db->from($table);
-        $this->db->order_by('numpropostas', 'desc');
+        $this->db->order_by('idPropostas', 'DESC');
 
         if ($where) {
             $this->db->where($where);

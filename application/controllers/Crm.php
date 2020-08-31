@@ -96,8 +96,72 @@ class Crm extends CI_Controller {
 
         $dadoslogin = $this->session->all_userdata();
         $whereNegocios_array = array();
-        $whereNegocios_array['negocios.vendedor'] = $dadoslogin['idusuarios'];
+        $whereRazaoOuFantasia = array();
+        $whereDataEntrada = array();
+        
+        $idNegocio = $this->input->get('idNegocio');
+        $cnpjCliente = $this->input->get('cnpj');
+        $nomeCliente = $this->input->get('nomeCliente');
+        $fantasiaCliente = $this->input->get('fantasiaCliente');
+        $status = $this->input->get('status');
+        $garantia = $this->input->get('garantia');
+        $encerrada = $this->input->get('encerrada');
+        $dataEntrada = $this->input->get('dataEntrada');
+        $dataEntradaMenor = $this->input->get('dataEntradaMenor');
+        $dataEntradaMaior = $this->input->get('dataEntradaMaior');
+        $dataEncerraMaior = $this->input->get('dataEncerraMaior');
+        $dataAlteracaoMenor = $this->input->get('dataAlteracaoMenor');
 
+        if ($idNegocio) {
+            $whereNegocios_array['negocios.idNegocio'] = $idNegocio;
+        }
+        if ($nomeCliente) {
+            $whereRazaoOuFantasia['nomeCliente'] = $nomeCliente;
+        }
+
+        if ($fantasiaCliente) {
+            $whereRazaoOuFantasia['fantasiaCliente'] = $fantasiaCliente;
+        }
+
+        if ($cnpjCliente) {
+            $where_array['cnpjCliente'] = $cnpjCliente;
+        }
+
+        if ($status) {
+            $where_array['status'] = $status;
+        }
+
+        if ($garantia) {
+            $where_array['garantia'] = $garantia;
+        }
+
+        if ($encerrada) {
+            $where_array['encerrada'] = $encerrada;
+        }
+
+        if ($dataEntrada) {
+            $where_array['dataEntrada'] = $dataEntrada;
+        }
+
+        if ($dataEntradaMenor) {
+            $where_array['dataEntrada <'] = $dataEntradaMenor;
+        }
+
+        if ($dataEntradaMaior) {
+            $where_array['dataEntrada >'] = $dataEntradaMaior;
+        }
+
+        if ($dataEncerraMaior) {
+            $where_array['dataEncerra >='] = $dataEncerraMaior;
+        }
+
+        if ($dataAlteracaoMenor) {
+            $where_array['dataAlteracao <'] = $dataAlteracaoMenor;
+        }
+        
+        
+        $whereNegocios_array['negocios.vendedor'] = $dadoslogin['idusuarios'];
+        
         if ($this->permission->checkPermission($this->session->userdata('permissao'), 'oLead')) {
             $where_array['usuario'] = $dadoslogin['idusuarios'];
         }
@@ -185,6 +249,7 @@ class Crm extends CI_Controller {
                     $dadosNegocio['nomeDoNegocio'] = $this->input->post('nomeDoNegocio');
                     $dadosNegocio['vendedor'] = $vendedor['idusuarios'];
                     $dadosNegocio['valorDoNegocio'] = $this->input->post('valorDoNegocio');
+                    $dadosNegocio['mensalidade'] = $this->input->post('mensalidade');
                     $dadosNegocio['faseDoFunil'] = $this->input->post('faseDoFunil');
                     $dadosNegocio['dataFechamentoEsperada'] = $this->input->post('dataFechamentoEsperada');
                     $dadosNegocio['dataCadastro'] = date('Y/m/d');
@@ -211,6 +276,7 @@ class Crm extends CI_Controller {
                 $dadosNegocio['nomeDoNegocio'] = $this->input->post('nomeDoNegocio');
                 $dadosNegocio['vendedor'] = $vendedor['idusuarios'];
                 $dadosNegocio['valorDoNegocio'] = $this->input->post('valorDoNegocio');
+                $dadosNegocio['mensalidade'] = $this->input->post('mensalidade');
                 $dadosNegocio['faseDoFunil'] = $this->input->post('faseDoFunil');
                 $dadosNegocio['dataFechamentoEsperada'] = $this->input->post('dataFechamentoEsperada');
                 $dadosNegocio['dataCadastro'] = date('Y/m/d');
@@ -241,7 +307,7 @@ class Crm extends CI_Controller {
         //verifica se o codigo passado no endereço do navegador é de um lead existente
         if (!$this->uri->segment(3) || !is_numeric($this->uri->segment(3))) {
             $this->session->set_flashdata('error', 'Item não pode ser encontrado, parâmetro não foi passado corretamente.');
-            redirect('empresa/gerenciar');
+            redirect('crm/negociosKanban');
         }
 
         //faz a validação dos dados  que chegaram via post
@@ -273,6 +339,9 @@ class Crm extends CI_Controller {
         $where_array3 = array();
         $where_array3['idLead_proposta'] = $this->uri->segment(3);
 
+        $where_array4 = array();
+        $where_array4['idNegocio'] = $this->uri->segment(3);
+
         //pega id da empresa deste negocio para utilizar na pesquisa da empresa
         $empresa = $this->crm_model->getById($this->uri->segment(3));
 
@@ -289,7 +358,7 @@ class Crm extends CI_Controller {
         $data['tarefas'] = $this->crm_model->getTarefas($this->uri->segment(3));
         $data['empresa'] = $this->crm_model->getByIdEmpresas($empresa->idEmpresas);
         $data['contato'] = $this->crm_model->getByIdContato($empresa->idEmpresas);
-        $data['proposta'] = $this->crm_model->getPropostas('propostas', 'numpropostas,fantasia,contato,data,status', $where_array3, '');
+        $data['proposta'] = $this->crm_model->getPropostas('propostas', 'idPropostas,idNegocio,totalProdutos,totalServicos,mensalidade,dataCadastro,dataAlteracao', $where_array4, '');
         $data['agenda'] = $this->crm_model->getConfig('calendario', 'id,title,color,start,end', $where_array3);
         $data['tipo'] = $this->crm_model->getConfig('tipo_empresa', 'idTipoEmpresa,descricao', 'status=1');
 
@@ -468,33 +537,35 @@ class Crm extends CI_Controller {
         }
     }
 
-    public function sendgrid() {
+    public function sendblue() {
 
-        // require 'vendor/autoload.php'; // If you're using Composer (recommended)
-// Comment out the above line if not using Composer
-        require("localhost/proposta_ci/index.php/third_party/sendgrid/sendgrid-php.php");
-// If not using Composer, uncomment the above line and
-// download sendgrid-php.zip from the latest release here,
-// replacing <PATH TO> with the path to the sendgrid-php.php file,
-// which is included in the download:
-// https://github.com/sendgrid/sendgrid-php/releases
+        require_once(APPPATH . 'third_party/autoload.php');
 
-        $email = new \SendGrid\Mail\Mail();
-        $email->setFrom("test@example.com", "Example User");
-        $email->setSubject("Sending with SendGrid is Fun");
-        $email->addTo("test@example.com", "Example User");
-        $email->addContent("text/plain", "and easy to do anywhere, even with PHP");
-        $email->addContent(
-                "text/html", "<strong>and easy to do anywhere, even with PHP</strong>"
+        $config = SendinBlue\Client\Configuration::getDefaultConfiguration()->setApiKey('api-key', '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');
+// Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+// $config = SendinBlue\Client\Configuration::getDefaultConfiguration()->setApiKeyPrefix('partner-key', 'Bearer');
+
+        $apiInstance = new SendinBlue\Client\Api\SMTPApi(
+                // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
+                // This is optional, `GuzzleHttp\Client` will be used as default.
+                new GuzzleHttp\Client(['verify' => false]), $config
         );
-        $sendgrid = new \SendGrid(getenv('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'));
+        $container = [];
+        $email = ['name' => 'Gabriel', 'email' => 'gabrielgrimello@gmail.com'];
+        $container['textContent'] = 'Hello world !';
+        $container['subject'] = 'SendinBlue test via V3 PHP API';
+        $container['sender'] = $email;
+        $container['replyTo'] = $email;
+        $container['templateId'] = 1;
+        $container['to'] = [$email];
+        $container['tags'] = ['test'];
+        $sendSmtpEmail = new \SendinBlue\Client\Model\SendSmtpEmail($container); // \SendinBlue\Client\Model\SendSmtpEmail | Values to send a transactional email
+
         try {
-            $response = $sendgrid->send($email);
-            print $response->statusCode() . "\n";
-            print_r($response->headers());
-            print $response->body() . "\n";
+            $result = $apiInstance->sendTransacEmail($sendSmtpEmail);
+            print_r($result);
         } catch (Exception $e) {
-            echo 'Caught exception: ' . $e->getMessage() . "\n";
+            echo 'Exception when calling SMTPApi->sendTransacEmail: ', $e->getMessage(), PHP_EOL;
         }
     }
 
@@ -923,6 +994,18 @@ class Crm extends CI_Controller {
 //            $data = file_get_contents('http://localhost:8886/OData/OData.svc/clientes?$filter=fantasia%20like%20(%27%%25' . $term . '%%25%27)');
 //            echo $data;
 //        }
+    }
+
+    public function autocompleteProduto() {
+        $term = $this->input->get('term');
+        $data = $this->crm_model->getProduto($term);
+        echo json_encode($data);
+    }
+
+    public function autocompleteServico() {
+        $term = $this->input->get('term');
+        $data = $this->crm_model->getServico($term);
+        echo json_encode($data);
     }
 
 }
